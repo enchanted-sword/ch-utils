@@ -1,9 +1,9 @@
 {
   "manifest_version": 3,
-  "name": "chost-utils",
+  "name": "CHUtils",
   "version": "1.0",
 
-  "description": "cohost utils",
+  "description": "Utilities for cohost",
   "icons": {
     "48": "icons/48.png",
     "96": "icons/96.png"
@@ -35,14 +35,6 @@
     "scripts": [
       "control/background.js"
     ]
-  },
-
-  "action": {
-    "default_icon" : {
-      "48": "icons/48.png",
-      "96": "icons/96.png"
-    },
-    "default_popup": "ui/menu.html"
   },
 
   "browser_specific_settings": {
