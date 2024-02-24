@@ -1,0 +1,54 @@
+{
+  "manifest_version": 3,
+  "name": "chost-utils",
+  "version": "1.0",
+
+  "description": "cohost utils",
+  "icons": {
+    "48": "icons/48.png",
+    "96": "icons/96.png"
+  },
+  "author": "April Lunarii",
+
+  "permissions": [
+    "webNavigation",
+    "storage"
+  ],
+  "web_accessible_resources": [{
+    "resources": [ "*.js", "*.json", "*.css", "*.svg" ],
+    "matches": ["*://*.cohost.org/*"]
+  }],
+
+  "content_scripts": [
+    {
+      "matches": [
+        "*://*.cohost.org/*"
+      ],
+      "run_at": "document_end",
+      "js": [
+        "control/content-script.js",
+        "lib/jquery.min.js"
+      ]
+    }
+  ],
+  "background": {
+    "scripts": [
+      "control/background.js"
+    ]
+  },
+
+  "action": {
+    "default_icon" : {
+      "48": "icons/48.png",
+      "96": "icons/96.png"
+    },
+    "default_popup": "ui/menu.html"
+  },
+
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "chost-utils@girldragon.neocities.org",
+      "strict_min_version": "121.0"
+    }
+  }
+}

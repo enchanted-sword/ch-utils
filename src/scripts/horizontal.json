@@ -1,0 +1,6 @@
+{
+  "name": "horizontal",
+  "preferences": { "enabled": true },
+  "js": true,
+  "css": true
+}

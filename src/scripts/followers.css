@@ -1,0 +1,39 @@
+.co-themed-box { position: relative; }
+.load-all {
+  position: absolute;
+  top: .5rem;
+  right: .5rem;
+}
+.follow-count { margin-right: .3em; }
+.counter-loading { margin-left: .3em; }
+.loader { /*adapted from https://cssloaders.github.io/*/
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  display: inline-block;
+  margin: 0 2rem;
+  position: relative;
+  color: rgb(var(--color-notBlack));
+  box-sizing: border-box;
+  animation: load-animation 1s linear infinite alternate;
+}
+@keyframes load-animation {
+  0% {box-shadow: -24px -6px, -8px 0, 8px 0, 24px 0; }
+  33% { box-shadow: -24px 0px, -8px -6px, 8px 0, 24px 0; }
+  66% { box-shadow: -24px 0px, -8px 0, 8px -6px, 24px 0; }
+  100% { box-shadow: -24px 0, -8px 0, 8px 0, 24px -6px; }
+}
+.spinner {
+  width: 24px;
+  height: 24px;
+  border: 3px solid rgb(var(--color-text));
+  border-bottom-color: transparent;
+  border-radius: 50%;
+  display: inline-block;
+  box-sizing: border-box;
+  animation: spin-animation 1s linear infinite;
+}
+@keyframes spin-animation {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

@@ -1,0 +1,6 @@
+{
+  "name": "followers",
+  "preferences": { "enabled": true },
+  "js": true,
+  "css": true
+}
