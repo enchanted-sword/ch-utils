@@ -24,6 +24,9 @@
     },
     "run": {
       "firefox": "deved"
-    }
+    },
+    "ignoreFiles": [
+      "lib/coloris.js"
+    ]
   }
 }
