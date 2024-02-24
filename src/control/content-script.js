@@ -12,7 +12,7 @@
     const app = document.getElementById('app');
     app.dataset.display = 'horizontal';
 
-    import(getURL('/scripts/utils/jsTools.js')).then(({ deepEquals, getJsonFile, importFeatures }) => {
+    import(getURL('/scripts/utils/jsTools.js')).then(({ deepEquals, importFeatures }) => {
       let installedFeatures = {};
       let enabledFeatures = [];
       const preferenceListeners = {};
