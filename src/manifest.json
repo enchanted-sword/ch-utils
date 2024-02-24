@@ -39,7 +39,7 @@
 
   "browser_specific_settings": {
     "gecko": {
-      "id": "chost-utils@girldragon.neocities.org",
+      "id": "ch-utils@girldragon.neocities.org",
       "strict_min_version": "121.0"
     }
   }
