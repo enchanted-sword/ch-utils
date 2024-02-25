@@ -14,8 +14,9 @@
     "webNavigation",
     "storage"
   ],
+  "host_permissions": ["*://*.cohost.org/*"],
   "web_accessible_resources": [{
-    "resources": [ "*.js", "*.json", "*.css", "*.svg" ],
+    "resources": [ "*.js", "*.json", "*.css", "*.svg", ".png" ],
     "matches": ["*://*.cohost.org/*"]
   }],
 
