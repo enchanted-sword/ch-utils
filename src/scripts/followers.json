@@ -1,6 +1,12 @@
 {
   "name": "followers",
-  "preferences": { "enabled": true },
+  "preferences": {
+    "enabled": true,
+    "options": {
+      "count": false,
+      "showAll": false
+    }
+  },
   "js": true,
   "css": true
 }
