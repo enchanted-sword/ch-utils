@@ -48,6 +48,7 @@
     z-index: 11;
     left: calc(50% - 19.8rem);
     padding: 0;
+    pointer-events: none;
   }
   #live-dashboard > .flex > button.w-full svg {
     color: rgb(var(--color-sidebar-bg));
