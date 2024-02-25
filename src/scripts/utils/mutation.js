@@ -109,4 +109,4 @@ const observer = new MutationObserver(mutations => {
   requestAnimationFrame(nodeManager);
 });
 
-observer.observe(app, { childList: true, subtree: true, characterData: true });
+observer.observe(app, { childList: true, subtree: true });
