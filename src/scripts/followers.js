@@ -44,36 +44,49 @@ const loadAll = followers => noact({
   },
   children: ['load all']
 });
-const lockIcon = `
-  <svg viewBox="0 0 25 18"
-    xmlns="http://www.w3.org/2000/svg"
-    style="fill-rule: evenodd; clip-rule: evenodd; stroke-linejoin: round; stroke-miterlimit: 2;"
-    class="cohost-shadow-light dark:cohost-shadow-dark absolute -bottom-1 -right-1 h-5 fill-foreground-500 text-notWhite">
-    <path
-      d="M14.923 17.087c-2.254.666-4.388.967-6.402.905-2.014-.062-3.742-.532-5.183-1.409-1.442-.877-2.436-2.217-2.982-4.022-.549-1.814-.463-3.476.257-4.985.719-1.51 1.905-2.832 3.557-3.965C5.823 2.478 7.776 1.578 10.03.913c2.243-.663 4.369-.965 6.376-.906 2.007.059 3.733.523 5.178 1.394 1.446.87 2.441 2.207 2.987 4.011.546 1.804.457 3.464-.266 4.981-.724 1.516-1.908 2.845-3.551 3.987-1.644 1.143-3.588 2.045-5.831 2.707Z"
-      style="fill-rule: nonzero;">
-    </path>
-    <g transform-origin="center center" transform="scale(0.6 0.6) rotate(0)">
-      <svg xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-        <path fill-rule="evenodd"
-          d="M12 1.5a5.25 5.25 0 00-5.25 5.25v3a3 3 0 00-3 3v6.75a3 3 0 003 3h10.5a3 3 0 003-3v-6.75a3 3 0 00-3-3v-3c0-2.9-2.35-5.25-5.25-5.25zm3.75 8.25v-3a3.75 3.75 0 10-7.5 0v3h7.5z"
-          clip-rule="evenodd">
-        </path>
-      </svg>
-    </g>
-  </svg>
-`;
+const lockIcon = () => { 
+  return {
+    viewBox: '0 0 25 18',
+    style: 'fill-rule: evenodd; clip-rule: evenodd; stroke-linejoin: round; stroke-miterlimit: 2;',
+    className: 'cohost-shadow-light dark:cohost-shadow-dark absolute -bottom-1 -right-1 h-5 fill-foreground-500 text-notWhite',
+    children: [
+      {
+        d: 'M14.923 17.087c-2.254.666-4.388.967-6.402.905-2.014-.062-3.742-.532-5.183-1.409-1.442-.877-2.436-2.217-2.982-4.022-.549-1.814-.463-3.476.257-4.985.719-1.51 1.905-2.832 3.557-3.965C5.823 2.478 7.776 1.578 10.03.913c2.243-.663 4.369-.965 6.376-.906 2.007.059 3.733.523 5.178 1.394 1.446.87 2.441 2.207 2.987 4.011.546 1.804.457 3.464-.266 4.981-.724 1.516-1.908 2.845-3.551 3.987-1.644 1.143-3.588 2.045-5.831 2.707Z',
+        style: 'fill-rule: nonzero;'
+      },
+      {
+        tag: 'g',
+        'transform-origin': 'center center',
+        transform: 'scale(0.6 0.6) rotate(0)',
+        children: [{
+          viewBox: '0 0 24 24',
+          fill: 'currentColor',
+          'aria-hidden': 'true',
+          children: [{
+            'fill-rule': 'evenodd',
+            d: 'M12 1.5a5.25 5.25 0 00-5.25 5.25v3a3 3 0 00-3 3v6.75a3 3 0 003 3h10.5a3 3 0 003-3v-6.75a3 3 0 00-3-3v-3c0-2.9-2.35-5.25-5.25-5.25zm3.75 8.25v-3a3.75 3.75 0 10-7.5 0v3h7.5z',
+            'clip-rule': 'evenodd'
+          }]
+        }]
+      }
+    ]
+  };
+};
+
+
 const followCard = project => noact({ className: `${customClass} flex flex-row items-center gap-1`, children: [
   {
     href: `https://cohost.org/${project.handle}`,
     className: 'flex-0 mask relative aspect-square h-16 w-16 hidden lg:block cohost-shadow-light dark:cohost-shadow-dark',
     title: `@${project.handle}`,
-    children: [{
-      src: project.avatarURL,
-      className: `mask mask-${project.avatarShape} h-full w-full object-cover`,
-      alt: project.handle
-    }, { html: project.privacy === 'private'? lockIcon : false }]
+    children: [
+      {
+        src: project.avatarURL,
+        className: `mask mask-${project.avatarShape} h-full w-full object-cover`,
+        alt: project.handle
+      }, 
+      project.privacy === 'private' ? lockIcon() : ''
+    ]
   },
   {
     className: 'min-w-0 flex-shrink justify-center gap-0 lg:flex-row',
