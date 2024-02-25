@@ -44,3 +44,15 @@ export const deepEquals = (x, y) => {
     Object.keys(x).every(key => deepEquals(x[key], y[key]))
   ) : (x === y);
 };
+
+/**
+ * Delays inputs for a textarea or text input to reduce the amount of events processed by the event handler
+ * @param {Function} func - Event handler to debounce
+ */
+export const debounce = func => {
+  let timeoutID;
+  return (...args) => {
+    clearTimeout(timeoutID);
+    timeoutID = setTimeout(() => func(...args), 500);
+  };
+};
