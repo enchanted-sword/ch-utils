@@ -74,8 +74,6 @@
         const { preferences } = changes;
         if (areaName !== 'local' || typeof preferences === 'undefined') return;
   
-        console.info(changes);
-  
         const { oldValue = {}, newValue = {} } = preferences;
   
         const newlyEnabled = Object.keys(newValue).filter(feature => !oldValue[feature]?.enabled && newValue[feature]?.enabled);
