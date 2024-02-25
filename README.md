@@ -1,2 +1,2 @@
-# ch-utils
-utilities for cohost
+# ch-utils - work in progress
+utilities for cohost!
