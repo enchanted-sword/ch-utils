@@ -3,8 +3,18 @@
   "preferences": {
     "enabled": true,
     "options": {
-      "count": false,
-      "showAll": false
+      "count": {
+        "enabled": false,
+        "type": "toggle",
+        "name": "show follower count",
+        "tooltip": "shows your follower count on the follower page. enable at your own discretion."
+      },
+      "loadAll": {
+        "enabled": false,
+        "type": "toggle",
+        "name": "load all followers",
+        "tooltip": "loads every page of your followers at once"
+      }
     }
   },
   "js": true,
