@@ -9,7 +9,7 @@
     "start": "web-ext run"
   },
   "author": "",
-  "license": "ISC",
+  "license": "GPL-3.0-only",
   "devDependencies": {
     "eslint": "^8.57.0",
     "web-ext": "^7.11.0"
@@ -24,9 +24,6 @@
     },
     "run": {
       "firefox": "deved"
-    },
-    "ignoreFiles": [
-      "lib/coloris.js"
-    ]
+    }
   }
 }
