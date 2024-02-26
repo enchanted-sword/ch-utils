@@ -1,5 +1,6 @@
 {
   "name": "followers",
+  "description": "tweaks to the followers page",
   "preferences": {
     "enabled": true,
     "options": {
