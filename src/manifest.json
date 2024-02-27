@@ -38,6 +38,14 @@
     ]
   },
 
+  "action": {
+    "default_icon" : {
+      "48": "icons/48.png",
+      "96": "icons/96.png"
+    },
+    "default_popup": "ui/menu.html"
+  },
+
   "browser_specific_settings": {
     "gecko": {
       "id": "ch-utils@girldragon.neocities.org",

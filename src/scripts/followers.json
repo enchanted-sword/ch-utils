@@ -5,13 +5,13 @@
     "enabled": true,
     "options": {
       "count": {
-        "enabled": false,
+        "value": false,
         "type": "toggle",
         "name": "show follower count",
         "tooltip": "shows your follower count on the follower page. enable at your own discretion."
       },
       "loadAll": {
-        "enabled": false,
+        "value": false,
         "type": "toggle",
         "name": "load all followers",
         "tooltip": "loads every page of your followers at once"

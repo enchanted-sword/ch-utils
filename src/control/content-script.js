@@ -75,6 +75,8 @@
         if (areaName !== 'local' || typeof preferences === 'undefined') return;
   
         const { oldValue = {}, newValue = {} } = preferences;
+
+        console.log(preferences);
   
         const newlyEnabled = Object.keys(newValue).filter(feature => !oldValue[feature]?.enabled && newValue[feature]?.enabled);
         const newlyDisabled = Object.keys(oldValue).filter(feature => oldValue[feature]?.enabled && !newValue[feature]?.enabled);
@@ -82,6 +84,17 @@
         newlyEnabled.forEach(executeFeature);
         enabledFeatures.push(newlyEnabled);
         newlyDisabled.forEach(destroyFeature);
+      };
+
+      const transformPreferences = preferences => {
+        const returnObj = { enabled: preferences.enabled };
+        if ('options' in preferences) {
+          returnObj.options = {};
+          Object.keys(preferences.options).map(option => {
+            returnObj.options[option] = preferences.options[option].value;
+          });
+        }
+        return returnObj;
       };
 
       const initFeatures = async () => {
@@ -96,7 +109,7 @@
           Object.keys(preferences).forEach(key => { if (!(key in installedFeatures)) delete preferences[key]; });
         } else {
           preferences = {};
-          Object.keys(installedFeatures).map(feature => preferences[feature] = installedFeatures[feature].preferences);
+          Object.keys(installedFeatures).map(feature => preferences[feature] = transformPreferences(installedFeatures[feature].preferences));
         }
   
         enabledFeatures = Object.keys(preferences).filter(key => preferences[key].enabled);

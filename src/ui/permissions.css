@@ -1,18 +1,22 @@
+@font-face {
+  font-family: "Atkinson Hyperlegible";
+  src:
+    local("Atkinson Hyperlegible Bold"),
+    url('fonts/Atkinson-Hyperlegible-Regular.ttf') format('truetype');
+}
+@font-face {
+  font-family: "Atkinson Hyperlegible";
+  src:
+    local("Atkinson Hyperlegible Bold"),
+    url('fonts/Atkinson-Hyperlegible-Bold.ttf') format('truetype');
+  font-weight: 700;
+}
+
 :root {
   --cherry: 131 37 79;
   --notBlack: 25 25 25;
   --notWhite: 255 249 242;
   --text: var(--notBlack);
-}
-
-@font-face {
-  font-family: "Atkinson Hyperlegible";
-  src: url('fonts/Atkinson-Hyperlegible-Regular.ttf') format('truetype');
-}
-@font-face {
-  font-family: "Atkinson Hyperlegible";
-  src: url('fonts/Atkinson-Hyperlegible-Bold.ttf') format('truetype');
-  font-weight: 700;
 }
 
 html {

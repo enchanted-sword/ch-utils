@@ -5,7 +5,7 @@
     "enabled": false,
     "options": {
       "unreadOnNavbar": {
-        "enabled": false,
+        "value": false,
         "type": "toggle",
         "name": "show unread posts on the navbar",
         "tooltip": "moves the 'new posts! click here to view them' button to a dedicated icon on the navbar"
