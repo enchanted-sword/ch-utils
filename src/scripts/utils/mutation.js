@@ -1,5 +1,5 @@
 const app = document.getElementById('app');
-const postSelector = '#live-dashboard .flex.gap-12 > .renderIfVisible';
+const postSelector = 'article.co-post-box';
 const addedNodesQueue = [];
 
 export const mutationManager = Object.freeze({
