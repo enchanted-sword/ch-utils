@@ -1,5 +1,6 @@
 {
-  "name": "horizontal navigation",
+  "name": "horizontal",
+  "title": "horizontal navigation",
   "description": "changes the navigation style to horizontal",
   "preferences": {
     "enabled": false,

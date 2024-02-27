@@ -28,7 +28,7 @@
       browser.storage.local.set({ preferences });
     };
 
-    const title = name => {
+    const title = featureTitle => {
       return {
         className: 'ui-featureTitle',
         onclick: function () {
@@ -45,7 +45,7 @@
         children: [
           {
             tag: 'h2',
-            children: [name]
+            children: [featureTitle]
           },
           {
             className: 'ui-caretWrapper',
@@ -74,7 +74,7 @@
             {
               className: 'ui-primaryContent',
               children: [
-                title(feature.name),
+                title(feature.title),
                 {
                   className: 'ui-inputWrapper',
                   children: [
