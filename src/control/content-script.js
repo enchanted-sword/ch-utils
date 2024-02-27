@@ -21,7 +21,7 @@
         const feature = installedFeatures[name];
 
         try {
-          if (feature.css) {
+          if ('css' in feature) {
             const link = Object.assign(document.createElement('link'), {
               rel: 'stylesheet',
               href: getURL(`/scripts/${name}.css`)
@@ -29,11 +29,11 @@
       
             document.documentElement.appendChild(link);
           }
-          if (feature.js) {
+          if ('js' in feature) {
             const scriptPath = getURL(`/scripts/${name}.js`);
             const { main, clean, update } = await import(scriptPath);
       
-            main().catch(console.error);
+            window.requestAnimationFrame(() => main().catch(console.error));
       
             preferenceListeners[name] = (changes, areaName) => {
               const { preferences } = changes;
@@ -60,7 +60,7 @@
             const scriptPath = getURL(`/scripts/${name}.js`);
             const { clean } = await import(scriptPath);
 
-            clean().catch(console.error);
+            window.requestAnimationFrame(() => clean().catch(console.error));
 
             if (browser.storage.onChanged.hasListener(preferenceListeners[name])) browser.storage.onChanged.removeListener(preferenceListeners[name]);
             delete preferenceListeners[name];
