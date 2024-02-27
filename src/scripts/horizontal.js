@@ -44,6 +44,7 @@ homeIcon.on('click', event => {
   if ($(buttonSelector).length) {
     event.preventDefault();
     event.stopImmediatePropagation();
+    window.scrollTo({ top: 0, behaviour: 'auto' });
     $(buttonSelector).trigger('click');
   }
 
