@@ -7,6 +7,14 @@
   const waitForLoad = () => new Promise(resolve => {
     window.requestAnimationFrame(() => (isAppLoaded() && readyState()) ? resolve() : waitForLoad().then(resolve));
   });
+  const runContextScript = () => {
+    const script = document.createElement('script');
+    script.src = getURL('control/pageContext.js');
+    (document.head || document.documentElement).append(script);
+    script.onload = () => script.remove();
+  };
+
+  runContextScript();
 
   waitForLoad().then(() => {
 
