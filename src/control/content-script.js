@@ -9,8 +9,6 @@
   });
 
   waitForLoad().then(() => {
-    const app = document.getElementById('app');
-    app.dataset.display = 'horizontal';
 
     import(getURL('/scripts/utils/jsTools.js')).then(({ deepEquals, importFeatures }) => {
       let installedFeatures = {};
