@@ -32,6 +32,31 @@ export const importFeatures = async () => {
 };
 
 /**
+ * Fetches items from the extension's local storage
+ * @param {string} keys - Array of strings corresponding to storage keys to fetch
+ * @returns {object} Object of key-value pairs ({ version: 'X' })
+ */ 
+export const getStorage = async (keys = []) => {
+  const storage = await browser.storage.local.get();
+  const returnObj = {};
+  for (const key of keys) {
+    returnObj[key] = storage[key];
+  }
+  return returnObj;
+};
+
+/**
+ * Fetches feature options
+ * @param {string} feature - Feature name
+ * @returns {object} options
+ */
+export const getOptions = async (feature = '') => {
+  const { preferences } = await getStorage(['preferences']);
+
+  return preferences[feature]?.options;
+};
+
+/**
  * Recursively compares two objects; returns true if they are identical and false otherwise
  * @param {object} x
  * @param {object} y 
