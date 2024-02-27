@@ -1,3 +1,31 @@
+import { getOptions } from './utils/jsTools.js';
+import { style } from './utils/style.js';
+
+const unreadOnNavbarStyleElement = style(`
+  @media (min-width: 1024px) {
+    #live-dashboard > .flex > button.w-full {
+      background: none;
+      box-shadow: none;
+      width: fit-content;
+      font-size: 0;
+      scale: .68;
+      position: fixed !important;
+      top: .5rem !important;
+      z-index: 11 !important;
+      left: calc(50% - 19.8rem);
+      padding: 0;
+      pointer-events: none;
+    }
+    #live-dashboard > .flex > button.w-full svg {
+      color: rgb(var(--color-sidebar-bg));
+      fill: rgb(var(--color-sidebar-accent));
+    }
+
+    @media (min-width: 1536px) {
+      #live-dashboard > .flex > button.w-full { left: calc(50% - 3.8rem); }
+    }
+  }
+`);
 const buttonSelector = '#live-dashboard .flex.gap-12 > button.w-full';
 const homeIcon = $(`
   <a href="/">
@@ -23,8 +51,15 @@ homeIcon.on('click', event => {
 });
 
 export const main = async () => {
+  const { unreadOnNavbar } = await getOptions('horizontal');
+
   $('ul[role="menu"]').prepend(homeIcon);
   $('[class~="lg:grid-cols-4"]:has(ul[role="menu"])').prepend($('<div>', { class: 'ch-utils' }));
+
+  if (unreadOnNavbar) document.documentElement.append(unreadOnNavbarStyleElement);
 };
 
-export const clean = async () => $('.ch-utils').remove();
+export const clean = async () => {
+  $('.ch-utils').remove();
+  unreadOnNavbarStyleElement.remove();
+}

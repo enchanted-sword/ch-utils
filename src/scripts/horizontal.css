@@ -38,21 +38,9 @@
   a[href="#"] + ul li:not(:last-of-type) { border-bottom: 1px solid rgba(var(--color-notWhite) / .2); }
 
   #live-dashboard > .flex > button.w-full {
-    background: none;
-    box-shadow: none;
-    width: fit-content;
-    font-size: 0;
-    scale: .68;
-    position: fixed;
-    top: .5rem;
-    z-index: 11;
-    left: calc(50% - 19.8rem);
-    padding: 0;
-    pointer-events: none;
-  }
-  #live-dashboard > .flex > button.w-full svg {
-    color: rgb(var(--color-sidebar-bg));
-    fill: rgb(var(--color-sidebar-accent));
+    position: sticky;
+    top: 5rem;
+    z-index: 10;
   }
 
   @media (max-width: 680px) {
@@ -60,7 +48,6 @@
   }
   @media (min-width: 1536px) {
     ul[role="menu"] { left: calc(50% - 6rem); }
-    #live-dashboard > .flex > button.w-full { left: calc(50% - 3.8rem); }
   }
 
   .lg\:grid-cols-4:has(#live-dashboard) { grid-template-columns: .5fr repeat(3, minmax(0, 1fr)); }
