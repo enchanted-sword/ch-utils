@@ -96,6 +96,7 @@
             }
           ]
         });
+        featureItem.dataset.searchable = JSON.stringify(feature);
         featureItem.querySelector('.ui-inputWrapper').append($(`<label for="ui-feature-${name}">toggle ${feature.name}</label`)[0]); // for some reason, vanilla js is incapable of setting the for attribute on labels, so jquery is used
 
         if (preference.enabled) featureItem.querySelector('input').setAttribute('checked', '');
@@ -286,9 +287,10 @@
     };
 
     const onSearch = ({ target }) => {
-      if (target.value) {
+      const query = target.value.replace(/[^\w]/g, '');
+      if (query) {  
         document.getElementById('ui-searchFilter').innerText = `
-          #ui-featureContainer > li:not([name*="${target.value.replace(/[^\w]/g, '')}" i]) { display: none; }
+          #ui-featureContainer > li:not([data-searchable*="${query}" i]) { display: none; }
         `;
       }
       else document.getElementById('ui-searchFilter').innerText = '';
