@@ -1,6 +1,8 @@
 import { apiFetch, followState, activeProjectId } from './utils/apiFetch.js';
 import { noact } from './utils/noact.js';
+import { getOptions } from './utils/jsTools.js';
 
+const boxSelector = '.co-themed-box';
 const headerSelector = '.co-themed-box > h1';
 const customClass = 'ch-utils-followers';
 
@@ -25,13 +27,15 @@ const followCancelOrUnfollowRequest = async (state, toProjectId) => apiFetch(`/v
 });
 
 const limit = 500;
-let offset = 0;
-let projects = [];
-let total = [];
 
 const countElement = $('<span>', { class: `follow-count ${customClass}` });
 const loader = $(`<span class='counter-loading ${customClass}'>(counting<span class='loader'></span>)</span>`);
-const loadAll = followers => noact({
+const loaderButtonPlaceholder = $(`
+  <button class="${customClass} load-all flex h-12 max-w-xs items-center justify-center rounded-lg bg-foreground px-6 text-lg text-text hover:bg-foreground-600 active:bg-foreground-700 disabled:bg-foreground-200">
+    <span class="spinner"></span>
+  </button>
+`);
+const loaderButton = followers => noact({
   className: `${customClass} load-all flex h-12 max-w-xs items-center justify-center rounded-lg bg-foreground px-6 text-lg text-text hover:bg-foreground-600 active:bg-foreground-700 disabled:bg-foreground-200`,
   onclick: async ({ target }) => {
     target.innerHTML = '<span class="spinner"></span>';
@@ -72,8 +76,6 @@ const lockIcon = () => {
     ]
   };
 };
-
-
 const followCard = project => noact({ className: `${customClass} flex flex-row items-center gap-1`, children: [
   {
     href: `https://cohost.org/${project.handle}`,
@@ -139,6 +141,10 @@ const followCard = project => noact({ className: `${customClass} flex flex-row i
 ]});
 
 const countFollowers = async () => {
+  let offset = 0;
+  let projects = [];
+  let total = [];
+
   ({ projects } = await apiFetch('/v1/projects/followers', { method: 'GET', queryParams: { offset, limit } }));
   total.push(...projects);
   while (projects.length === limit) {
@@ -148,14 +154,24 @@ const countFollowers = async () => {
   }
   return total;
 };
+
 export const main = async () => {
-  if (location.pathname !== '/rc/project/followers') return;
-  $(headerSelector).prepend(countElement);
-  $(headerSelector).append(loader);
+  const { count, loadAll } = await getOptions('followers');
+  if (location.pathname !== '/rc/project/followers' || (!count && !loadAll)) return;
+
+  if (count) {
+    $(headerSelector).prepend(countElement);
+    $(headerSelector).append(loader);
+  }
+  if (loadAll) $(boxSelector).append(loaderButtonPlaceholder);
+
   const followers = await countFollowers();
-  countElement.text(followers.length);
-  $('.counter-loading').remove();
-  $('.co-themed-box').append(loadAll(followers));
+
+  if (count) {
+    countElement.text(followers.length);
+    loader.remove();
+  }
+  if (loadAll) loaderButtonPlaceholder.replaceWith(loaderButton(followers));
 };
 
 export const clean = async () => $(`.${customClass}`).remove();

@@ -4,6 +4,9 @@
   top: .5rem;
   right: .5rem;
 }
+.load-all:has(.spinner) {
+  cursor: wait;
+}
 .follow-count { margin-right: .3em; }
 .counter-loading { margin-left: .3em; }
 .loader { /*adapted from https://cssloaders.github.io/*/
