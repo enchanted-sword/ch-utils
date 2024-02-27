@@ -24,7 +24,7 @@ homeIcon.on('click', event => {
 
 export const main = async () => {
   $('ul[role="menu"]').prepend(homeIcon);
-  $('[class~="lg:grid-cols-4"]:has(ul[role="menu"])').prepend($('<div>'));
+  $('[class~="lg:grid-cols-4"]:has(ul[role="menu"])').prepend($('<div>', { class: 'ch-utils' }));
 };
 
 export const clean = async () => $('.ch-utils').remove();
