@@ -61,6 +61,7 @@ export const main = async () => {
 };
 
 export const clean = async () => {
-  $('.ch-utils').remove();
+  homeIcon.remove();
   unreadOnNavbarStyleElement.remove();
+  $('.ch-utils').remove();
 }
