@@ -57,7 +57,7 @@ export const main = async () => {
   const { unreadOnNavbar } = await getOptions('horizontal');
 
   $('ul[role="menu"]').prepend(homeIcon);
-  $('[class~="lg:grid-cols-4"]:has(ul[role="menu"])').prepend($('<div>', { class: 'ch-utils' }));
+  $('[class~="lg:grid-cols-4"]:has(ul[role="menu"])').prepend($('<div>', { class: 'ch-utils-horizontal' }));
 
   if (unreadOnNavbar) document.documentElement.append(unreadOnNavbarStyleElement);
 };
