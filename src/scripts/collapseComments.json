@@ -1,0 +1,18 @@
+{
+  "name": "collapseComments",
+  "title": "collapse comments",
+  "description": "adds the ability to collapse long reply chains in comments",
+  "preferences": {
+    "enabled": false,
+    "options": {
+      "collapseByDefault": {
+        "value": false,
+        "type": "toggle",
+        "name": "trim long chains by default",
+        "tooltip": "trims long reply chains by default"
+      }
+    }
+  },
+  "js": true,
+  "css": true
+}
