@@ -1,4 +1,6 @@
 [
   "horizontal",
-  "followers"
+  "followers",
+  "collapseComments",
+  "popoverComments"
 ]

@@ -2,7 +2,7 @@
 
 {
   const permissions = {
-    origins: ['*://*.cohost.org/'],
+    origins: ['*://*.cohost.org/*'],
   };
 
   const button = document.getElementById('grantPermissions');
