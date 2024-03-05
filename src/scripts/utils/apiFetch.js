@@ -14,7 +14,7 @@ export const apiFetch = async (path, body = {}) => fetch(`https://cohost.org/api
   .then(response => response.json());
 
 export const followState = async projectHandle => {
-  const arr = await apiFetch('/v1/trpc/projects.followingState', { method: 'GET', queryParams: { batch: 1, input: { 0: { projectHandle } } } }).then();
+  const arr = await apiFetch('/v1/trpc/projects.followingState', { method: 'GET', queryParams: { batch: 1, input: { 0: { projectHandle } } } });
   return arr[0].result.data.readerToProject;
 };
 
