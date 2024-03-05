@@ -3,7 +3,7 @@
   "title": "follower page tweaks",
   "description": "tweaks to the followers page",
   "preferences": {
-    "enabled": true,
+    "enabled": false,
     "options": {
       "count": {
         "value": false,
