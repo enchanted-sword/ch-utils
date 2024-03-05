@@ -12,10 +12,10 @@
         "tooltip": "shows your follower count on the follower page. enable at your own discretion."
       },
       "loadAll": {
-        "value": false,
+        "value": true,
         "type": "toggle",
         "name": "load all followers",
-        "tooltip": "loads every page of your followers at once"
+        "tooltip": "adds a button that allows loading every page of your followers at once"
       }
     }
   },
