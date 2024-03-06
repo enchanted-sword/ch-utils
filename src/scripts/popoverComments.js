@@ -232,7 +232,6 @@ const addPopovers = async posts => {
     const { handle } = postingProject;
     shareTree.map(treeItem => handleMap[treeItem.postId] = treeItem.postingProject.handle);
     const postComments = await getComments(handle, postId);
-    console.log(postComments);
 
     if (postComments !== null) {
       const commentButton = newCommentButton(postId, post.querySelector(linkSelector));
