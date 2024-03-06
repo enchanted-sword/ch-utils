@@ -70,6 +70,7 @@
       try {
         featureItem = noact({
           tag: 'li',
+          dataset: { searchable: JSON.stringify(feature) },
           children: [
             {
               className: 'ui-primaryContent',
@@ -96,7 +97,6 @@
             }
           ]
         });
-        featureItem.dataset.searchable = JSON.stringify(feature);
         featureItem.querySelector('.ui-inputWrapper').append($(`<label for="ui-feature-${name}">toggle ${feature.name}</label`)[0]); // for some reason, vanilla js is incapable of setting the for attribute on labels, so jquery is used
 
         if (preference.enabled) featureItem.querySelector('input').setAttribute('checked', '');
