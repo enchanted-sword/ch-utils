@@ -123,6 +123,13 @@ const newComment = (comment, poster, extLink) => { return {
                     {
                       className: 'flex flex-row flex-wrap items-center gap-2',
                       children: [
+                        poster.displayName ? {
+                          rel: 'author',
+                          href: `https://cohost.org/${poster.handle}`,
+                          title: poster.displayName,
+                          className: 'co-project-display-name max-w-full flex-shrink truncate font-atkinson font-bold hover:underline',
+                          children: [poster.displayName]
+                        } : '',
                         {
                           href: `https://cohost.org/${poster.handle}`,
                           className: 'co-project-handle font-atkinson font-normal hover:underline',
