@@ -18,7 +18,7 @@ const newCommentButton = (postId, link) => noact({
     {
       href: link.href,
       target: '_blank',
-      className: 'text-sm hover:underline',
+      className: 'text-sm',
       children: [link.innerText]
     },
     {
@@ -134,6 +134,8 @@ const getComments = async (handle, postId) => {
   return removeEmptyArrays(arr[0].result.data.comments);
 };
 const onButtonClick = event => {
+  event.preventDefault();
+  
   const target = event.target.closest(`.${customClass}`);
   const { dataset } = target;
   if (dataset.headlessuiState === 'open') dataset.headlessuiState = '';
