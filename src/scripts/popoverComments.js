@@ -236,4 +236,5 @@ export const main = async () => {
 
 export const clean = async () => {
   postFunction.stop(addPopovers);
+  $(`.${customClass}`).remove();
 }
