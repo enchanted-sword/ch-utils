@@ -1,6 +1,6 @@
 import { postFunction } from './utils/mutation.js';
 import { getViewModel } from './utils/react.js';
-import { apiFetch } from './utils/apiFetch.js';
+import { singlePost } from './utils/apiFetch.js';
 import { noact } from './utils/noact.js';
 import { DateTime } from '../lib/luxon.min.js';
 
@@ -34,7 +34,6 @@ const newCommentButton = (postId, link) => noact({
     }
   ]
 });
-
 const newCommentWrapper = (irt, shareId) => noact({
   className: `${customClass} my-3 flex min-w-0 flex-col gap-2`,
   children: [{
@@ -195,8 +194,8 @@ const removeEmptyArrays = obj => {
   return Object.keys(returnObj).length ? returnObj : null;
 };
 const getComments = async (handle, postId) => {
-  const arr = await apiFetch('/v1/trpc/posts.singlePost', { method: 'GET', queryParams: { batch: 1, input: { 0: { handle, postId } } } });
-  return removeEmptyArrays(arr[0].result.data.comments);
+  const { comments } = await singlePost(handle, postId);
+  return removeEmptyArrays(comments);
 };
 const onButtonClick = event => {
   event.preventDefault();
