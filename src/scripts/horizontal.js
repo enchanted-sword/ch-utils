@@ -77,6 +77,8 @@ export const main = async () => {
 };
 
 export const clean = async () => {
+  document.removeEventListener('click', closeTagMenu);
+  $(linkSelector).off('click', onTagButtonClick);
   unreadOnNavbarStyleElement.remove();
   $(`.${customClass}`).remove();
 }
