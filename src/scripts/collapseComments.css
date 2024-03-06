@@ -1,11 +1,11 @@
 .ch-utils-collapseable.co-outline-button { border-width: 2px; }
 
-.ch-utils-collapseable[data-displaystate="collapsed"] + .flex-col {
+.ch-utils-collapseable[data-display-state="collapsed"] + .flex-col {
   position: relative;
-  max-height: 12rem;
+  max-height: 6rem;
   overflow: hidden;
 }
-.ch-utils-collapseable[data-displaystate="collapsed"] + .flex-col:after {
+.ch-utils-collapseable[data-display-state="collapsed"] + .flex-col:after {
   position: absolute;
   content: "";
   left: 0;
@@ -14,7 +14,7 @@
   height: 4rem;
   background: linear-gradient(transparent, rgb(255 255 255));
 }
-[data-theme="dark"] .ch-utils-collapseable[data-displaystate="collapsed"] + .flex-col:after { background: linear-gradient(transparent, rgb(0 0 0));}
+[data-theme="dark"] .ch-utils-collapseable[data-display-state="collapsed"] + .flex-col:after { background: linear-gradient(transparent, rgb(0 0 0));}
 @media (prefers-color-scheme: dark) {
-  [data-theme="both"] .ch-utils-collapseable[data-displaystate="collapsed"] + .flex-col:after { background: linear-gradient(transparent, rgb(0 0 0));}
+  [data-theme="both"] .ch-utils-collapseable[data-display-state="collapsed"] + .flex-col:after { background: linear-gradient(transparent, rgb(0 0 0));}
 }

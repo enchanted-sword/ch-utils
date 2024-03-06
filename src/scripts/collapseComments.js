@@ -7,11 +7,11 @@ const customClass = 'ch-utils-collapseable';
 let collapseByDefault;
 
 const onToggle = ({ target }) => {
-  if (target.dataset.displaystate === 'expanded') {
-    target.dataset.displaystate = 'collapsed';
+  if (target.dataset.displayState === 'expanded') {
+    target.dataset.displayState = 'collapsed';
     target.innerText = 'expand comment';
   } else {
-    target.dataset.displaystate = 'expanded';
+    target.dataset.displayState = 'expanded';
     target.innerText = 'collapse comment';
   }
   $(target).toggleClass('co-filled-button');
@@ -24,7 +24,7 @@ const newToggle = () => {
       collapse comment
     </button>
   `);
-  toggle[0].dataset.displaystate = 'expanded';
+  toggle[0].dataset.displayState = 'expanded';
   toggle.on('click', onToggle);
   return toggle;
 }
@@ -34,7 +34,7 @@ const addToggles = boxes => {
     const toggle = newToggle();
     $(box).prepend(toggle);
 
-    if (collapseByDefault && box.getBoundingClientRect().height > 600) {
+    if (collapseByDefault && box.getBoundingClientRect().height > 320) {
       toggle.trigger('click');
     }
   }
