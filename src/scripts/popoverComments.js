@@ -206,9 +206,6 @@ const onButtonClick = event => {
   if (dataset.headlessuiState === 'open') dataset.headlessuiState = '';
   else dataset.headlessuiState = 'open';
 };
-const onReplyClick = ({ target }) => {
-
-};
 const onHiddenButtonClick = ({ target }) => {
   const info = target.parentElement.querySelector('.ch-utils-popoverComments-hiddenInfo');
   const comment = target.closest('.min-w-0').querySelector('[data-popover-comments-hidden]');
@@ -229,6 +226,7 @@ const onHiddenButtonClick = ({ target }) => {
 
 const addPopovers = async posts => {
   for (const post of posts) {
+    if (post.dataset.popoverComments) return;
     post.dataset.popoverComments = true;
 
     let handleMap = {};
@@ -268,4 +266,5 @@ export const main = async () => {
 export const clean = async () => {
   postFunction.stop(addPopovers);
   $(`.${customClass}`).remove();
+  $('[data-popover-comments]').removeAttr('[data-popover-comments]');
 }
