@@ -63,7 +63,8 @@ const closeTagMenu = () => {
 const onTagButtonClick = event => {
   const link = event.target.closest(linkSelector);
   const state = link.matches('[href="#"]:has(svg.rotate-180)');
-  if (!state) window.setTimeout(() => document.addEventListener('click', closeTagMenu), 200); 
+  if (!state) window.setTimeout(() => document.addEventListener('click', closeTagMenu), 200);
+  else document.removeEventListener('click', closeTagMenu);
 };
 
 export const main = async () => {
