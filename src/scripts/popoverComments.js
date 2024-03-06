@@ -187,7 +187,6 @@ const newComment = (comment, poster, extLink) => { return {
   ]
 }};
 
-
 const removeEmptyArrays = obj => {
   const returnObj = {};
   Object.keys(obj).filter(key => obj[key].length > 0).map(key => returnObj[key] = obj[key]);
