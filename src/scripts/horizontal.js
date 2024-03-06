@@ -2,6 +2,7 @@ import { getOptions } from './utils/jsTools.js';
 import { style } from './utils/style.js';
 
 const buttonSelector = '#live-dashboard .flex.gap-12 > button.w-full';
+const linkSelector = '[href="#"]';
 const customClass = 'ch-utils-horizontal';
 
 const unreadOnNavbarStyleElement = style(`
@@ -53,11 +54,24 @@ homeIcon.on('click', event => {
   homeIcon.find('text').text('');
 });
 
+const closeTagMenu = () => {
+  if ($('[href="#"]:hover, [href="#"] + .my-1:hover').length === 0) {
+    $(linkSelector)[0].click();
+    document.removeEventListener('click', closeTagMenu);
+  }
+};
+const onTagButtonClick = event => {
+  const link = event.target.closest(linkSelector);
+  const state = link.matches('[href="#"]:has(svg.rotate-180)');
+  if (!state) window.setTimeout(() => document.addEventListener('click', closeTagMenu), 200); 
+};
+
 export const main = async () => {
   const { unreadOnNavbar } = await getOptions('horizontal');
 
   $('ul[role="menu"]').prepend(homeIcon);
   $('[class~="lg:grid-cols-4"]:has(ul[role="menu"])').prepend($('<div>', { class: 'ch-utils-horizontal' }));
+  $(linkSelector).on('click', onTagButtonClick);
 
   if (unreadOnNavbar) document.documentElement.append(unreadOnNavbarStyleElement);
 };
