@@ -43,7 +43,8 @@ export const noact = obj => {
     if ('dataset' in obj) Object.keys(obj.dataset).forEach(key => el.dataset[key] = obj.dataset[key]);
     if ('children' in obj && obj.children.constructor.name === 'Array') {
       obj.children.forEach(child => {
-        if (typeof child === 'object') el.append(noact(child));
+        if (child.constructor.name.includes('Element')) el.append(child);
+        else if (typeof child === 'object') el.append(noact(child));
         else el.append(document.createTextNode(child));
       });
     }
