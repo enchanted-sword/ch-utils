@@ -1,5 +1,4 @@
 [data-popover-comments="true"] .co-thread-footer > div > div:has(button.ch-utils-popoverComments) > a.hover\:underline { display: none; }
-[data-popover-comments="true"] .co-thread-footer > div > div.items-center { align-items: flex-start; }
 
 button.ch-utils-popoverComments {
   display: flex;
@@ -7,4 +6,6 @@ button.ch-utils-popoverComments {
 }
 .ch-utils-popoverComments svg { margin-left: .5rem; }
 
-footer:has(button.ch-utils-popoverComments[data-headlessui-state=""]) > .ch-utils-popoverComments { display: none; }
+footer:has(.w-max > button.ch-utils-popoverComments[data-headlessui-state=""]) > .ch-utils-popoverComments { display: none; }
+
+[data-popover-comments-hidden="true"] { display: none; }

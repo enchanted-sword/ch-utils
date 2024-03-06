@@ -54,6 +54,39 @@ const newCommentBox = (comment, poster, extLink) => noact({
   className: 'co-themed-box co-comment-box cohost-shadow-light dark:cohost-shadow-dark flex w-full min-w-0 max-w-full flex-col gap-4 rounded-lg p-3 lg:max-w-prose',
   children: [newComment(comment, poster, extLink)]
 });
+const hiddenButton = () => { return {
+  className: 'co-info-box co-info text-sm mx-auto flex w-full flex-row gap-4 rounded-lg p-3 mb-4 max-w-full',
+  children: [
+    {
+      viewBox: '0 0 24 24',
+      fill: 'none',
+      stroke: 'currentColor',
+      'aria-hidden': true,
+      className: 'w-6 self-start',
+      children: [{
+        'stroke-linecap': 'round',
+        'stroke-linejoin': 'round',
+        d: 'M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z'
+      }]
+    },
+    {
+      className: 'flex-1 self-center',
+      children: [
+        {
+          tag: 'span',
+          className: 'ch-utils-popoverComments-hiddenInfo',
+          children: ['A comment has been hidden by the page which made this post. ']
+        },
+        {
+          className: `${customClass} co-link-button underline`,
+          onclick: onHiddenButtonClick,
+          dataset: { headlessuiState: '' },
+          children: ['(view it anyway)']
+        }
+      ]
+    }
+  ]
+}};
 const newComment = (comment, poster, extLink) => { return {
   className: 'flex flex-col gap-4',
   children: [
@@ -68,51 +101,55 @@ const newComment = (comment, poster, extLink) => { return {
         },
         {
           className: 'flex min-w-0 flex-1 flex-col',
-          children: [{
-            className: 'flex flex-row gap-4',
-            children: [
-              {
-                href: `https://cohost.org/${poster.handle}`,
-                className: 'flex-0 mask relative aspect-square cohost-shadow-light dark:cohost-shadow-dark hidden h-12 w-12 lg:block',
-                title: `@${poster.handle}`,
-                children: [{
-                  src: `${poster.avatarURL}?dpr=2&amp;width=80&amp;height=80&amp;fit=cover&amp;auto=webp`,
-                  className: `mask mask-${poster.avatarShape} h-full w-full object-cover`,
-                  alt: poster.handle
-                }]
-              },
-              {
-                className: 'flex min-w-0 flex-1 flex-col justify-start gap-2',
-                children: [
-                  {
-                    className: 'flex flex-row flex-wrap items-center gap-2',
-                    children: [
-                      {
-                        href: `https://cohost.org/${poster.handle}`,
-                        className: 'co-project-handle font-atkinson font-normal hover:underline',
-                        children: [`@${poster.handle}`]
-                      },
-                      {
-                        tag: 'time',
-                        className: 'block flex-none text-xs tabular-nums text-gray-500',
-                        datetime: comment.postedAtISO,
-                        title: DateTime.fromISO(comment.postedAtISO).toLocaleString(DateTime.DATETIME_MED),
-                        children: [{
-                          href: `${extLink}#comment-${comment.commentId}`,
-                          className: 'hover:underline',
-                          children: [DateTime.fromISO(comment.postedAtISO).toRelative()]
-                        }]
-                      }
-                    ]
-                  },
-                  {
-                    className: 'co-prose prose overflow-hidden break-words',
-                    children: comment.body.split('\n\n')
-                  }
-                ]
-              }
-            ]
-          }]
+          children: [
+            comment.hidden ? hiddenButton() : '',
+            {
+              className: 'flex flex-row gap-4',
+              dataset: { popoverCommentsHidden: comment.hidden },
+              children: [
+                {
+                  href: `https://cohost.org/${poster.handle}`,
+                  className: 'flex-0 mask relative aspect-square cohost-shadow-light dark:cohost-shadow-dark hidden h-12 w-12 lg:block',
+                  title: `@${poster.handle}`,
+                  children: [{
+                    src: `${poster.avatarURL}?dpr=2&amp;width=80&amp;height=80&amp;fit=cover&amp;auto=webp`,
+                    className: `mask mask-${poster.avatarShape} h-full w-full object-cover`,
+                    alt: poster.handle
+                  }]
+                },
+                {
+                  className: 'flex min-w-0 flex-1 flex-col justify-start gap-2',
+                  children: [
+                    {
+                      className: 'flex flex-row flex-wrap items-center gap-2',
+                      children: [
+                        {
+                          href: `https://cohost.org/${poster.handle}`,
+                          className: 'co-project-handle font-atkinson font-normal hover:underline',
+                          children: [`@${poster.handle}`]
+                        },
+                        {
+                          tag: 'time',
+                          className: 'block flex-none text-xs tabular-nums text-gray-500',
+                          datetime: comment.postedAtISO,
+                          title: DateTime.fromISO(comment.postedAtISO).toLocaleString(DateTime.DATETIME_MED),
+                          children: [{
+                            href: `${extLink}#comment-${comment.commentId}`,
+                            className: 'hover:underline',
+                            children: [DateTime.fromISO(comment.postedAtISO).toRelative()]
+                          }]
+                        }
+                      ]
+                    },
+                    {
+                      className: 'co-prose prose overflow-hidden break-words',
+                      children: comment.body.split('\n\n')
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
         }
       ]
     },
@@ -136,10 +173,27 @@ const getComments = async (handle, postId) => {
 const onButtonClick = event => {
   event.preventDefault();
   
-  const target = event.target.closest(`.${customClass}`);
+  const target = event.target.closest(`button.${customClass}`);
   const { dataset } = target;
   if (dataset.headlessuiState === 'open') dataset.headlessuiState = '';
   else dataset.headlessuiState = 'open';
+};
+const onHiddenButtonClick = ({ target }) => {
+  const info = target.parentElement.querySelector('.ch-utils-popoverComments-hiddenInfo');
+  const comment = target.closest('.min-w-0').querySelector('[data-popover-comments-hidden]');
+  const { dataset } = target;
+  if (dataset.headlessuiState === 'open') {
+    dataset.headlessuiState = '';
+    target.innerText = '(view it anyway)';
+    info.innerText = 'A comment has been hidden by the page which made this post. ';
+    comment.dataset.popoverCommentsHidden = true;
+  }
+  else {
+    dataset.headlessuiState = 'open';
+    target.innerText = '(hide it again)';
+    info.innerText = 'The below comment was hidden by the page which made this post. ';
+    comment.dataset.popoverCommentsHidden = false;
+  }
 };
 
 const addPopovers = async posts => {
