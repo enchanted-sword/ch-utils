@@ -15,16 +15,16 @@ const initInjection = () => import('../scripts/utils/injectableFunctions.js').th
       target.dispatchEvent(
         new CustomEvent(responseEvent, { detail: JSON.stringify({ id, result }) }),
       );
-    } catch (exception) {
+    } catch (e) {
       target.dispatchEvent(
         new CustomEvent(responseEvent, {
           detail: JSON.stringify({
             id,
             exception: {
-              message: exception.message,
-              name: exception.name,
-              stack: exception.stack,
-              ...exception,
+              message: e.message,
+              name: e.name,
+              stack: e.stack,
+              ...e,
             },
           }),
         }),
