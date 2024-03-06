@@ -151,6 +151,27 @@ const newComment = (comment, poster, extLink) => { return {
                     {
                       className: 'co-prose prose overflow-hidden break-words',
                       children: comment.body.split('\n\n')
+                    },
+                    {
+                      className: 'flex flex-row items-center gap-2',
+                      children: [{
+                        className: 'co-link-button flex cursor-pointer flex-row items-center gap-1 text-sm font-bold hover:underline',
+                        href: `${extLink}#comment-${comment.commentId}`,
+                        children: [
+                          {
+                            viewBox: '0 0 24 24',
+                            className: 'h-4 w-4',
+                            fill: 'currentColor',
+                            'aria-hidden': true,
+                            children: [{
+                              'fill-rule': 'evenodd',
+                              'clip-rule': 'evenodd',
+                              d: 'M9.53 2.47a.75.75 0 010 1.06L4.81 8.25H15a6.75 6.75 0 010 13.5h-3a.75.75 0 010-1.5h3a5.25 5.25 0 100-10.5H4.81l4.72 4.72a.75.75 0 11-1.06 1.06l-6-6a.75.75 0 010-1.06l6-6a.75.75 0 011.06 0z'
+                            }]
+                          },
+                          'reply'
+                        ]
+                      }]
                     }
                   ]
                 }
@@ -184,6 +205,9 @@ const onButtonClick = event => {
   const { dataset } = target;
   if (dataset.headlessuiState === 'open') dataset.headlessuiState = '';
   else dataset.headlessuiState = 'open';
+};
+const onReplyClick = ({ target }) => {
+
 };
 const onHiddenButtonClick = ({ target }) => {
   const info = target.parentElement.querySelector('.ch-utils-popoverComments-hiddenInfo');
