@@ -175,7 +175,7 @@ const addPopovers = async posts => {
 };
 
 export const main = async () => {
-  if (!['/', '/rc/dashboard', '#'].includes(location.pathname)) return;
+  if (!['/', '/rc/dashboard', '/rc/project/following', '#'].includes(location.pathname)) return;
 
   postFunction.start(addPopovers);
 };
