@@ -36,10 +36,11 @@ export const noact = obj => {
         .forEach(key => el.setAttribute(key === 'className' ? 'class' : key, obj[key]));
     } else {
       el = document.createElement(tag);
-      Object.keys(obj).filter(key => !['tag','children'].includes(key))
+      Object.keys(obj).filter(key => !['tag', 'dataset', 'children'].includes(key))
         .forEach(key => el[key] = obj[key]);
     }
 
+    if ('dataset' in obj) Object.keys(obj.dataset).forEach(key => el.dataset[key] = obj.dataset[key]);
     if ('children' in obj && obj.children.constructor.name === 'Array') {
       obj.children.forEach(child => {
         if (typeof child === 'object') el.append(noact(child));
