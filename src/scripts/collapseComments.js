@@ -34,7 +34,7 @@ const addToggles = boxes => {
     const toggle = newToggle();
     $(box).prepend(toggle);
 
-    if (collapseByDefault && box.getBoundingClientRect().height > 320) {
+    if (collapseByDefault) {
       toggle.trigger('click');
     }
   }

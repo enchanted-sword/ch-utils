@@ -8,8 +8,8 @@
       "collapseByDefault": {
         "value": false,
         "type": "toggle",
-        "name": "trim long chains by default",
-        "tooltip": "trims long reply chains by default"
+        "name": "collapse by default",
+        "tooltip": "comments will start collapsed by default"
       }
     }
   },
