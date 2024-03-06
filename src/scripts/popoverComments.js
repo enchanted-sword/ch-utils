@@ -236,13 +236,13 @@ const addPopovers = async posts => {
     const postComments = await getComments(handle, postId);
     console.log(postComments);
 
-    const commentButton = newCommentButton(postId, post.querySelector(linkSelector));
-    const footer = post.querySelector('.co-thread-footer');
-    const footerStartWrapper = post.querySelector(wrapperSelector);
-
-    footerStartWrapper.append(commentButton);
-
     if (postComments !== null) {
+      const commentButton = newCommentButton(postId, post.querySelector(linkSelector));
+      const footer = post.querySelector('.co-thread-footer');
+      const footerStartWrapper = post.querySelector(wrapperSelector);
+
+      footerStartWrapper.append(commentButton);
+
       Object.keys(postComments).forEach(shareId => {
         const commentCollection = postComments[shareId];
         const irt = String(postId) === shareId ? handle : handleMap[shareId];
