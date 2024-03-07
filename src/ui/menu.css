@@ -205,7 +205,7 @@ div.ui-secondaryContent {
   > p {
     margin-bottom: 8px;
     background: rgb(var(--white));
-    padding: 4px;
+    padding: .5rem;
     border-radius: 3px;
   }
 }
