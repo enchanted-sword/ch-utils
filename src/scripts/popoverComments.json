@@ -1,7 +1,7 @@
 {
   "name": "popoverComments",
   "title": "show comments under posts",
-  "description": "allows expanding a posts' comments without navigating away from the dashboard",
+  "description": "allows expanding a post's comments without navigating away from the dashboard",
   "preferences": { "enabled": false },
   "js": true,
   "css": true
