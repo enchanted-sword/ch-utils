@@ -109,12 +109,12 @@
 
             switch (option.type) {
               case 'toggle':
-                const toggleWrapper = $(`<div class="ui-multiSelectWrapper"><h2>${option.name}</h2></div>`);
+                const toggleWrapper = $(`<div class="ui-multiSelectWrapper"></div>`);
                 const input = $('<input>', { class: 'ui-multiSelect', type: 'checkbox', id: `ui-feature-${name}-${key}`, name: `${name}-${key}` });
-                const label = $(`<label for="ui-feature-${name}-${key}" name="${name}-${key}">select ${option.name}</label>`);
+                const label = $(`<label for="ui-feature-${name}-${key}" name="${name}-${key}">${option.name}</label>`);
 
-                toggleWrapper.append(input);
                 toggleWrapper.append(label);
+                toggleWrapper.append(input);
                 optionsWrapper.append(toggleWrapper);
 
                 if (preference.options[key]) input.attr('checked', '');
@@ -203,16 +203,22 @@
                 textInput.on('input', debounce(onTextInput));
                 break;
               case 'number': {
-                const numInputWrapper = $(`<div class="ui-extendedSelectWrapper"><h3>${option.name}</h3></div>`);
+                const numInputWrapper = $(`<div class="ui-extendedSelectWrapper align-end"></div>`);
+                const label = $(`<label for="ui-feature-${name}-${key}" name="${name}-${key}">${option.name}</label>`);
                 const numInput = $('<input>', {
                   type: 'number',
                   class: 'ui-numInput',
                   placeholder: option.value,
+                  min: option.min,
+                  max: option.max,
+                  step: option.step,
+                  style: `width: ${String(option.max).length}em;`,
                   value: preference.options[key],
                   id: `ui-feature-${name}-${key}`,
                   name: `${name}-${key}`
                 });
 
+                numInputWrapper.append(label);
                 numInputWrapper.append(numInput);
                 optionsWrapper.append(numInputWrapper);
 
