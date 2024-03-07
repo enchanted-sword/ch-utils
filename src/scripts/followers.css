@@ -1,3 +1,5 @@
+/*loaders adapted from https://cssloaders.github.io/*/
+
 .co-themed-box { position: relative; }
 .load-all {
   position: absolute;
@@ -9,7 +11,7 @@
 }
 .follow-count { margin-right: .3em; }
 .counter-loading { margin-left: .3em; }
-.loader { /*adapted from https://cssloaders.github.io/*/
+.loader {
   width: 6px;
   height: 6px;
   border-radius: 50%;

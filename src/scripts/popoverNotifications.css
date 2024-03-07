@@ -1,0 +1,38 @@
+[href="https://cohost.org/rc/project/notifications"][data-notification-popover-state="open"] { position: relative; }
+[href="https://cohost.org/rc/project/notifications"][data-notification-popover-state="open"] svg.inline-block { fill: currentColor; }
+
+.ch-utils-popover {
+  position: fixed;
+  z-index: 100;
+  width: 24rem;
+  max-height: 32rem;
+  border-radius: .5rem;
+  overflow: hidden;
+}
+.ch-utils-popover > section {
+  max-height: 32rem;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-color: rgb(var(--color-mango)) rgb(var(--color-background) / .4);
+}
+
+.co-notification-card > div { align-items: flex-start; }
+.ch-utils-postSummary { max-width: 16rem; }
+
+.loader { /*adapted from https://cssloaders.github.io/*/
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  display: inline-block;
+  margin: 0 2rem;
+  position: relative;
+  color: rgb(var(--color-notBlack));
+  box-sizing: border-box;
+  animation: load-animation 1s linear infinite alternate;
+}
+@keyframes load-animation {
+  0% {box-shadow: -24px -6px, -8px 0, 8px 0, 24px 0; }
+  33% { box-shadow: -24px 0px, -8px -6px, 8px 0, 24px 0; }
+  66% { box-shadow: -24px 0px, -8px 0, 8px -6px, 24px 0; }
+  100% { box-shadow: -24px 0, -8px 0, 8px 0, 24px -6px; }
+}
