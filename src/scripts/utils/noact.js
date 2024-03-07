@@ -24,8 +24,9 @@ export const noact = obj => {
       if ('href' in obj) tag = 'a';
       else if ('src' in obj) tag = 'img';
       else if ('viewBox' in obj) tag = 'svg';
-      else if ('d' in obj) tag = 'path'
-      else if ('onclick' in obj) tag = 'button'
+      else if ('d' in obj) tag = 'path';
+      else if ('onclick' in obj) tag = 'button';
+      else if ('datetime' in obj) tag = 'time';
       else if ('children' in obj && obj.children.constructor.name === 'Array' && !obj?.children.filter(child => typeof child === 'object').length) tag = 'p';
       else tag = 'div';
     }
