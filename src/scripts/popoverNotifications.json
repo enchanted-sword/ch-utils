@@ -2,7 +2,17 @@
   "name": "popoverNotifications",
   "title": "open notifications in popover view",
   "description": "allows viewing notifications from the dashboard",
-  "preferences": { "enabled": false },
+  "preferences": {
+    "enabled": false,
+    "options": {
+      "numFetch": {
+        "value": 40,
+        "type": "number",
+        "name": "number of notifications to display",
+        "tooltip": "the number of notifications displayed. larger numbers will take longer to load."
+      }
+    }
+  },
   "js": true,
   "css": true
 }

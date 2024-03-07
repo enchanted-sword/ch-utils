@@ -5,9 +5,24 @@
   position: fixed;
   z-index: 100;
   width: 24rem;
-  max-height: 32rem;
   border-radius: .5rem;
   overflow: hidden;
+  color: rgb(var(--color-notBlack));
+  background-color: rgb(255 255 255 / var(--tw-bg-opacity));
+}
+.ch-utils-popover > header {
+  padding: .5rem;
+  background-color: rgb(var(--color-notWhite) / var(--tw-bg-opacity));
+  color: inherit;
+}
+main:has([data-theme="dark"]) .ch-utils-popover { background-color: rgb(0 0 0 / var(--tw-bg-opacity)); }
+main:has([data-theme="dark"]) .ch-utils-popover > header { background-color: rgb(var(--color-notBlack) / var(--tw-bg-opacity)); }
+@media (prefers-color-scheme: dark) {
+  main:has([data-theme="both"]) .ch-utils-popover {
+    color: rgb(var(--color-notWhite));
+    background-color: rgb(0 0 0 / var(--tw-bg-opacity));
+  }
+  main:has([data-theme="both"]) .ch-utils-popover > header { background-color: rgb(var(--color-notBlack) / var(--tw-bg-opacity)); }
 }
 .ch-utils-popover > section {
   max-height: 32rem;
@@ -16,8 +31,17 @@
   scrollbar-color: rgb(var(--color-mango)) rgb(var(--color-background) / .4);
 }
 
+.header-sticky {
+  position: sticky;
+  top: 0;
+  z-index: 101;
+}
 .co-notification-card > div { align-items: flex-start; }
-.ch-utils-postSummary { max-width: 16rem; }
+.max-19 { max-width: 19rem; }
+.flex-0 + .max-19 { max-width: 16.5rem; }
+.gap-space { gap: 0 .3em; }
+.ch-utils-popover .co-block-quote { margin: 0; }
+
 
 .loader { /*adapted from https://cssloaders.github.io/*/
   width: 6px;

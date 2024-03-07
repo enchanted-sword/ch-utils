@@ -202,7 +202,28 @@
 
                 textInput.on('input', debounce(onTextInput));
                 break;
-              case 'colors':
+              case 'number': {
+                const numInputWrapper = $(`<div class="ui-extendedSelectWrapper"><h3>${option.name}</h3></div>`);
+                const numInput = $('<input>', {
+                  type: 'number',
+                  class: 'ui-numInput',
+                  placeholder: option.value,
+                  value: preference.options[key],
+                  id: `ui-feature-${name}-${key}`,
+                  name: `${name}-${key}`
+                });
+
+                numInputWrapper.append(numInput);
+                optionsWrapper.append(numInputWrapper);
+
+                numInput.on('change', async function () {
+                  const value = this.value;
+                  let { preferences } = await browser.storage.local.get('preferences');
+                  preferences[name].options[key] = value;
+                  browser.storage.local.set({ preferences });
+                });
+                break;
+              } case 'colors': {
                 const colorsInputWrapper = $(`<div class="ui-extendedSelectWrapper "><h3>${option.name}</h3></div>`);
                 optionsWrapper.append(colorsInputWrapper);
 
@@ -232,7 +253,7 @@
                   }); */ //should be superceded by onColorChange
                 });
                 break;
-              case 'listSelect':
+              } case 'listSelect': {
                 const listSelectInputWrapper = $(`<div class="ui-extendedSelectWrapper"><h3>${option.name}</h3></div>`);
                 const listSelectWrapper = $(`<div class="ui-listSelectWrapper"></div>`);
 
@@ -262,6 +283,7 @@
                   });
                 });
                 break;
+              }
             }
           });
 
