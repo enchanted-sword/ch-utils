@@ -7,6 +7,9 @@
     "options": {
       "numFetch": {
         "value": 40,
+        "min": 0,
+        "max": 1000,
+        "step": 1,
         "type": "number",
         "name": "number of notifications to display",
         "tooltip": "the number of notifications displayed. larger numbers will take longer to load."
