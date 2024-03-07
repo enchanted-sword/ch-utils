@@ -149,7 +149,7 @@ const newComment = (comment, poster, extLink) => { return {
                     },
                     {
                       className: 'co-prose prose overflow-hidden break-words',
-                      children: comment.body.split('\n\n')
+                      innerHTML: DOMPurify.sanitize(marked.parse(comment.body))
                     },
                     {
                       className: 'flex flex-row items-center gap-2',

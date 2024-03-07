@@ -27,7 +27,9 @@
       "run_at": "document_end",
       "js": [
         "control/content-script.js",
-        "lib/jquery.min.js"
+        "lib/jquery.min.js",
+        "lib/marked.min.js",
+        "lib/purify.min.js"
       ]
     }
   ],
