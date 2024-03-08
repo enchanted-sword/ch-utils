@@ -30,3 +30,8 @@ export const singlePost = async (handle, postId) => {
   const arr = await apiFetch('/v1/trpc/posts.singlePost', { method: 'GET', queryParams: { batch: 1, input: { 0: { handle, postId } } } });
   return arr[0].result.data;
 };
+
+export const displayPrefs = async () => {
+  const { result } = await apiFetch('/v1/trpc/users.displayPrefs');
+  return result.data;
+}
