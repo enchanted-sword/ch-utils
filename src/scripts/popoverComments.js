@@ -225,7 +225,6 @@ const onHiddenButtonClick = ({ target }) => {
 
 const addPopovers = async posts => {
   for (const post of posts) {
-    if (post.dataset.popoverComments) return;
     post.dataset.popoverComments = true;
 
     let handleMap = {};
@@ -258,11 +257,11 @@ const addPopovers = async posts => {
 export const main = async () => {
   if (!['/', '/rc/dashboard', '/rc/project/following', '#'].includes(location.pathname)) return;
 
-  postFunction.start(addPopovers);
+  postFunction.start(addPopovers, ':not([data-popover-comments="true"])');
 };
 
 export const clean = async () => {
   postFunction.stop(addPopovers);
   $(`.${customClass}`).remove();
-  $('[data-popover-comments]').removeAttr('[data-popover-comments]');
+  $('[data-popover-comments]').removeAttr('data-popover-comments');
 }
