@@ -10,15 +10,21 @@ const removeParams = obj => {
   return obj;
 };
 
-export const apiFetch = async (path, body = {}) => fetch(`https://cohost.org/api${path}${stringifyParams(body?.queryParams)}`, removeParams(body))
+export const apiFetch = async (path = '', body = {}) => fetch(`https://cohost.org/api${path}${stringifyParams(body?.queryParams)}`, removeParams(body))
   .then(response => response.json().then(response => {
-    if (response.constructor.name === 'Array') return response.map(({ result }) => result.data);
+    if (response.constructor.name === 'Array') return response.map(({ result, error }) => {
+      if (result && result.data) return result.data;
+      else if (error) throw error;
+    });
     else if ('result' in response) return response.result.data;
+    else if ('error' in response) throw response.error;
     else return response;
-  })).catch(() => {
-    console.error('apiFetch error: failed to fetch resource', `request url: https://cohost.org/api${path}${stringifyParams(body?.queryParams)}`, `request body: ${removeParams(body)}`);
+  })).catch(e => {
+    console.error(`apiFetch error: failed to fetch resource at url https://cohost.org/api${path}${stringifyParams(body?.queryParams)}`, e);
     return null;
   });
+
+export const batchTrpc = async (routes = [], input = {}) => await apiFetch(`/v1/trpc/${routes.join(',')}`, { method: 'GET', queryParams: { batch: 1, input }});
 
 export const followState = async projectHandle => {
   const { readerToProject } = await apiFetch('/v1/trpc/projects.followingState', { method: 'GET', queryParams: { input: { projectHandle } } });
