@@ -10,6 +10,12 @@ const removeParams = obj => {
   return obj;
 };
 
+/**
+ * fetches data via the cohost api
+ * @param {string} path - request path (e.g. /v1/trpc/users.displayPrefs)
+ * @param {object} body - request body
+ * @returns the destructured result if successful and null otherwise
+ */
 export const apiFetch = async (path = '', body = {}) => fetch(`https://cohost.org/api${path}${stringifyParams(body?.queryParams)}`, removeParams(body))
   .then(response => response.json().then(response => {
     if (response.constructor.name === 'Array') return response.map(({ result, error }) => {
