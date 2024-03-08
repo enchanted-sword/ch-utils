@@ -24,7 +24,10 @@ module.exports = {
       "sourceType": "module"
   },
   "globals": {
-    "Coloris": "readonly"
+    "cloneInto": "readonly",
+    "Coloris": "readonly",
+    "marked": "readonly",
+    "DOMPurify": "readonly"
   },
   "rules": {
     "no-case-declarations": "off",
