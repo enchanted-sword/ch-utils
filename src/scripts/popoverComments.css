@@ -1,4 +1,4 @@
-[data-popover-comments="true"] .co-thread-footer > div > div:has(button.ch-utils-popoverComments) > a.hover\:underline { display: none; }
+[data-popover-comments] .co-thread-footer > div > div:has(button.ch-utils-popoverComments) > a.hover\:underline { display: none; }
 
 button.ch-utils-popoverComments {
   display: flex;

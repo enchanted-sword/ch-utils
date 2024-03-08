@@ -9,6 +9,7 @@ const wrapperSelector = '.co-thread-footer .flex-none';
 const linkSelector = '.co-thread-footer a';
 
 const customClass = 'ch-utils-popoverComments';
+const customAttribute = 'data-popover-comments';
 
 const newCommentButton = (postId, link) => noact({
   id: `headlessui-comments-button-:${postId}:`,
@@ -225,7 +226,8 @@ const onHiddenButtonClick = ({ target }) => {
 
 const addPopovers = async posts => {
   for (const post of posts) {
-    post.dataset.popoverComments = true;
+    if (post.matches(`[${customAttribute}]`)) return;
+    post.setAttribute(customAttribute, '')
 
     let handleMap = {};
     const { postingProject, postId, shareTree, singlePostPageUrl } = await getViewModel(post);
@@ -263,5 +265,5 @@ export const main = async () => {
 export const clean = async () => {
   postFunction.stop(addPopovers);
   $(`.${customClass}`).remove();
-  $('[data-popover-comments]').removeAttr('data-popover-comments');
+  $(`[${customAttribute}]`).removeAttr(customAttribute);
 }
