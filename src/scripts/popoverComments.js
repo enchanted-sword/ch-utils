@@ -3,6 +3,7 @@ import { getViewModel } from './utils/react.js';
 import { singlePost } from './utils/apiFetch.js';
 import { noact } from './utils/noact.js';
 import { DateTime } from '../lib/luxon.min.js';
+import { parseMd } from './utils/markdown.js';
 
 const wrapperSelector = '.co-thread-footer .flex-none';
 const linkSelector = '.co-thread-footer a';
@@ -149,7 +150,7 @@ const newComment = (comment, poster, extLink) => { return {
                     },
                     {
                       className: 'co-prose prose overflow-hidden break-words',
-                      innerHTML: DOMPurify.sanitize(marked.parse(comment.body))
+                      innerHTML: parseMd(comment.body)
                     },
                     {
                       className: 'flex flex-row items-center gap-2',
