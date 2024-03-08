@@ -1,5 +1,5 @@
 import { noact } from './utils/noact.js';
-import { apiFetch } from './utils/apiFetch.js';
+import { apiFetch, displayPrefs } from './utils/apiFetch.js';
 import { DateTime } from '../lib/luxon.min.js';
 import { getOptions } from './utils/jsTools.js';
 
@@ -232,8 +232,9 @@ const newNotificationCard = notification => {return {
   className: 'co-notification-card flex flex-col p-3 last:rounded-b-lg',
   children: [newNotification(notification)] // this can conditionally return an array, however noact will automatically flatten the array to a single level to prevent issues
 }};
-const newNotificationPage = (date, notifications) => {return {
+const newNotificationPage = (date, notifications, theme) => {return {
   className: 'co-themed-box co-notification-group flex flex-col divide-y',
+  dataset: { theme },
   children: [
     {
       tag: 'header',
@@ -247,13 +248,14 @@ const newNotificationPage = (date, notifications) => {return {
     ...notifications.map(notification => newNotificationCard(notification))
   ]
 }};
-const newNotificationPopover = (clientX, clientY) => {
+const newNotificationPopover = (clientX, clientY, theme) => {
   const popover = noact({
     className: `${customClass} ch-utils-popover`,
     style: `top: ${clientY + 16}px; left: ${clientX}px;`,
     children: [
       {
         tag: 'header',
+        dataset: { theme },
         children: [{
           href: '#',
           className: 'font-bold hover:underline',
@@ -288,15 +290,16 @@ const onNotificationButtonClick = async event => {
   if (state !== 'open') {
     dataset.notificationPopoverState = 'open';
     window.setTimeout(() => document.addEventListener('click', closePopover), 200);
+    const { defaultPostBoxTheme } = await displayPrefs();
 
-    const popover = newNotificationPopover(clientX, clientY);
+    const popover = newNotificationPopover(clientX, clientY, defaultPostBoxTheme);
     document.body.append(popover)
 
     const notifications = await getTransformedNotifications();
     popover.querySelector('.loader').replaceWith(noact({
       tag: 'section',
       className: 'col-span-1 flex flex-col lg:col-span-2',
-      children: Object.keys(notifications).map(date => newNotificationPage(date, notifications[date]))
+      children: Object.keys(notifications).map(date => newNotificationPage(date, notifications[date], defaultPostBoxTheme))
     }));
   } else {
     dataset.notificationPopoverState = '';
