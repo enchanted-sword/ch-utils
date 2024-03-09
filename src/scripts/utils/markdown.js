@@ -9,4 +9,9 @@ const srcMap = {
 };
 const emoji = (match, p1) => `<img style="max-width: 24px; max-height: 24px; display: inline-block;" alt=":${p1}:" src="${srcMap[p1]}">`;
 
+/**
+ * parses strings of markdown into sanitized HTML strings with custom emoji support
+ * @param {string} str - markdown
+ * @returns {string} parsed markdown
+ */
 export const parseMd = str => DOMPurify.sanitize(marked.parse(str.replace(emojiRegex, emoji)));

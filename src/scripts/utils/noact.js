@@ -14,6 +14,13 @@ const svgNs = [
   'polygon','polyline','radialGradient','rect','set','stop','svg','symbol','text','textPath','use','view'
 ]
 
+/**
+ * simultaneously the best and worst replacement for react, jquery, innerHTML, you name it
+ * @param {object} obj - element-like object. all properties except `tag` and `children` are set as properties on the element.
+ * @property tag - any valid html or svg tag, intuitively assigned if not provided
+ * @property children - can be any combination of existing elements, strings (converted to text nodes), or other valid noact objects (recursively processed)
+ * @returns {Element} element
+ */
 export const noact = obj => {
   if (!obj) return ''; 
   let el, tag;

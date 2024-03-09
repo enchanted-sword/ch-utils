@@ -3,7 +3,7 @@ import { inject } from './inject.js';
 const viewModelCache = new WeakMap();
 
 /**
- * @param {Element} post - post element to fetch properties from
+ * @param {Element} post - post element to fetch viewModel from
  * @returns {any} viewModel property
  */
 export const getViewModel = async post => {
