@@ -1,0 +1,8 @@
+{
+  "name": "quickRechost",
+  "title": "quick rechost",
+  "description": "adds a popup menu that allows fast-resharing a post, optionally with tags",
+  "preferences": { "enabled": false },
+  "js": true,
+  "css": true
+}

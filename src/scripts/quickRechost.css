@@ -1,0 +1,31 @@
+.w-15 { width: 15rem; }
+
+.ch-utils-quickRechost {
+  position: absolute;
+  z-index: 99;
+  display: none;
+}
+
+.ch-utils-quickRechost-list { display: none; }
+[data-headlessui-state="open"] + .ch-utils-quickRechost-list { display: block; }
+
+.ch-utils-quickRechost-status {
+  pointer-events: none;
+  position: fixed;
+  bottom: -4rem;
+  opacity: 0;
+  left: 50%;
+  color: rgb(var(--color-notWhite));
+  animation: .5s ease-in-out 1 normal forwards slidein, .5s ease-in-out 3s 1 reverse forwards slidein;
+}
+
+@keyframes slidein {
+  from {
+    opacity: 0;
+    bottom: -4rem;
+  }
+  to {
+    opacity: 1;
+    bottom: 6rem;
+  }
+}
