@@ -27,7 +27,7 @@ export const apiFetch = async (path = '', body = {}) => fetch(`https://cohost.or
     else return response;
   })).catch(e => {
     console.error(`apiFetch error: failed to fetch resource at url https://cohost.org/api${path}${stringifyParams(body?.queryParams)}`, e);
-    return null;
+    return Promise.reject();
   });
 
 export const batchTrpc = async (routes = [], input = {}) => await apiFetch(`/v1/trpc/${routes.join(',')}`, { method: 'GET', queryParams: { batch: 1, input }});
