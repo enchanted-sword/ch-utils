@@ -139,9 +139,9 @@ const newMenu = async postId => {
                   }]
                 },
                 {
-                  className: 'rounded-r-lg p-2 text-notWhite group-hover:bg-foreground-600 ui-open:bg-foreground-700 lg:block',
+                  className: 'rounded-r-lg p-2 group-hover:bg-foreground-600 ui-open:bg-foreground-700 lg:block',
                   children: [{
-                    className: 'h-6 w-6 text-notWhite transition-transform ui-open:rotate-180',
+                    className: 'ch-utils-quickRechost-caret h-6 w-6 transition-transform ui-open:rotate-180',
                     viewBox: '0 0 24 24',
                     'aria-hidden': true,
                     fill: 'currentColor',
@@ -156,7 +156,7 @@ const newMenu = async postId => {
             },
             {
               tag: 'ul',
-              className: 'ch-utils-quickRechost-list lg:cohost-shadow-light dark:lg:cohost-shadow-dark fixed left-0 top-8 max-w-xs divide-y divide-foreground-500 !overflow-y-auto truncate bg-foreground text-notWhite !outline-none lg:absolute lg:max-h-[calc(100vh_-_100px)] lg:divide-none lg:rounded-lg lg:bg-notWhite lg:text-notBlack',
+              className: 'ch-utils-quickRechost-list lg:cohost-shadow-light dark:lg:cohost-shadow-dark fixed left-0 top-8 max-w-xs divide-y divide-foreground-500 !overflow-y-auto truncate bg-foreground !outline-none lg:absolute lg:max-h-[calc(100vh_-_100px)] lg:divide-none lg:rounded-lg lg:bg-notWhite lg:text-notBlack',
               'aria-orientation': 'vertical',
               role: 'listbox',
               onmouseleave: () => {

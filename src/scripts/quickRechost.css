@@ -9,6 +9,12 @@
 .ch-utils-quickRechost-list { display: none; }
 [data-headlessui-state="open"] + .ch-utils-quickRechost-list { display: block; }
 
+.ch-utils-quickRechost-caret { color: rgb(var(--color-notBlack)); }
+[data-theme="dark"] .ch-utils-quickRechost-caret, [data-headlessui-state]:hover .ch-utils-quickRechost-caret { color: rgb(var(--color-notWhite)) !important; }
+@media (prefers-color-scheme: dark) {
+  [data-theme="both"] .ch-utils-quickRechost-caret { color: rgb(var(--color-notWhite)); }
+}
+
 .ch-utils-quickRechost-status {
   pointer-events: none;
   position: fixed;
