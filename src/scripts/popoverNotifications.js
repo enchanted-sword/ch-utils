@@ -309,8 +309,11 @@ const onNotificationButtonClick = async event => {
 };
 
 export const main = async () => {
+  const button = document.querySelector(buttonSelector);
+  if (!button) return;
+  
   ({ numFetch } = await getOptions('popoverNotifications'));
-  document.querySelector(buttonSelector).addEventListener('click', onNotificationButtonClick);
+  button.addEventListener('click', onNotificationButtonClick);
 };
 
 export const clean = async () => {
