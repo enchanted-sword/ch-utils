@@ -40,7 +40,7 @@ export const noact = obj => {
   
     if (svgNs.includes(tag)) {
       el = document.createElementNS('http://www.w3.org/2000/svg', tag);
-      Object.keys(obj).filter(key => !['tag','children'].includes(key))
+      Object.keys(obj).filter(key => !['tag', 'dataset', 'children'].includes(key))
         .forEach(key => el.setAttribute(key === 'className' ? 'class' : key, obj[key]));
     } else {
       el = document.createElement(tag);
