@@ -112,9 +112,11 @@
                 const toggleWrapper = $(`<div class="ui-multiSelectWrapper"></div>`);
                 const input = $('<input>', { class: 'ui-multiSelect', type: 'checkbox', id: `ui-feature-${name}-${key}`, name: `${name}-${key}` });
                 const label = $(`<label for="ui-feature-${name}-${key}" name="${name}-${key}">${option.name}</label>`);
+                const tooltip = $(`<div class="ui-tooltip">${option.tooltip}</div>`);
 
                 toggleWrapper.append(label);
                 toggleWrapper.append(input);
+                toggleWrapper.append(tooltip);
                 optionsWrapper.append(toggleWrapper);
 
                 if (preference.options[key]) input.attr('checked', '');
@@ -217,9 +219,11 @@
                   id: `ui-feature-${name}-${key}`,
                   name: `${name}-${key}`
                 });
+                const tooltip = $(`<div class="ui-tooltip">${option.tooltip}</div>`);
 
                 numInputWrapper.append(label);
                 numInputWrapper.append(numInput);
+                numInputWrapper.append(tooltip);
                 optionsWrapper.append(numInputWrapper);
 
                 numInput.on('change', async function () {

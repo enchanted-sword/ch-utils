@@ -305,6 +305,7 @@ div.ui-inputWrapper[type="multiSelect"] {
   flex-flow: column nowrap;
 }
 div.ui-multiSelectWrapper, div.ui-extendedSelectWrapper {
+  position: relative;
   background: rgba(var(--cherry), .08);
   padding: 4px 8px;
   border-bottom: 2px solid rgba(var(--cherry), .2);
@@ -519,6 +520,33 @@ input.ui-numInput {
   outline: none;
   padding: .25rem;
 }
+
+.ui-tooltip {
+  pointer-events: none;
+  position: absolute;
+  opacity: 0;
+  bottom: 2.5rem;
+  left: 0;
+  padding: .5rem;
+  background-color: rgb(var(--notWhite));
+  border: 2px solid rgb(var(--mango));
+  border-radius: 3px;
+  z-index: 100;
+
+  &:after {
+    content: '';
+    left: calc(50% - .5rem);
+    bottom: -1rem;
+    position: absolute;
+    border: 1rem solid rgb(var(--mango));
+    border-top-color: transparent;
+    border-left-color: transparent;
+    border-radius: 3px;
+    transform: rotate(45deg);
+    z-index: 99;
+  }
+}
+:hover > .ui-tooltip { opacity: 1; }
 
 .ui-card {
   background-color: rgb(var(--white));
