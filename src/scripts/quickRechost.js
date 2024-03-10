@@ -215,10 +215,28 @@ const quickRechost = event => {
 };
 const addStatusMessage = (success, handle) => {
   const message = noact({
-    tag: 'button',
-    className: 'ch-utils-quickRechost-status tracking-wider whitespace-nowrap flex h-10 items-center justify-center self-center rounded-lg py-2 px-3',
-    style: `background-color: rgb(${success ? '49 157 53' : '229 107 111'});`,
-    children: [success ? `posted to ${handle}!` : 'an error occurred while processing the post']
+    className: `ch-utils-quickRechost-status flex justify-between gap-3 !bg-${success ? 'green' : 'red'}-200 !text-${success ? 'green' : 'red'}-800 cohost-shadow-light dark:cohost-shadow-dark rounded-lg px-3 py-2 font-bold`,
+    style: `left: calc(50% - ${success ? 130 : 194.8335 }px);`,
+    children: [
+      {
+        className: `h-6 flex-none text-${success ? 'green' : 'red'}-800`,
+        viewBox: '0 0 24 24',
+        fill: 'none',
+        'stroke-width': 1.5,
+        stroke: 'currentColor',
+        'aria-hidden': true,
+        children: [{
+          'stroke-linecap': 'round',
+          'stroke-linejoin': 'round',
+          d: 'M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
+        }]
+      },
+      {
+        role: 'status',
+        'aria-live': 'polite',
+        children: [success ? `posted to ${handle}!` : 'An error occurred while processing the post']
+      }
+    ]
   });
 
   document.body.append(message);

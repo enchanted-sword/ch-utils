@@ -20,8 +20,8 @@
   position: fixed;
   bottom: -4rem;
   opacity: 0;
-  left: 50%;
-  color: rgb(var(--color-notWhite));
+  left: calc(50% - 8rem);
+  width: fit-content;
   animation: .5s ease-in-out 1 normal forwards slidein, .5s ease-in-out 3s 1 reverse forwards slidein;
 }
 
@@ -32,6 +32,6 @@
   }
   to {
     opacity: 1;
-    bottom: 6rem;
+    bottom: 4rem;
   }
 }
