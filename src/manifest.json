@@ -5,8 +5,8 @@
 
   "description": "Utilities for cohost",
   "icons": {
-    "48": "icons/48.png",
-    "96": "icons/96.png"
+    "48": "icons/icon.svg",
+    "96": "icons/icon.svg"
   },
   "author": "April Lunarii",
 
@@ -41,8 +41,8 @@
 
   "action": {
     "default_icon" : {
-      "48": "icons/48.png",
-      "96": "icons/96.png"
+      "48": "icons/icon.svg",
+      "96": "icons/icon.svg"
     },
     "default_popup": "ui/menu.html"
   },
