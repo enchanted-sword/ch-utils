@@ -3,10 +3,15 @@
 button.ch-utils-popoverComments {
   display: flex;
   align-items: center;
+
+  svg { margin-left: .5rem; }
 }
-.ch-utils-popoverComments svg { margin-left: .5rem; }
-[data-theme="light"] .ch-utils-popoverComments > h4 { color: rgb(var(--color-notBlack) / var(--tw-text-opacity)); }
-[data-theme="light"] .ch-utils-popoverComments > h4 > a { color: rgb(var(--color-cherry) / var(--tw-text-opacity)) }
+
+[data-theme="light"] .ch-utils-popoverComments > h4 {
+  color: rgb(var(--color-notBlack) / var(--tw-text-opacity));
+
+  > a { color: rgb(var(--color-cherry) / var(--tw-text-opacity)) }
+}
 
 footer:has(.w-max > button.ch-utils-popoverComments[data-headlessui-state=""]) > .ch-utils-popoverComments { display: none; }
 
