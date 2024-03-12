@@ -69,8 +69,11 @@ export const main = async () => {
 
   if (unreadOnNavbar) {
     const target = document.querySelector(observerTargetSelector);
-    if (target) document.documentElement.append(unreadOnNavbarStyleElement);
-    unreadObserver.observe(target, { subtree: true, characterData: true });
+    if (target){
+      document.documentElement.append(unreadOnNavbarStyleElement);
+      unreadObserver.observe(target, { subtree: true, characterData: true });
+    } 
+    
   }
 };
 
