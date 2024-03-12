@@ -2,16 +2,12 @@
   #app > .flex > header > .container > div { width: fit-content; }
 
   ul[role="menu"] {
-    position: fixed;
     flex-flow: row nowrap;
-    z-index: 10;
     background: none;
     border: none;
     box-shadow: none !important;
-    top: 0;
-    height: 4rem;
     align-items: center;
-    left: calc(50% - 22rem);
+    padding: 0;
 
     > a > li {
       font-size: 0;
@@ -41,18 +37,13 @@
   }
   a[href="#"] + ul li:not(:last-of-type) { border-bottom: 1px solid rgba(var(--color-notWhite) / .2); }
 
-  #live-dashboard > .flex > button.w-full {
+  #live-dashboard > .flex-col > button.w-full {
     position: sticky;
     top: 5rem;
     z-index: 10;
   }
 
-  @media (min-width: 1280px) {
-    ul[role="menu"] { left: calc(50% - 14rem); }
-  }
-  @media (min-width: 1536px) {
-    ul[role="menu"] { left: calc(50% - 6rem); }
-  }
+  svg.ch-utils-horizontal:has(text:empty) { display: none; }
 
   .lg\:grid-cols-4:has(#live-dashboard) { grid-template-columns: .5fr repeat(3, minmax(0, 1fr)); }
 }

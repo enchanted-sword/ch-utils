@@ -1,35 +1,15 @@
 import { getOptions } from './utils/jsTools.js';
 import { style } from './utils/style.js';
 
-const buttonSelector = '#live-dashboard .flex.gap-12 > button.w-full';
+const navSelector = 'header > .container > nav';
+const menuSelector = 'ul[role="menu"]';
+const buttonSelector = '#live-dashboard .flex-col > button.w-full';
 const linkSelector = '[href="#"]';
+const observerTargetSelector = '#live-dashboard > .flex-col';
+const textSelector = '#live-dashboard .flex-col > button.w-full svg text'
 const customClass = 'ch-utils-horizontal';
 
-const unreadOnNavbarStyleElement = style(`
-  @media (min-width: 1024px) {
-    #live-dashboard > .flex > button.w-full {
-      background: none;
-      box-shadow: none;
-      width: fit-content;
-      font-size: 0;
-      scale: .68;
-      position: fixed !important;
-      top: .5rem !important;
-      z-index: 11 !important;
-      left: calc(50% - 19.8rem);
-      padding: 0;
-      pointer-events: none;
-    }
-    #live-dashboard > .flex > button.w-full svg {
-      color: rgb(var(--color-sidebar-bg));
-      fill: rgb(var(--color-sidebar-accent));
-    }
-
-    @media (min-width: 1536px) {
-      #live-dashboard > .flex > button.w-full { left: calc(50% - 3.8rem); }
-    }
-  }
-`);
+const unreadOnNavbarStyleElement = style('@media (min-width: 1024px) { #live-dashboard > .flex > button.w-full { display: none; } }');
 const homeIcon = $(`
   <a class="${customClass}" href="/">
     <li class="flex flex-row items-center gap-2 rounded-lg border border-transparent px-1 py-3 hover:text-accent lg:hover:text-sidebarAccent" title="home">
@@ -39,6 +19,10 @@ const homeIcon = $(`
         </svg>
       </div>
       unread posts
+      <svg viewBox="0 0 25 18" xmlns="http://www.w3.org/2000/svg" style="fill-rule: evenodd; clip-rule: evenodd; stroke-linejoin: round; stroke-miterlimit: 2;" class="${customClass} ml-auto h-6 fill-sidebarAccent text-sidebarBg">
+        <path d="M14.923 17.087c-2.254.666-4.388.967-6.402.905-2.014-.062-3.742-.532-5.183-1.409-1.442-.877-2.436-2.217-2.982-4.022-.549-1.814-.463-3.476.257-4.985.719-1.51 1.905-2.832 3.557-3.965C5.823 2.478 7.776 1.578 10.03.913c2.243-.663 4.369-.965 6.376-.906 2.007.059 3.733.523 5.178 1.394 1.446.87 2.441 2.207 2.987 4.011.546 1.804.457 3.464-.266 4.981-.724 1.516-1.908 2.845-3.551 3.987-1.644 1.143-3.588 2.045-5.831 2.707Z" style="fill-rule: nonzero;"></path>
+          <text x="50%" y="50%" text-anchor="middle" dominant-baseline="middle" class="cursor-pointer select-none fill-current font-atkinson text-[10px] font-bold leading-none"></text>
+        </svg>
     </li>
   </a>
 `);
@@ -67,19 +51,35 @@ const onTagButtonClick = event => {
   else document.removeEventListener('click', closeTagMenu);
 };
 
+const unreadObserver = new MutationObserver(mutations => {
+  const text = mutations.filter(({ target }) => target.parentElement.matches(textSelector)).pop();
+  if (!text) return;
+
+  $(`svg.${customClass} text`).text(text.target.parentElement.textContent);
+});
+
 export const main = async () => {
   const { unreadOnNavbar } = await getOptions('horizontal');
+  const menu = $(menuSelector);
 
-  $('ul[role="menu"]').prepend(homeIcon);
   $('[class~="lg:grid-cols-4"]:has(ul[role="menu"])').prepend($('<div>', { class: 'ch-utils-horizontal' }));
+  $(navSelector).prepend(menu);
+  menu.prepend(homeIcon);
   $(linkSelector).on('click', onTagButtonClick);
 
-  if (unreadOnNavbar) document.documentElement.append(unreadOnNavbarStyleElement);
+  if (unreadOnNavbar) {
+    const target = document.querySelector(observerTargetSelector);
+    document.documentElement.append(unreadOnNavbarStyleElement);
+    unreadObserver.observe(target, { subtree: true, characterData: true });
+  }
 };
 
 export const clean = async () => {
   document.removeEventListener('click', closeTagMenu);
   $(linkSelector).off('click', onTagButtonClick);
   unreadOnNavbarStyleElement.remove();
+
+  $(menuSelector).insertAfter(`div.${customClass}`);
   $(`.${customClass}`).remove();
+  unreadObserver.disconnect();
 }
