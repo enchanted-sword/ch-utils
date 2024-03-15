@@ -124,10 +124,10 @@ const followCard = project => noact({ className: `${customClass} flex flex-row i
     onclick: async ({ target }) => {
       const state = await followState(project.handle);
       
-      followCancelOrUnfollowRequest(state, project.projectId).then(([{ result }]) => {
-        if (result.data.followingState === 2) {
+      followCancelOrUnfollowRequest(state, project.projectId).then(([followingState]) => {
+        if (followingState === 2) {
           target.innerText = 'unfollow';
-        } else if (result.data.followingState === 1) {
+        } else if (followingState === 1) {
           target.innerText = 'cancel follow request';
         } else if (project.privacy === 'private') {
           target.innerText = 'send follow request';
