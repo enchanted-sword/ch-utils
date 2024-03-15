@@ -1,0 +1,22 @@
+.urlPopover-baseContainer {
+  z-index: 9;
+  transition: opacity 0.1s;
+}
+.urlPopover-holder {
+  max-height: calc(100vh - 8rem);
+  inset: 0px auto auto 0px;
+  width: 280px;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+header + .urlPopover-avatar {
+  margin-top: 3rem;
+}
+.urlPopover-avatar a {
+  transform: translateY(-15%);
+  top: unset;
+}
+.urlPopover-description {
+  margin-top: 1rem;
+  min-height: 2rem;
+}

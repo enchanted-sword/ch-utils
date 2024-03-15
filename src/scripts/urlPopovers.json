@@ -1,0 +1,8 @@
+{
+  "name": "urlPopovers",
+  "title": "show page info on hover",
+  "description": "adds tumblr-style popup info cards to header links in posts",
+  "preferences": { "enabled": false },
+  "js": true,
+  "css": true
+}
