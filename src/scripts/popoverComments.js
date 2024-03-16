@@ -235,7 +235,7 @@ const addPopovers = async posts => {
     shareTree.map(treeItem => handleMap[treeItem.postId] = treeItem.postingProject.handle);
     const postComments = await getComments(handle, postId);
 
-    if (postComments !== null) {
+    if (postComments !== null && post.querySelector(linkSelector)) {
       const commentButton = newCommentButton(postId, post.querySelector(linkSelector));
       const footer = post.querySelector('.co-thread-footer');
       const footerStartWrapper = post.querySelector(wrapperSelector);

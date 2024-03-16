@@ -1,5 +1,5 @@
 const app = document.getElementById('app');
-const postSelector = 'article.co-post-box';
+const postSelector = 'article.co-post-box:not(.co-post-composer)';
 const addedNodesQueue = [];
 
 export const mutationManager = Object.freeze({
