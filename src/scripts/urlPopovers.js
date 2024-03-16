@@ -88,7 +88,7 @@ const urlPopover = async (project, targetId, xPos, yPos) => {
                 href: projectURL,
                 children: [`@${project.handle}`]
               },
-              {
+              activeProject !== project.projectId ? {
                 className: 'leading-none align-middle py-2 px-4 no-select font-atkinson font-bold rounded-full border-2 border-cherry hover:bg-cherry text-cherry active:bg-cherry-600 active:border-cherry-600 disabled:text-cherry-300 disabled:border-cherry-300 focus:outline-cherry focus:ring-cherry bg-notWhite hover:text-notWhite text-sm hover:border-accent',
                 onclick: async ({ target }) => {
                   const state = await followState(project.handle);
@@ -104,7 +104,7 @@ const urlPopover = async (project, targetId, xPos, yPos) => {
                   });
                 },
                 children: [project.followState === 0 ? (project.privacy === 'private' ? 'send follow request' : 'follow') : states[project.followState]]
-              }
+              } : null
             ]
           },
           project.headerURL ? {
