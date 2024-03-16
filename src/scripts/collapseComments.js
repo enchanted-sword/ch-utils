@@ -7,9 +7,10 @@ const customClass = 'ch-utils-collapseable';
 let collapseByDefault;
 
 const onToggle = ({ target }) => {
+  const { numReplies } = target
   if (target.dataset.displayState === 'expanded') {
     target.dataset.displayState = 'collapsed';
-    target.innerText = 'expand comment';
+    target.innerText = `expand comment ${numReplies ? `(${numReplies} ${numReplies > 1 ? 'replies' : 'reply'})` : ''}`;
   } else {
     target.dataset.displayState = 'expanded';
     target.innerText = 'collapse comment';
@@ -32,6 +33,9 @@ const newToggle = () => {
 const addToggles = boxes => {
   for (const box of boxes) {
     const toggle = newToggle();
+    const numReplies = box.querySelectorAll('article').length - 1;
+
+    toggle[0].numReplies = numReplies;
     $(box).prepend(toggle);
 
     if (collapseByDefault) {
