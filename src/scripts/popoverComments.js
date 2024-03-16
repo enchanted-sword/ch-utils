@@ -37,7 +37,7 @@ const newCommentButton = (postId, link) => noact({
   ]
 });
 const newCommentWrapper = (irt, shareId) => noact({
-  className: `${customClass} my-3 flex min-w-0 flex-col gap-2`,
+  className: `${customClass} mt-3 flex min-w-0 flex-col gap-2`,
   children: [{
     tag: 'h4',
     className: 'px-3 text-bgText lg:px-0',
@@ -110,7 +110,7 @@ const newComment = (comment, poster, extLink) => { return {
               children: [
                 {
                   href: `https://cohost.org/${poster.handle}`,
-                  className: 'flex-0 mask relative aspect-square cohost-shadow-light dark:cohost-shadow-dark hidden h-12 w-12 lg:block',
+                  className: 'flex-0 mask relative aspect-square cohost-shadow-light dark:cohost-shadow-dark h-12 w-12 lg:block',
                   title: `@${poster.handle}`,
                   children: [{
                     src: `${poster.avatarURL}?dpr=2&amp;width=80&amp;height=80&amp;fit=cover&amp;auto=webp`,
