@@ -257,7 +257,7 @@ const newNotificationPopover = (clientX, clientY, theme) => {
         tag: 'header',
         dataset: { theme },
         children: [{
-          href: '#',
+          href: '/rc/project/notifications',
           className: 'font-bold hover:underline',
           children: ['notifications']
         }]
