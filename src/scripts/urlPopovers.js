@@ -2,7 +2,9 @@ import { activeProjectId, apiFetch, followState } from './utils/apiFetch.js';
 import { postFunction } from './utils/mutation.js';
 import { getViewModel } from './utils/react.js';
 import { noact } from './utils/noact.js';
+import { getProject } from './utils/darkWorld.js';
 
+const anchorSelector = 'a[href^="https://cohost.org/"]:not([href="https://cohost.org/"],[href^="https://cohost.org/rc"],[href*="/post/"],[data-url-popovers])';
 const customClass = 'ch-utils-urlPopovers';
 const customAttribute = 'data-url-popovers';
 
@@ -151,12 +153,13 @@ const attachPopover = (anchor, project) => {
   const uuid = `urlPopover-${project.projectId}-${discriminator()}`;
   anchor.project = project;
   anchor.targetId = uuid;
+  anchor.dataset.urlPopovers = '';
 
   anchor.addEventListener('mouseenter', displayPopover);
   anchor.addEventListener('mouseleave', removePopover);
 };
 
-const addPopovers = async posts => {
+const addPopoversInPosts = async posts => {
   for (const post of posts) {
     if (post.matches(`[${customAttribute}]`)) return;
     post.setAttribute(customAttribute, '');
@@ -171,11 +174,21 @@ const addPopovers = async posts => {
 };
 
 export const main = async () => {
-  postFunction.start(addPopovers);
+  postFunction.start(addPopoversInPosts);
+
+  const anchors = document.querySelectorAll(anchorSelector);
+
+  for (const anchor of anchors) {
+    const handle = anchor.href.split('https://cohost.org/')[1];
+    if (!handle) continue;
+    
+    const { project } = await getProject(handle);
+    attachPopover(anchor, project);
+  }
 };
 
 export const clean = async () => {
-  postFunction.stop(addPopovers);
+  postFunction.stop(addPopoversInPosts);
 
   $(`.${customClass}`).remove();
   $(`[${customAttribute}]`).removeAttr(customAttribute);
