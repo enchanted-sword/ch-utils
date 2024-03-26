@@ -12,7 +12,7 @@
 
   "permissions": [
     "storage",
-    "declarativeNetRequestWithHostAccess"
+    "declarativeNetRequest"
   ],
   "host_permissions": ["*://*.cohost.org/*"],
   "web_accessible_resources": [{
