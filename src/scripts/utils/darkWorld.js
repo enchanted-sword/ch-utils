@@ -1,16 +1,25 @@
 const parser = new DOMParser();
+const worlds = new Map();
 
-export const darkWorld = async project => fetch(`https://cohost.org/${project}`)
-  .then(response => 
-    response.text().then(docText => {
-      const doc = parser.parseFromString(docText, 'text/html');
-      console.log(doc)
-      if (doc.head.childElementCount) return doc;
-      else throw `failed to retrieve page https://cohost.org/${project}`;
-  })).catch(e => {
-    console.error(`darkWorld error: your machinations are too evil,`, e);
-    return Promise.reject();
-  });
+export const darkWorld = async project => {
+  if (!worlds.has(project)) {
+    const world = await fetch(`https://cohost.org/${project}`)
+      .then(response => 
+        response.text().then(docText => {
+          const doc = parser.parseFromString(docText, 'text/html');
+          console.log(doc)
+          if (doc.head.childElementCount) return doc;
+          else throw `failed to retrieve page https://cohost.org/${project}`;
+      })).catch(e => {
+        console.error(`darkWorld error: your machinations are too evil,`, e);
+        return Promise.reject();
+      });
+  
+    worlds.set(project, world);
+  }
+
+  return worlds.get(project);
+};
 
 export const getProject = async project => {
   const doc = await darkWorld(project);
