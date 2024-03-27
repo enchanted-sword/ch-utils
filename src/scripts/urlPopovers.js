@@ -32,17 +32,16 @@ const followCancelOrUnfollowRequest = async (state, toProjectId) => apiFetch(`/v
 });
 
 const displayPopover = async event => {
-  const { project, targetId } = event.target.closest('a');
+  const { project } = event.target.closest('a');
   const { bottom, left, width } = event.target.getBoundingClientRect();
   const xPos = left + width / 2;
   const yPos = bottom + window.scrollY;
-  const popover = await urlPopover(project, targetId, xPos, yPos);
+  const popover = await urlPopover(project, xPos, yPos);
   document.body.append(popover);
 };
 const removePopover = event => {
   window.setTimeout(() => {
-    const { targetId } = event.target.closest('a');
-    const popover = document.getElementById(targetId);
+    const popover = document.getElementById('urlPopover');
     if (popover && !popover.matches(':hover')) {
       popover.style.opacity = 0;
       window.setTimeout(() => { popover.remove() }, 150);
@@ -60,15 +59,15 @@ const popoverSelfRemove = event => {
   }, removePopoverDelay);
 };
 
-const urlPopover = async (project, targetId, xPos, yPos) => {
-  if (document.getElementById(targetId)) return;
+const urlPopover = async (project, xPos, yPos) => {
+  document.getElementById(urlPopover)?.remove();
 
   const projectURL = `/${project.handle}`;
   project.followState = await followState(project.handle);
 
   return noact({
-    className: `${k('baseContainer')} ${customClass}` + ' w-full absolute top-0',
-    id: targetId,
+    className: `${k('baseContainer')} ${customClass}` + ' h-0 w-full absolute top-0',
+    id: 'urlPopover',
     tabindex: 0,
     role: 'group',
     children: [{
@@ -150,9 +149,7 @@ const urlPopover = async (project, targetId, xPos, yPos) => {
 };
 
 const attachPopover = (anchor, project) => {
-  const uuid = `urlPopover-${project.projectId}-${discriminator()}`;
   anchor.project = project;
-  anchor.targetId = uuid;
   anchor.dataset.urlPopovers = '';
 
   anchor.addEventListener('mouseenter', displayPopover);
