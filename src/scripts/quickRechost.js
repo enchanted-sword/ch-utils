@@ -109,6 +109,7 @@ const newMenu = async postId => {
               tag: 'input',
               type: 'text',
               id: `qrc-input-${postId}`,
+              onkeydown: ctrlEnter,
               className: 'co-composer-text-box w-full row-start-1 row-end-2 col-start-1 col-end-2 min-h-0',
               style: 'resize: none; overflow: hidden;',
               placeholder: 'tags (comma-separated)',
@@ -241,7 +242,12 @@ const addStatusMessage = (success, handle) => {
 
   document.body.append(message);
   window.setTimeout(() => message.remove(), 5000);
-}
+};
+const ctrlEnter = event => {
+  if (event.ctrlKey && event.key === 'Enter') {
+    document.getElementById(`qrc-${event.target.id.split('-')[2]}`).click();
+  }
+};
 
 const showMenu = event => {
   const { pageX, pageY } = event;
