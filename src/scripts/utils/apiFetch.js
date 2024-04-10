@@ -68,6 +68,15 @@ export const singlePost = async (handle, postId) => await apiFetch('/v1/trpc/pos
  */
 export const displayPrefs = async () => await apiFetch('/v1/trpc/users.displayPrefs');
 
+const themeMap = {
+  light: 'light',
+  dark: 'dark',
+  'prefers-color-scheme': 'both'
+};
+const { defaultPostBoxTheme } = await displayPrefs();
+
+export const postBoxTheme = themeMap[defaultPostBoxTheme];
+
 /**
  * @returns {Promise <object[]>} list of projects the user has edit access to
  */

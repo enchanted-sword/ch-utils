@@ -1,4 +1,4 @@
-import { apiFetch, batchTrpc } from './utils/apiFetch.js';
+import { apiFetch, batchTrpc, postBoxTheme } from './utils/apiFetch.js';
 import { getViewModel } from './utils/react.js';
 import { postFunction } from './utils/mutation.js';
 import { noact } from './utils/noact.js';
@@ -86,14 +86,13 @@ const selectableProject = (project, index, activeProjectId, postId) => {
 const newMenu = async postId => {
   const [
     { projectId },
-    { projects },
-    { defaultPostBoxTheme },
-  ] = await batchTrpc(['login.loggedIn', 'projects.listEditedProjects', 'users.displayPrefs']);
+    { projects }
+  ] = await batchTrpc(['login.loggedIn', 'projects.listEditedProjects']);
   const activeProject = projects.find(project => project.projectId === projectId);
   return noact({
     className: `${customClass} co-themed-box co-comment-box cohost-shadow-light dark:cohost-shadow-dark w-15 rounded-lg p-2 lg:max-w-prose`,
     id: `qrc-menu-${postId}`,
-    dataset: { theme: defaultPostBoxTheme },
+    dataset: { theme: postBoxTheme },
     onmouseleave: menuSelfHide,
     children: [{
       className: 'flex flex-col gap-2',

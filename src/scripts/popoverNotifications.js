@@ -1,5 +1,5 @@
 import { noact } from './utils/noact.js';
-import { apiFetch, displayPrefs } from './utils/apiFetch.js';
+import { apiFetch, postBoxTheme } from './utils/apiFetch.js';
 import { DateTime } from '../lib/luxon.min.js';
 import { getOptions } from './utils/jsTools.js';
 
@@ -290,16 +290,15 @@ const onNotificationButtonClick = async event => {
   if (state !== 'open') {
     dataset.notificationPopoverState = 'open';
     window.setTimeout(() => document.addEventListener('click', closePopover), 200);
-    const { defaultPostBoxTheme } = await displayPrefs();
 
-    const popover = newNotificationPopover(clientX, clientY, defaultPostBoxTheme);
+    const popover = newNotificationPopover(clientX, clientY, postBoxTheme);
     document.body.append(popover)
 
     const notifications = await getTransformedNotifications();
     popover.querySelector('.loader').replaceWith(noact({
       tag: 'section',
       className: 'col-span-1 flex flex-col lg:col-span-2',
-      children: Object.keys(notifications).map(date => newNotificationPage(date, notifications[date], defaultPostBoxTheme))
+      children: Object.keys(notifications).map(date => newNotificationPage(date, notifications[date], postBoxTheme))
     }));
   } else {
     dataset.notificationPopoverState = '';
