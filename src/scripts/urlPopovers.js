@@ -52,10 +52,12 @@ const displayPopover = async event => {
 const removePopover = event => {
   window.setTimeout(() => {
     const popover = document.getElementById('urlPopover');
-    const projectLinks = Array.from(document.querySelectorAll(`[href='${popover.targetLink}']`));
-    if (popover && !popover.matches(':hover') && !projectLinks.some(link => link.matches(':hover'))) {
-      popover.style.opacity = 0;
-      window.setTimeout(() => { popover.remove() }, 150);
+    if (popover) {
+      const projectLinks = Array.from(document.querySelectorAll(`[href='${popover.targetLink}']`));
+      if (!popover.matches(':hover') && !projectLinks.some(link => link.matches(':hover'))) {
+        popover.style.opacity = 0;
+        window.setTimeout(() => { popover.remove() }, 150);
+      }
     }
   }, removePopoverDelay);
 };
