@@ -7,7 +7,6 @@ export const darkWorld = async project => {
       .then(response => 
         response.text().then(docText => {
           const doc = parser.parseFromString(docText, 'text/html');
-          console.log(doc)
           if (doc.head.childElementCount) return doc;
           else throw `failed to retrieve page https://cohost.org/${project}`;
       })).catch(e => {
