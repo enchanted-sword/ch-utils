@@ -1,0 +1,9 @@
+@media (min-width: 1024px) {
+  [data-postid] {
+    position: relative;
+    > a.mask {
+      position: sticky;
+      top: 5rem;
+    }
+  }
+}

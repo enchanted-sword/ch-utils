@@ -1,0 +1,7 @@
+{
+  "name": "scrollingAvatars",
+  "title": "scrolling avatars",
+  "description": "make the avatars displayed to the left of posts scroll with the timeline",
+  "preferences": { "enabled": false },
+  "css": true
+}
