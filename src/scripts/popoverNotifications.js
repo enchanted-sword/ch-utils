@@ -2,6 +2,7 @@ import { noact } from './utils/noact.js';
 import { apiFetch, postBoxTheme } from './utils/apiFetch.js';
 import { DateTime } from '../lib/luxon.min.js';
 import { getOptions } from './utils/jsTools.js';
+import { parseMd } from './utils/markdown.js';
 
 let numFetch;
 const buttonSelector = '[href="https://cohost.org/rc/project/notifications"]';
@@ -25,6 +26,8 @@ const getTransformedNotifications = async () => {
     notification.comment = comments[notification.commentId]?.comment;
     notification.replyTo = comments[notification.inReplyTo]?.comment;
 
+    if (notification.toPostId && typeof notification.targetPost === 'undefined') return null; // cohost doesn't delete notifications attached to deleted posts, so we have to trim them out manually
+
     if (notification.type === 'groupedLike' && !notification.grouped) notification.type = 'like';
     if (notification.replyTo) notification.type = 'reply';
 
@@ -44,10 +47,11 @@ const getTransformedNotifications = async () => {
       children: [`@${notification.notifyingProject.handle}`]
     };
     interaction = interactionMap(notification);
-    if (notification.sharePost) preview = newBodyPreview(notification.sharePost);
-    else if (notification.comment) preview = newBodyPreview(notification.targetPost, notification.comment);
+
+    if (notification.type === 'comment') preview = newBodyPreview(notification.targetPost, notification.comment);
+    else if (notification.type === 'reply') preview = newBodyPreview(notification.targetPost, notification.comment, notification.replyTo);
     else if (notification.type === 'groupedFollow') preview = undefined;
-    else preview = newBodyPreview(notification.targetPost);
+    else preview = newBodyPreview(notification.targetPost);  
 
     notification.lineOfAction = cloneInto([notifier, interaction, preview], notification);
 
@@ -168,7 +172,7 @@ const interactionMap = notification => {
           children: [' replied ']
         },
         {
-          href: `${notification.targetPost.singlePostPageUrl}#comment-${notification.replyTo.commentId}`,
+          href: notification.targetPost ? `${notification.targetPost.singlePostPageUrl}#comment-${notification.replyTo.commentId}` : '',
           className: 'font-bold hover:underline',
           children: ['to your comment']
         },
@@ -183,7 +187,7 @@ const newIcon = type => {return {
   'aria-hidden': true,
   children: [pathMap[type]]
 }};
-const newAvatar = project => {return {
+const newAvatar = project => {if (project) return { // we need to also account for deleted projects, their ids are still present in fromProjectIds but the actual project is undefined
   className: 'flex-0 mask relative aspect-square h-8 w-8',
   href: `https://cohost.org/${project.handle}`,
   title: `@${project.handle}`,
@@ -193,18 +197,26 @@ const newAvatar = project => {return {
     src: `${project.avatarURL}?dpr=2&amp;width=80&amp;height=80&amp;fit=cover&amp;auto=webp`
   }]
 }};
-const newBodyPreview = (post, comment = null) => {return {
-  tag: 'span',
-  className: "co-inline-quote flex-1 truncate before:content-['“'] after:content-['”']",
-  children: [{
-    href: `${post.singlePostPageUrl}${comment ? `#comment${comment.commentId}` : ''}`,
-    className: 'hover:underline',
-    children: [`${post.plainTextBody.slice(0, 40)}${post.plainTextBody.length > 40 ? '...' : ''}`]
-  }]
-}};
-const newNotification = notification => {return [
+const newBodyPreview = (post, comment = null, reply = null) => {
+  let body;
+  if (reply) ({ body } = reply);
+  else body = post.headline ? post.headline : post.plainTextBody;
+
+  if (!body) return;
+  else return {
+    tag: 'span',
+    className: "co-inline-quote flex-1 truncate before:content-['“'] after:content-['”']",
+    children: [{
+      className: 'inline-children hover:underline',
+      href: `${post.singlePostPageUrl}${comment ? `#comment${comment.commentId}` : ''}`,
+      innerHTML: parseMd(body)
+    }]
+  };
+};
+const newNotification = notification => {
+  return [
   {
-    className: 'flex w-full flex-row flex-nowrap items-center gap-3',
+    className: 'flex w-full flex-row flex-nowrap align-start items-center gap-3',
     children: [
       newIcon(notification.type),
       notification.grouped ? '' : newAvatar(notification.notifyingProject),
@@ -245,7 +257,7 @@ const newNotificationPage = (date, notifications, theme) => {return {
         children: [DateTime.fromISO(date).toLocaleString(dateFormat)]
       }]
     },
-    ...notifications.map(notification => newNotificationCard(notification))
+    ...notifications.map(notification => notification ? newNotificationCard(notification) : null)
   ]
 }};
 const newNotificationPopover = (clientX, clientY, theme) => {

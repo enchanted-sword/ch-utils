@@ -53,10 +53,22 @@
   top: 0;
   z-index: 101;
 }
-.co-notification-card > div { align-items: flex-start; }
+.align-start { align-items: flex-start; }
 .max-19 { max-width: 19rem; }
 .flex-0 + .max-19 { max-width: 16.5rem; }
 .gap-space { gap: 0 .3em; }
+.inline-children {
+  * {
+    display: inline !important;
+    background: none !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    font-size: inherit !important;
+    &:is(h1,h2,h3,h4,h5,h6) { font-weight: bold; }
+    &:is(ul) { display: none !important; }
+  }
+}
 
 .loader { /*adapted from https://cssloaders.github.io/*/
   width: 6px;
