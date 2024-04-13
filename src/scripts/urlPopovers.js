@@ -9,8 +9,8 @@ const customClass = 'ch-utils-urlPopovers';
 const customAttribute = 'data-url-popovers';
 
 const activeProject = await activeProjectId();
+const addPopoverDelay = 100;
 const removePopoverDelay = 300;
-const discriminator = () => Math.round(Math.random() * 100000);
 const k = str => str.split(' ').map(key => `urlPopover-${key}`).join(' ');
 const states = [
   'follow',
@@ -32,42 +32,42 @@ const followCancelOrUnfollowRequest = async (state, toProjectId) => apiFetch(`/v
 });
 
 const displayPopover = async event => {
-  const { project } = event.target.closest('a');
-  const { bottom, left, width } = event.target.getBoundingClientRect();
-  const xPos = left + width / 2;
-  const yPos = bottom + window.scrollY;
-  const popover = await urlPopover(project, xPos, yPos);
-  document.body.append(popover);
+  window.setTimeout(async () => {
+    if (!event.target.matches(':hover')) return;
+
+    const { project, href } = event.target.closest('a');
+    const { bottom, left, width } = event.target.getBoundingClientRect();
+    const xPos = left + width / 2;
+    const yPos = bottom + window.scrollY;
+
+    let popover = document.getElementById('urlPopover');
+    if (popover) {
+      if (popover.targetLink === href) return;
+      else popover.remove();
+    }
+    popover = await urlPopover(project, xPos, yPos, href);
+    document.body.append(popover);
+  }, addPopoverDelay);
 };
 const removePopover = event => {
   window.setTimeout(() => {
     const popover = document.getElementById('urlPopover');
-    if (popover && !popover.matches(':hover')) {
-      popover.style.opacity = 0;
-      window.setTimeout(() => { popover.remove() }, 150);
-    }
-  }, removePopoverDelay);
-};
-const popoverSelfRemove = event => {
-  event.stopPropagation();
-  const popover = event.target.closest('.urlPopover-baseContainer');
-  window.setTimeout(() => {
-    if (!popover.matches(':hover')) {
+    const projectLinks = Array.from(document.querySelectorAll(`[href='${popover.targetLink}']`));
+    if (popover && !popover.matches(':hover') && !projectLinks.some(link => link.matches(':hover'))) {
       popover.style.opacity = 0;
       window.setTimeout(() => { popover.remove() }, 150);
     }
   }, removePopoverDelay);
 };
 
-const urlPopover = async (project, xPos, yPos) => {
-  document.getElementById(urlPopover)?.remove();
-
+const urlPopover = async (project, xPos, yPos, targetLink) => {
   const projectURL = `/${project.handle}`;
   project.followState = await followState(project.handle);
 
   return noact({
     className: `${k('baseContainer')} ${customClass}` + ' h-0 w-full absolute top-0',
     id: 'urlPopover',
+    targetLink,
     tabindex: 0,
     role: 'group',
     children: [{
@@ -75,7 +75,7 @@ const urlPopover = async (project, xPos, yPos) => {
       style: `transform: translate(${xPos - 140}px, ${yPos + 10}px);`,
       children: [{
         className: k('card') + ' cohost-shadow-light cohost-shadow-dark flex flex-col bg-cherry text-notWhite w-full h-full overflow-hidden rounded-lg',
-        onmouseleave: popoverSelfRemove,
+        onmouseleave: removePopover,
         children: [
           {
             tag: 'header',
