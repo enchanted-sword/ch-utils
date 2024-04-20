@@ -1,6 +1,7 @@
 /*loaders adapted from https://cssloaders.github.io/*/
 
 .co-themed-box { position: relative; }
+#headlessui-listbox-options-\:ru\: { z-index: 1; } /*this element will otherwise get hidden behind other elements if .co-themed-box is set to display: relative;*/
 .load-all {
   position: absolute;
   top: .5rem;
