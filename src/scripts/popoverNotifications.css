@@ -67,6 +67,7 @@
     font-size: inherit !important;
     &:is(h1,h2,h3,h4,h5,h6) { font-weight: bold; }
     &:is(ul) { display: none !important; }
+    &:is(img,video) { max-height: 20px !important; }
   }
 }
 
