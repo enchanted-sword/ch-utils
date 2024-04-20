@@ -11,8 +11,7 @@
   "author": "April Lunarii",
 
   "permissions": [
-    "storage",
-    "declarativeNetRequest"
+    "storage"
   ],
   "host_permissions": ["*://*.cohost.org/*"],
   "web_accessible_resources": [{
