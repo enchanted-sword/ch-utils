@@ -73,7 +73,7 @@
           }
           break;
         case 'parent':
-          container = document.querySelector(options.parent);
+          container = options.parent instanceof HTMLElement ? options.parent : document.querySelector(options.parent);
           if (container) {
             container.appendChild(picker);
             settings.parent = options.parent;
@@ -105,7 +105,7 @@
           break;
         case 'rtl':
           settings.rtl = !!options.rtl;
-          document.querySelectorAll('.clr-field').forEach(field => field.classList.toggle('clr-rtl', settings.rtl));
+          Array.from(document.getElementsByClassName('clr-field')).forEach(field => field.classList.toggle('clr-rtl', settings.rtl));
           break;
         case 'margin':
           options.margin *= 1;
@@ -125,13 +125,30 @@
           break;
         case 'swatches':
           if (Array.isArray(options.swatches)) {
-            const swatches = [];
+            const swatchesContainer = getEl('clr-swatches');
+            const swatches = document.createElement('div');
 
+            // Clear current swatches
+            swatchesContainer.textContent = '';
+
+            // Build new swatches
             options.swatches.forEach((swatch, i) => {
-              swatches.push(`<button type="button" id="clr-swatch-${i}" aria-labelledby="clr-swatch-label clr-swatch-${i}" style="color: ${swatch};">${swatch}</button>`);
+              const button = document.createElement('button');
+
+              button.setAttribute('type', `button`);
+              button.setAttribute('id', `clr-swatch-${i}`);
+              button.setAttribute('aria-labelledby', `clr-swatch-label clr-swatch-${i}`);
+              button.style.color = swatch;
+              button.textContent = swatch;
+
+              swatches.appendChild(button);
             });
 
-            getEl('clr-swatches').innerHTML = swatches.length ? `<div>${swatches.join('')}</div>` : '';
+            // Append new swatches if any
+            if (options.swatches.length) {
+              swatchesContainer.appendChild(swatches);
+            }
+
             settings.swatches = options.swatches.slice();
           }
           break;
@@ -294,54 +311,61 @@
 
   /**
    * Bind the color picker to input fields that match the selector.
-   * @param {string} selector One or more selectors pointing to input fields.
+   * @param {(string|HTMLElement|HTMLElement[])} selector A CSS selector string, a DOM element or a list of DOM elements.
    */
   function bindFields(selector) {
-    // Show the color picker on click on the input fields that match the selector
-    addListener(document, 'click', selector, event => {
-      // Skip if inline mode is in use
-      if (settings.inline) {
-        return;
-      }
+    if (selector instanceof HTMLElement) {
+      selector = [selector];
+    } 
 
-      // Apply any per-instance options first
-      attachVirtualInstance(event.target);
+    if (Array.isArray(selector)) {
+      selector.forEach(field => {
+        addListener(field, 'click', openPicker);
+        addListener(field, 'input', updateColorPreview);
+      });
+    } else  {   
+      addListener(document, 'click', selector, openPicker);
+      addListener(document, 'input', selector, updateColorPreview);
+    }
+  }
 
-      currentEl = event.target;
-      oldColor = currentEl.value;
-      currentFormat = getColorFormatFromStr(oldColor);
-      picker.classList.add('clr-open');
-      
-      updatePickerPosition();
-      setColorFromStr(oldColor);
+  /**
+   * Open the color picker.
+   * @param {object} event The event that opens the color picker.
+   */
+  function openPicker(event) {
+    // Skip if inline mode is in use
+    if (settings.inline) {
+      return;
+    }
 
-      if (settings.focusInput || settings.selectInput) {
-        colorValue.focus({ preventScroll: true });
-        colorValue.setSelectionRange(currentEl.selectionStart, currentEl.selectionEnd);
-      }
-      
-      if (settings.selectInput) {
-        colorValue.select();
-      }
+    // Apply any per-instance options first
+    attachVirtualInstance(event.target);
 
-      // Always focus the first element when using keyboard navigation
-      if (keyboardNav || settings.swatchesOnly) {
-        getFocusableElements().shift().focus();
-      }
+    currentEl = event.target;
+    oldColor = currentEl.value;
+    currentFormat = getColorFormatFromStr(oldColor);
+    picker.classList.add('clr-open');
+    
+    updatePickerPosition();
+    setColorFromStr(oldColor);
 
-      // Trigger an "open" event
-      currentEl.dispatchEvent(new Event('open', { bubbles: true }));
-    });
+    if (settings.focusInput || settings.selectInput) {
+      colorValue.focus({ preventScroll: true });
+      colorValue.setSelectionRange(currentEl.selectionStart, currentEl.selectionEnd);
+    }
+    
+    if (settings.selectInput) {
+      colorValue.select();
+    }
 
-    // Update the color preview of the input fields that match the selector
-    addListener(document, 'input', selector, event => {
-      const parent = event.target.parentNode;
+    // Always focus the first element when using keyboard navigation
+    if (keyboardNav || settings.swatchesOnly) {
+      getFocusableElements().shift().focus();
+    }
 
-      // Only update the preview if the field has been previously wrapped
-      if (parent.classList.contains('clr-field')) {
-        parent.style.color = event.target.value;
-      }
-    });
+    // Trigger an "open" event
+    currentEl.dispatchEvent(new Event('open', { bubbles: true }));
   }
 
   /**
@@ -423,27 +447,52 @@
 
   /**
    * Wrap the linked input fields in a div that adds a color preview.
-   * @param {string} selector One or more selectors pointing to input fields.
+   * @param {(string|HTMLElement|HTMLElement[])} selector A CSS selector string, a DOM element or a list of DOM elements.
    */
   function wrapFields(selector) {
-    document.querySelectorAll(selector).forEach(field => {
-      const parentNode = field.parentNode;
+    if (selector instanceof HTMLElement) {
+      wrapColorField(selector);
+    } else if (Array.isArray(selector)) {
+      selector.forEach(wrapColorField);
+    } else  {
+      document.querySelectorAll(selector).forEach(wrapColorField);
+    }
+  }
 
-      if (!parentNode.classList.contains('clr-field')) {
-        const wrapper = document.createElement('div');
-        let classes = 'clr-field';
+  /**
+   * Wrap an input field in a div that adds a color preview.
+   * @param {object} field The input field.
+   */
+  function wrapColorField(field) {
+    const parentNode = field.parentNode;
 
-        if (settings.rtl || field.classList.contains('clr-rtl')) {
-          classes += ' clr-rtl';
-        }
+    if (!parentNode.classList.contains('clr-field')) {
+      const wrapper = document.createElement('div');
+      let classes = 'clr-field';
 
-        wrapper.innerHTML = `<button type="button" aria-labelledby="clr-open-label"></button>`;
-        parentNode.insertBefore(wrapper, field);
-        wrapper.setAttribute('class', classes);
-        wrapper.style.color = field.value;
-        wrapper.appendChild(field);
+      if (settings.rtl || field.classList.contains('clr-rtl')) {
+        classes += ' clr-rtl';
       }
-    });
+
+      wrapper.innerHTML = '<button type="button" aria-labelledby="clr-open-label"></button>';
+      parentNode.insertBefore(wrapper, field);
+      wrapper.className = classes;
+      wrapper.style.color = field.value;
+      wrapper.appendChild(field);
+    }
+  }
+
+  /**
+   * Update the color preview of an input field
+   * @param {object} event The "input" event that triggers the color change.
+   */
+  function updateColorPreview(event) {
+    const parent = event.target.parentNode;
+
+    // Only update the preview if the field has been previously wrapped
+    if (parent.classList.contains('clr-field')) {
+      parent.style.color = event.target.value;
+    }
   }
 
   /**
@@ -838,9 +887,6 @@
         a: match[6] * 1
       };
 
-      // Workaround to mitigate a Chromium bug where the alpha value is rounded incorrectly
-      rgba.a = +rgba.a.toFixed(2);
-
     } else {
       match = ctx.fillStyle.replace('#', '').match(/.{2}/g).map(h => parseInt(h, 16));
       rgba = {
@@ -984,6 +1030,10 @@
 
     addListener(colorArea, 'mousedown', event => {
       addListener(document, 'mousemove', moveMarker);
+    });
+
+    addListener(colorArea, 'contextmenu', event => {
+      event.preventDefault();
     });
 
     addListener(colorArea, 'touchstart', event => {
