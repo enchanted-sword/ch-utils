@@ -8,6 +8,7 @@
     box-shadow: none !important;
     align-items: center;
     padding: 0;
+    position: relative;
 
     > a > li {
       font-size: 0;
@@ -30,7 +31,7 @@
     margin: 0;
     position: absolute;
     top: 3rem;
-    left: 5rem;
+    left: 6rem;
     background: rgb(var(--color-notBlack));
     padding: .5rem;
     border-radius: .5rem;
