@@ -62,7 +62,8 @@ export const main = async () => {
   const { unreadOnNavbar } = await getOptions('horizontal');
   const menu = $(menuSelector);
 
-  $('[class~="lg:grid-cols-4"]:has(ul[role="menu"])').prepend($('<div>', { class: 'ch-utils-horizontal' }));
+  if (window.location.href === 'https://cohost.org/rc/artist-alley') $('.styled-scrollbars-light[class~="\[height\:calc\(100vh-4rem\)\]"]').prepend($('<div>', { class: 'ch-utils-horizontal' }));
+  else $('[class~="lg\:grid-cols-4"]:has(ul[role="menu"])').prepend($('<div>', { class: 'ch-utils-horizontal' }));
   $(navSelector).prepend(menu);
   menu.prepend(homeIcon);
   $(linkSelector).on('click', onTagButtonClick);
