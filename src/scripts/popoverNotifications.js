@@ -236,8 +236,8 @@ const newNotification = notification => {
       }]
     }]
   } : notification.hasBody ? {
-    className: 'co-block-quote ml-20 whitespace-pre-line break-words border-l-2 pl-2 italic',
-    children: [notification.sharePost ? notification.sharePost.plainTextBody : notification.comment.body]
+    className: 'co-block-quote ml-20 break-words border-l-2 pl-2 italic',
+    innerHTML: parseMd(notification.sharePost ? notification.sharePost.plainTextBody : notification.comment.body)
   } : ''
 ]};
 const newNotificationCard = notification => {return {
