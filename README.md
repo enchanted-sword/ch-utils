@@ -1,6 +1,6 @@
 # chutils - utilities for cohost!
 
-### **IMPORTANT NOTICE**: This extension is currently being developed exclusively for Firefox (>= v109) and its development builds
+### **IMPORTANT NOTICE**: This extension is currently being developed exclusively for Firefox (>= v121.0) and its development builds
 chutils is a web extension for cohost that adds custom informative, cosmetic, and quality-of-life features to improve the site's default layout and user experience.
 
 # Features
