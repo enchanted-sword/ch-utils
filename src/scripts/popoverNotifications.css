@@ -53,7 +53,6 @@
   top: 0;
   z-index: 101;
 }
-.align-start { align-items: flex-start; }
 .max-19 { max-width: 19rem; }
 .flex-0 + .max-19 { max-width: 16.5rem; }
 .gap-space { gap: 0 .3em; }

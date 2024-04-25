@@ -1,5 +1,5 @@
 import { noact } from './utils/noact.js';
-import { apiFetch, postBoxTheme } from './utils/apiFetch.js';
+import { apiFetch, postBoxTheme, activeProjectId } from './utils/apiFetch.js';
 import { DateTime } from '../lib/luxon.min.js';
 import { getOptions } from './utils/jsTools.js';
 import { parseMd } from './utils/markdown.js';
@@ -7,6 +7,7 @@ import { parseMd } from './utils/markdown.js';
 let numFetch;
 const buttonSelector = '[href="https://cohost.org/rc/project/notifications"]';
 const customClass = 'ch-utils-popover-notifications';
+const activeProject = await activeProjectId();
 
 const dateFormat = { weekday: 'long', month: 'long', day: 'numeric' };
 
@@ -51,9 +52,9 @@ const getTransformedNotifications = async () => {
     if (notification.type === 'comment') preview = newBodyPreview(notification.targetPost, notification.comment);
     else if (notification.type === 'reply') preview = newBodyPreview(notification.targetPost, notification.comment, notification.replyTo);
     else if (notification.type === 'groupedFollow') preview = undefined;
-    else preview = newBodyPreview(notification.targetPost);  
+    else notification.preview =cloneInto(newBodyPreview(notification.targetPost), notification);  
 
-    notification.lineOfAction = cloneInto([notifier, interaction, preview], notification);
+    notification.lineOfAction = cloneInto([notifier, interaction], notification);
 
     const date = notification.createdAt.split('T')[0];
     if (!(date in sortedNotifications)) sortedNotifications[date] = [];
@@ -105,6 +106,9 @@ const pathMap = {
   }
 };
 const interactionMap = notification => {
+  let reshare = false;
+  if (notification.targetPost && (notification.targetPost.postingProject.projectId !== activeProject)) reshare = true;
+
   switch (notification.type) {
     case 'like':
     case 'groupedLike':
@@ -114,11 +118,11 @@ const interactionMap = notification => {
           children: [' liked ']
         },
         {
-          href: notification.sharePost ? notification.sharePost.singlePostPageUrl : notification.targetPost.singlePostPageUrl,
+          href: notification.targetPost.singlePostPageUrl,
           className: 'font-bold hover:underline',
-          children: [notification.sharePost ? 'a share' : 'your post']
+          children: [reshare ? 'a share' : 'your post']
         },
-        notification.sharePost ? ' of your post' : ''
+        reshare ? ' of your post' : ''
       ];
     case 'share':
       return [
@@ -139,11 +143,11 @@ const interactionMap = notification => {
           children: [' shared ']
         },
         {
-          href: notification.sharePost ? notification.sharePost.singlePostPageUrl : notification.targetPost.singlePostPageUrl,
+          href: notification.targetPost.singlePostPageUrl,
           className: 'font-bold hover:underline',
-          children: [notification.sharePost ? 'a share' : 'your post']
+          children: [reshare ? 'a share' : 'your post']
         },
-        notification.sharePost ? ' of your post' : ''
+        reshare ? ' of your post' : ''
       ];
     case 'groupedFollow':
       return {
@@ -163,7 +167,7 @@ const interactionMap = notification => {
           className: 'font-bold hover:underline',
           children: ['a comment']
         },
-        notification.sharePost ? ' on a share of your post' : ' on your post'
+        reshare ? ' on a share of your post' : ' on your post'
       ];
     case 'reply':
       return [
@@ -216,16 +220,20 @@ const newBodyPreview = (post, comment = null, reply = null) => {
 const newNotification = notification => {
   return [
   {
-    className: 'flex w-full flex-row flex-nowrap align-start items-center gap-3',
+    className: 'flex w-full flex-row flex-nowrap align-center items-center gap-3',
     children: [
       newIcon(notification.type),
       notification.grouped ? '' : newAvatar(notification.notifyingProject),
       {
-        className: 'flex w-full flex-1 max-19 flex-row flex-wrap overflow-auto gap-space',
-        children: notification.lineOfAction
+        className: 'flex w-full max-19 flex-col',
+        children: [{
+          className: 'flex w-full flex-1 flex-row flex-wrap overflow-auto gap-space',
+          children: notification.lineOfAction
+        }]
       }
     ]
   },
+  notification.preview,
   notification.grouped ? {
     className: 'flex flex-col gap-4',
     children: [{
@@ -240,7 +248,9 @@ const newNotification = notification => {
     innerHTML: parseMd(notification.sharePost ? notification.sharePost.plainTextBody : notification.comment.body)
   } : ''
 ]};
-const newNotificationCard = notification => {return {
+const newNotificationCard = notification => {
+  console.log(notification);
+  return {
   className: 'co-notification-card flex flex-col p-3 last:rounded-b-lg',
   children: [newNotification(notification)] // this can conditionally return an array, however noact will automatically flatten the array to a single level to prevent issues
 }};
