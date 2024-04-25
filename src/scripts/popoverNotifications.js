@@ -225,7 +225,7 @@ const newNotification = notification => {
       newIcon(notification.type),
       notification.grouped ? '' : newAvatar(notification.notifyingProject),
       {
-        className: 'flex w-full max-19 flex-col',
+        className: 'flex w-full max-23 flex-col',
         children: [{
           className: 'flex w-full flex-1 flex-row flex-wrap overflow-auto gap-space',
           children: notification.lineOfAction
@@ -244,7 +244,7 @@ const newNotification = notification => {
       }]
     }]
   } : notification.hasBody ? {
-    className: 'co-block-quote ml-20 break-words border-l-2 pl-2 italic',
+    className: 'co-block-quote block-children ml-20 break-words border-l-2 pl-2 italic',
     innerHTML: parseMd(notification.sharePost ? notification.sharePost.plainTextBody : notification.comment.body)
   } : ''
 ]};

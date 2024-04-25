@@ -4,7 +4,7 @@
 .ch-utils-popover {
   position: fixed;
   z-index: 100;
-  width: 24rem;
+  width: 28rem;
   border-radius: .5rem;
   overflow: hidden;
   color: rgb(var(--color-notBlack));
@@ -53,8 +53,8 @@
   top: 0;
   z-index: 101;
 }
-.max-19 { max-width: 19rem; }
-.flex-0 + .max-19 { max-width: 16.5rem; }
+.max-23 { max-width: 23rem; }
+.flex-0 + .max-23 { max-width: 20.5rem; }
 .gap-space { gap: 0 .3em; }
 .inline-children {
   * {
@@ -64,11 +64,12 @@
     padding: 0 !important;
     margin: 0 !important;
     font-size: inherit !important;
-    &:is(h1,h2,h3,h4,h5,h6) { font-weight: bold; }
-    &:is(ul) { display: none !important; }
-    &:is(img,video) { max-height: 20px !important; }
   }
+  h1, h2, h3, h4, h5, h6 { font-weight: bold; }
+  ul { display: none !important; }
+  img, video { max-height: 20px !important; }
 }
+.block-children { img, video { max-width: 100% !important; }; }
 
 .loader { /*adapted from https://cssloaders.github.io/*/
   width: 6px;
