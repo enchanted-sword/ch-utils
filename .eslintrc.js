@@ -31,6 +31,7 @@ module.exports = {
   },
   "rules": {
     "no-case-declarations": "off",
-    "no-unused-vars": "off"
+    "no-unused-vars": "off",
+    "no-useless-escape": "off"
   }
 }
