@@ -1,6 +1,6 @@
 # chutils - utilities for cohost!
 
-### **IMPORTANT NOTICE**: This extension is currently being developed exclusively for Firefox and its development builds
+### **IMPORTANT NOTICE**: This extension is currently being developed exclusively for Firefox (>= v109) and its development builds
 chutils is a web extension for cohost that adds custom informative, cosmetic, and quality-of-life features to improve the site's default layout and user experience.
 
 # Features
@@ -28,3 +28,13 @@ Hovering over a handle or display name will display a popup showing that page's 
 
 ### Scrolling avatars
 Makes the floating avatars scroll alongside the posts they're attached to
+
+# Building the extension locally
+- Download and install [Node.js and npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
+- Install the project dependancies using ```npm install```
+
+The extension can then be built with ```npm run build``` and installed using the "install add-on from file" option on the [about:addons](about:addons) page. 
+
+Currently, as the extension is yet to be signed, this is only possible on the Nightly and Development builds of Firefox with `xpinstall.signatures.required` set to `false` in Firefox's [about:config](about:config) page. Only do this if you are familliar with what you are doing.
+
+
