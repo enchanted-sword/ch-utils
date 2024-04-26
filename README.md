@@ -33,8 +33,6 @@ Makes the floating avatars scroll alongside the posts they're attached to
 - Download and install [Node.js and npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
 - Install the project dependancies using ```npm install```
 
-The extension can then be built with ```npm run build``` and installed using the "install add-on from file" option on the [about:addons](about:addons) page. 
-
-Currently, as the extension is yet to be signed, this is only possible on the Nightly and Development builds of Firefox with `xpinstall.signatures.required` set to `false` in Firefox's [about:config](about:config) page. Only do this if you are familliar with what you are doing.
+The extension can then be built with ```npm run build``` and installed using the "install add-on from file" option on the [about:addons](about:addons) page.
 
 
