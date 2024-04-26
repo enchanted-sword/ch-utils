@@ -29,7 +29,8 @@
         "control/content-script.js",
         "lib/jquery.min.js",
         "lib/marked.min.js",
-        "lib/purify.min.js"
+        "lib/purify.min.js",
+        "lib/luxon.min.js"
       ]
     }
   ],

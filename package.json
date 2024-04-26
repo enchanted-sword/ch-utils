@@ -15,7 +15,6 @@
     "web-ext": "^7.11.0"
   },
   "dependencies": {
-    "coloris": "^0.1.0",
     "dompurify": "^3.0.9",
     "jquery": "^3.7.1",
     "luxon": "^3.4.4",

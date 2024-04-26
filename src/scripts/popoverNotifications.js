@@ -1,9 +1,9 @@
 import { noact } from './utils/noact.js';
 import { apiFetch, postBoxTheme, activeProjectId } from './utils/apiFetch.js';
-import { DateTime } from '../lib/luxon.min.js';
 import { getOptions } from './utils/jsTools.js';
 import { parseMd } from './utils/markdown.js';
 
+const { DateTime } = luxon;
 let numFetch;
 const buttonSelector = '[href="https://cohost.org/rc/project/notifications"]';
 const customClass = 'ch-utils-popover-notifications';

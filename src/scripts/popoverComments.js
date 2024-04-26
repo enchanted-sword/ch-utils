@@ -2,9 +2,9 @@ import { postFunction } from './utils/mutation.js';
 import { getViewModel } from './utils/react.js';
 import { singlePost } from './utils/apiFetch.js';
 import { noact } from './utils/noact.js';
-import { DateTime } from '../lib/luxon.min.js';
 import { parseMd } from './utils/markdown.js';
 
+const { DateTime } = luxon;
 const wrapperSelector = '.co-thread-footer .flex-none';
 const linkSelector = '.co-thread-footer a';
 

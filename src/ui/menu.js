@@ -233,36 +233,6 @@
                   browser.storage.local.set({ preferences });
                 });
                 break;
-              } case 'colors': {
-                const colorsInputWrapper = $(`<div class="ui-extendedSelectWrapper "><h3>${option.name}</h3></div>`);
-                optionsWrapper.append(colorsInputWrapper);
-
-                Object.keys(option.options).forEach(subKey => {
-                  const subOption = option.options[subKey];
-                  const colorWrapper = $(`<div class="ui-multiSelectWrapper ui-extendedSelect"><h2>${subOption.name}</h2></div>`);
-                  const colorInputWrapper = $(`<div>`, { style: 'position: relative;' });
-                  const input = $('<input>', {
-                    class: 'ui-colors',
-                    type: 'text',
-                    id: `ui-feature-${name}-${key}-${subKey}`,
-                    name: `${name}-${key}-${subKey}`,
-                    'data-coloris': '',
-                    value: preference.options[key][subKey]
-                  });
-                  const label = $('<label>', { style: `background: ${preference.preferences[key][subKey]};` });
-        
-                  colorInputWrapper.append(input);
-                  colorInputWrapper.append(label);
-                  colorWrapper.append(colorInputWrapper);
-                  colorsInputWrapper.append(colorWrapper);
-
-                  /* input.on('change', async function () {
-                    let { preferences } = await browser.storage.local.get('preferences');
-                    preferences[name].preferences[key][subKey] = this.value;
-                    browser.storage.local.set({ preferences });
-                  }); */ //should be superceded by onColorChange
-                });
-                break;
               } case 'listSelect': {
                 const listSelectInputWrapper = $(`<div class="ui-extendedSelectWrapper"><h3>${option.name}</h3></div>`);
                 const listSelectWrapper = $(`<div class="ui-listSelectWrapper"></div>`);
@@ -327,12 +297,6 @@
       }
       else document.getElementById('ui-searchFilter').innerText = '';
     };
-
-    const hexToRgbString = hex =>
-      hex.replace(/^#?([a-f\d])([a-f\d])([a-f\d])$/i, (m, r, g, b) => '#' + r + r + g + g + b + b)
-        .substring(1).match(/.{2}/g)
-        .map(x => parseInt(x, 16))
-        .join(',');
 
     const init = async () => {
       const features = await importFeatures(); // "await has no effect on this type of expression"- it does, actually!
@@ -406,14 +370,6 @@
       preferences[name].preferences[key][optionsKey] = color;
       browser.storage.local.set({ preferences });
     };
-
-    Coloris({
-      themeMode: 'auto',
-      alpha: false,
-      theme: 'polaroid',
-      el: '.ui-colors',
-      onChange: debounce(onColorChange)
-    });
     
     init();
   }()
