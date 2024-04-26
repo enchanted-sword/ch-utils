@@ -248,9 +248,7 @@ const newNotification = notification => {
     innerHTML: parseMd(notification.sharePost ? notification.sharePost.plainTextBody : notification.comment.body)
   } : ''
 ]};
-const newNotificationCard = notification => {
-  console.log(notification);
-  return {
+const newNotificationCard = notification => {return {
   className: 'co-notification-card flex flex-col p-3 last:rounded-b-lg',
   children: [newNotification(notification)] // this can conditionally return an array, however noact will automatically flatten the array to a single level to prevent issues
 }};
