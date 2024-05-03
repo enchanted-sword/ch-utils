@@ -69,8 +69,8 @@ const projectMap = new Map();
 
 /**
  * fetches info for a project
- * @param {*} handle 
- * @returns 
+ * @param {string} handle 
+ * @returns {Promise <object>} project info for the given handle 
  */
 export const getProject = async handle => {
   if (!projectMap.has(handle)) {
