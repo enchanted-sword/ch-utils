@@ -1,3 +1,5 @@
+import { getProjectSlow } from './darkWorld.js';
+
 const stringifyParams = obj => {
   if (typeof obj === 'undefined') return '';
   let string = [];
@@ -39,11 +41,11 @@ export const batchTrpc = async (routes, input = {}) => await apiFetch(`/v1/trpc/
 
 /**
  * follow relationship between the user and a given project
- * @param {string} projectHandle - handle of project
+ * @param {string} handle - handle of project
  * @returns {Promise <Number>} relationship state: either 0 (not following), 1 (request sent), or 2 (following)
  */
-export const followState = async projectHandle => {
-  const { readerToProject } = await apiFetch('/v1/trpc/projects.followingState', { method: 'GET', queryParams: { input: { projectHandle } } });
+export const followState = async handle => {
+  const { readerToProject } = await apiFetch(`/v1/project/${handle}/following`);
   return readerToProject;
 };
 
@@ -62,6 +64,27 @@ export const activeProjectId = async () => {
  * @returns {Promise <object>} post data
  */
 export const singlePost = async (handle, postId) => await apiFetch('/v1/trpc/posts.singlePost', { method: 'GET', queryParams: { input: { handle, postId } } });
+
+const projectMap = new Map();
+
+/**
+ * fetches info for a project
+ * @param {*} handle 
+ * @returns 
+ */
+export const getProject = async handle => {
+  if (!projectMap.has(handle)) {
+    try {
+      const [{ projects }] = await batchTrpc(['projects.searchByHandle'], { 0: { query: handle, skipMinimum: false } }); // the search function is currently the fastest way to get info from a handle. it's stupid, i know
+      projectMap.set(handle, projects[0]);
+    } catch (e) {
+      console.warn('search method failed, attempting slow method', e);
+      projects.set(handle, await getProjectSlow(handle));
+    }
+  }
+
+  return projectMap.get(handle);
+}
 
 /**
  * @returns {Promise <object>} user display preferences

@@ -20,9 +20,9 @@ export const darkWorld = async project => {
   return worlds.get(project);
 };
 
-export const getProject = async project => {
-  const doc = await darkWorld(project);
-  const ppv = JSON.parse(doc.getElementById('__COHOST_LOADER_STATE__').innerText)['project-page-view'];
+export const getProjectSlow = async handle => {
+  const doc = await darkWorld(handle);
+  const { project } = JSON.parse(doc.getElementById('__COHOST_LOADER_STATE__').innerText)['project-page-view'];
 
-  return ppv || undefined;
+  return project || undefined;
 };
