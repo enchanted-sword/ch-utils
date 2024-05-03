@@ -79,7 +79,7 @@ export const getProject = async handle => {
       projectMap.set(handle, projects[0]);
     } catch (e) {
       console.warn('search method failed, attempting slow method', e);
-      projects.set(handle, await getProjectSlow(handle));
+      projectMap.set(handle, await getProjectSlow(handle));
     }
   }
 
