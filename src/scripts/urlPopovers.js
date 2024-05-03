@@ -1,12 +1,11 @@
-import { activeProjectId, apiFetch, followState } from './utils/apiFetch.js';
-import { postFunction } from './utils/mutation.js';
+import { activeProjectId, apiFetch, followState, getProject } from './utils/apiFetch.js';
+import { mutationManager, postFunction } from './utils/mutation.js';
 import { getViewModel } from './utils/react.js';
 import { noact } from './utils/noact.js';
-import { getProject } from './utils/darkWorld.js';
 
-const anchorSelector = 'a[href^="https://cohost.org/"]:not([href="https://cohost.org/"],[href^="https://cohost.org/rc"],[href*="/post/"],[data-url-popovers])';
 const customClass = 'ch-utils-urlPopovers';
 const customAttribute = 'data-url-popovers';
+const anchorSelector = `a[href^="https://cohost.org/"]:not([href="https://cohost.org/"],[href^="https://cohost.org/rc"],[href*="/post/"],[href$="/ask"],[href*="/tagged/"],[${customAttribute}])`;
 
 const activeProject = await activeProjectId();
 const addPopoverDelay = 100;
@@ -152,7 +151,7 @@ const urlPopover = async (project, xPos, yPos, targetLink) => {
 
 const attachPopover = (anchor, project) => {
   anchor.project = project;
-  anchor.dataset.urlPopovers = '';
+  anchor.setAttribute(customAttribute, '');
 
   anchor.addEventListener('mouseenter', displayPopover);
   anchor.addEventListener('mouseleave', removePopover);
@@ -171,23 +170,24 @@ const addPopoversInPosts = async posts => {
     });
   }
 };
-
-export const main = async () => {
-  postFunction.start(addPopoversInPosts);
-
-  const anchors = document.querySelectorAll(anchorSelector);
-
+const addPopovers = async anchors => {
   for (const anchor of anchors) {
     const handle = anchor.href.split('https://cohost.org/')[1];
-    if (!handle) continue;
+    if (anchor.matches(`[${customAttribute}]`) || !handle) continue;
     
-    const { project } = await getProject(handle);
+    const project = await getProject(handle);
     attachPopover(anchor, project);
   }
 };
 
+export const main = async () => {
+  postFunction.start(addPopoversInPosts);
+  mutationManager.start(anchorSelector, addPopovers);
+};
+
 export const clean = async () => {
   postFunction.stop(addPopoversInPosts);
+  mutationManager.stop(addPopovers);
 
   $(`.${customClass}`).remove();
   $(`[${customAttribute}]`).removeAttr(customAttribute);
