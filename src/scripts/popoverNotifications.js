@@ -3,6 +3,7 @@ import { apiFetch, postBoxTheme, activeProjectId } from './utils/apiFetch.js';
 import { getOptions } from './utils/jsTools.js';
 import { parseMd } from './utils/markdown.js';
 
+// eslint-disable-next-line no-undef
 const { DateTime } = luxon;
 let numFetch;
 const buttonSelector = '[href="https://cohost.org/rc/project/notifications"]';
