@@ -8,6 +8,7 @@ let numFetch;
 const buttonSelector = '[href="https://cohost.org/rc/project/notifications"]';
 const customClass = 'ch-utils-popover-notifications';
 const activeProject = await activeProjectId();
+const app = document.getElementById('app');
 
 const dateFormat = { weekday: 'long', month: 'long', day: 'numeric' };
 
@@ -161,13 +162,11 @@ const interactionMap = notification => {
           children: [' left ']
         },
         {
-          href: notification.sharePost
-            ? `${notification.sharePost.singlePostPageUrl}#comment-${notification.comment.commentId}`
-            : `${notification.targetPost.singlePostPageUrl}#comment-${notification.comment.commentId}`,
+          href: `${notification.targetPost.singlePostPageUrl}#comment-${notification.comment.commentId}`,
           className: 'font-bold hover:underline',
           children: ['a comment']
         },
-        reshare ? ' on a share of your post' : ' on your post'
+        ' on your post'
       ];
     case 'reply':
       return [
@@ -312,7 +311,7 @@ const onNotificationButtonClick = async event => {
     window.setTimeout(() => document.addEventListener('click', closePopover), 200);
 
     const popover = newNotificationPopover(clientX, clientY, postBoxTheme);
-    document.body.append(popover)
+    app.append(popover)
 
     const notifications = await getTransformedNotifications();
     popover.querySelector('.loader').replaceWith(noact({
