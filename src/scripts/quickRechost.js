@@ -234,7 +234,7 @@ const addStatusMessage = (success, handle) => {
       {
         role: 'status',
         'aria-live': 'polite',
-        children: [success ? `posted to ${handle}!` : 'An error occurred while processing the post']
+        children: [success ? `posted to ${handle}!` : 'an error occurred while processing the post']
       }
     ]
   });
