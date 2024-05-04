@@ -19,15 +19,19 @@ const removeParams = obj => {
  * @returns {Promise <object>} the destructured result if successful
  */
 export const apiFetch = async (path, body = {}) => fetch(`https://cohost.org/api${path}${stringifyParams(body?.queryParams)}`, removeParams(body))
-  .then(response => response.json().then(response => {
-    if (response.constructor.name === 'Array') return response.map(({ result, error }) => {
-      if (result && result.data) return result.data;
-      else if (error) throw error;
-    });
-    else if ('result' in response) return response.result.data;
-    else if ('error' in response) throw response.error;
-    else return response;
-  })).catch(e => {
+  .then(response => {
+    if (response.headers.get('content-type')) {
+      return response.json().then(response => {
+        if (response.constructor.name === 'Array') return response.map(({ result, error }) => {
+          if (result && result.data) return result.data;
+          else if (error) throw error;
+        });
+        else if ('result' in response) return response.result.data;
+        else if ('error' in response) throw response.error;
+        else return response;
+      });
+    } else return;
+  }).catch(e => {
     console.error(`apiFetch error: failed to fetch resource at url https://cohost.org/api${path}${stringifyParams(body?.queryParams)}`, e);
     return Promise.reject();
   });

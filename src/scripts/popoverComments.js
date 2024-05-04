@@ -1,15 +1,22 @@
 import { postFunction } from './utils/mutation.js';
 import { getViewModel } from './utils/react.js';
-import { singlePost } from './utils/apiFetch.js';
+import { apiFetch, singlePost } from './utils/apiFetch.js';
 import { noact } from './utils/noact.js';
 import { parseMd } from './utils/markdown.js';
 
+// eslint-disable-next-line no-undef
 const { DateTime } = luxon;
 const wrapperSelector = '.co-thread-footer .flex-none';
 const linkSelector = '.co-thread-footer a';
 
 const customClass = 'ch-utils-popoverComments';
 const customAttribute = 'data-popover-comments';
+
+const submitComment = obj => apiFetch('/v1/comments', {
+  method: 'POST',
+  headers: { 'content-type': 'application/json' },
+  body: JSON.stringify(obj)
+});
 
 const newCommentButton = (postId, link) => noact({
   id: `headlessui-comments-button-:${postId}:`,
@@ -36,20 +43,27 @@ const newCommentButton = (postId, link) => noact({
     }
   ]
 });
-const newCommentWrapper = (irt, shareId) => noact({
-  className: `${customClass} mt-3 flex min-w-0 flex-col gap-2`,
-  children: [{
-    tag: 'h4',
-    className: 'px-3 text-bgText lg:px-0',
-    children: [
-      'in reply to ',
-      {
-        href: `#post-${shareId}`,
-        className: 'font-bold text-secondary hover:underline',
-        children: [`@${irt}'s post`]
-      }
-    ] 
-  }]
+const newCommentWrapper = (irt, shareId, i) => noact({
+  className: `${customClass} my-3 flex min-w-0 flex-col gap-2`,
+  dataset: { shareId },
+  children: [
+    i === 0 ? {
+      className: 'co-themed-box co-comment-box cohost-shadow-light dark:cohost-shadow-dark flex w-full min-w-0 max-w-full flex-col gap-4 rounded-lg p-3 lg:max-w-prose',
+      children: [newReplyBox(shareId)]
+    } : '',
+    {
+      tag: 'h4',
+      className: 'px-3 text-bgText lg:px-0',
+      children: [
+        'in reply to ',
+        {
+          href: `#post-${shareId}`,
+          className: 'font-bold text-secondary hover:underline',
+          children: [`@${irt}'s post`]
+        }
+      ] 
+    }
+  ]
 });
 const newCommentBox = (comment, poster, extLink) => noact({
   className: 'co-themed-box co-comment-box cohost-shadow-light dark:cohost-shadow-dark flex w-full min-w-0 max-w-full flex-col gap-4 rounded-lg p-3 lg:max-w-prose',
@@ -98,9 +112,6 @@ const newComment = (comment, poster, extLink) => { return {
       children: [
         {
           id: `comment-${comment.commentId}`,
-          className: 'absolute -top-16'
-        },
-        {
           className: 'flex min-w-0 flex-1 flex-col',
           children: [
             comment.hidden ? hiddenButton() : '',
@@ -157,7 +168,18 @@ const newComment = (comment, poster, extLink) => { return {
                       className: 'flex flex-row items-center gap-2',
                       children: [{
                         className: 'co-link-button flex cursor-pointer flex-row items-center gap-1 text-sm font-bold hover:underline',
-                        href: `${extLink}#comment-${comment.commentId}`,
+                        dataset: { replyBox: false },
+                        onclick: function () {
+                          const { shareId } = this.closest('[data-share-id]').dataset;
+                          if (this.dataset.replyBox === 'true') {
+                            $(`#ch-utils-replyBox-${shareId}${comment.commentId ? `-${comment.commentId}` : ''}`).remove();
+                            this.dataset.replyBox = false;
+                          }
+                          else {
+                            this.closest('.justify-start').append(noact(newReplyBox(shareId, comment.commentId)));
+                            this.dataset.replyBox = true;
+                          }
+                        },
                         children: [
                           {
                             viewBox: '0 0 24 24',
@@ -188,6 +210,102 @@ const newComment = (comment, poster, extLink) => { return {
     }})
   ]
 }};
+
+const newReplyBox = (id, inReplyToCommentId = false) => { 
+  const postId = Number(id);
+
+  return {
+    id: `ch-utils-replyBox-${postId}${inReplyToCommentId ? `-${inReplyToCommentId}` : ''}`,
+    className: 'flex flex-col gap-4',
+    children: [
+      {
+        className: 'ch-utils-replyBox relative grid w-full overflow-auto',
+        children: [
+          {
+            tag: 'textarea',
+            name: 'body',
+            id: `ch-utils-commentArea-${postId}${inReplyToCommentId ? `-${inReplyToCommentId}` : ''}`,
+            rows: 1,
+            placeholder: 'leave a comment...',
+            oninput: function () {
+              this.style.height = "";
+              this.style.height = `${Math.min(this.scrollHeight, 320)}px`;
+              if (this.value) $(`#ch-utils-replyBox-${postId}${inReplyToCommentId ? `-${inReplyToCommentId}` : ''} button`).removeAttr('disabled');
+              else $(`#ch-utils-replyBox-${postId}${inReplyToCommentId ? `-${inReplyToCommentId}` : ''} button`).attr('disabled', '');
+            },
+            className: 'co-composer-text-box w-full row-start-1 row-end-2 col-start-1 col-end-2 min-h-0',
+            style: 'resize: none; overflow: hidden;'
+          }
+        ]
+      },
+      {
+        className: 'flex flex-row items-center justify-end gap-4',
+        children: [
+          {
+            className: 'co-outline-button flex items-center justify-center rounded-lg border-2 px-[14px] py-[6px] text-sm font-bold',
+            onclick: () => {
+              $(`#ch-utils-commentArea-${postId}${inReplyToCommentId ? `-${inReplyToCommentId}` : ''}`).val('');
+              $(`#ch-utils-replyBox-${postId}${inReplyToCommentId ? `-${inReplyToCommentId}` : ''} button`).attr('disabled', '');
+            },
+            disabled: true,
+            children: ['discard']
+          },
+          {
+            className: 'co-filled-button flex items-center justify-center rounded-lg px-4 py-2 text-sm font-bold',
+            onclick: async () => {
+              const textarea = $(`#ch-utils-commentArea-${postId}${inReplyToCommentId ? `-${inReplyToCommentId}` : ''}`);
+              const value = textarea.val();
+              if (!value.length) return;
+
+              const body = DOMPurify.sanitize(value);
+              const commentObj = { body, postId };
+              if (inReplyToCommentId) commentObj.inReplyToCommentId = inReplyToCommentId;
+
+              submitComment(commentObj)
+                .then(() => {
+                  addStatusMessage(true);
+                  $(`#ch-utils-commentArea-${postId}${inReplyToCommentId ? `-${inReplyToCommentId}` : ''}`).val('');
+                  $(`#ch-utils-replyBox-${postId}${inReplyToCommentId ? `-${inReplyToCommentId}` : ''} button`).attr('disabled', '');
+                })
+                .catch(e => addStatusMessage(false))
+            },
+            disabled: true,
+            children: ['submit']
+          },
+        ]
+      }
+    ]
+  }
+};
+const addStatusMessage = success => {
+  const message = noact({
+    className: `ch-utils-popoverComments-status flex justify-between gap-3 !bg-${success ? 'green' : 'red'}-200 !text-${success ? 'green' : 'red'}-800 cohost-shadow-light dark:cohost-shadow-dark rounded-lg px-3 py-2 font-bold`,
+    style: `left: calc(50% - ${success ? 130 : 194.8335 }px);`,
+    children: [
+      {
+        className: `h-6 flex-none text-${success ? 'green' : 'red'}-800`,
+        viewBox: '0 0 24 24',
+        fill: 'none',
+        'stroke-width': 1.5,
+        stroke: 'currentColor',
+        'aria-hidden': true,
+        children: [{
+          'stroke-linecap': 'round',
+          'stroke-linejoin': 'round',
+          d: 'M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
+        }]
+      },
+      {
+        role: 'status',
+        'aria-live': 'polite',
+        children: [success ? `comment submitted` : 'an error occurred while submitting the comment']
+      }
+    ]
+  });
+
+  document.body.append(message);
+  window.setTimeout(() => message.remove(), 5000);
+};
 
 const removeEmptyArrays = obj => {
   const returnObj = {};
@@ -242,10 +360,10 @@ const addPopovers = async posts => {
 
       footerStartWrapper.append(commentButton);
 
-      Object.keys(postComments).forEach(shareId => {
+      Object.keys(postComments).forEach((shareId, i) => {
         const commentCollection = postComments[shareId];
         const irt = String(postId) === shareId ? handle : handleMap[shareId];
-        const commentWrapper = newCommentWrapper(irt, shareId);
+        const commentWrapper = newCommentWrapper(irt, shareId, i);
   
         footer.append(commentWrapper);
         commentCollection.forEach(({ comment, poster } )=> {

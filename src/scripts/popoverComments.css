@@ -16,3 +16,24 @@ button.ch-utils-popoverComments {
 footer:has(.w-max > button.ch-utils-popoverComments[data-headlessui-state=""]) > .ch-utils-popoverComments { display: none; }
 
 [data-popover-comments-hidden="true"] { display: none; }
+
+.ch-utils-popoverComments-status {
+  pointer-events: none;
+  position: fixed;
+  bottom: -4rem;
+  opacity: 0;
+  left: calc(50% - 8rem);
+  width: fit-content;
+  animation: .5s ease-in-out 1 normal forwards slidein, .5s ease-in-out 3s 1 reverse forwards slidein;
+}
+
+@keyframes slidein {
+  from {
+    opacity: 0;
+    bottom: -4rem;
+  }
+  to {
+    opacity: 1;
+    bottom: 4rem;
+  }
+}
