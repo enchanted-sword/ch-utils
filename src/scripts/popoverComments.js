@@ -43,14 +43,10 @@ const newCommentButton = (postId, link) => noact({
     }
   ]
 });
-const newCommentWrapper = (irt, shareId, i) => noact({
+const newCommentWrapper = (irt, shareId) => noact({
   className: `${customClass} my-3 flex min-w-0 flex-col gap-2`,
   dataset: { shareId },
   children: [
-    i === 0 ? {
-      className: 'co-themed-box co-comment-box cohost-shadow-light dark:cohost-shadow-dark flex w-full min-w-0 max-w-full flex-col gap-4 rounded-lg p-3 lg:max-w-prose',
-      children: [newReplyBox(shareId)]
-    } : '',
     {
       tag: 'h4',
       className: 'px-3 text-bgText lg:px-0',
@@ -353,23 +349,34 @@ const addPopovers = async posts => {
     shareTree.map(treeItem => handleMap[treeItem.postId] = treeItem.postingProject.handle);
     const postComments = await getComments(handle, postId);
 
-    if (postComments !== null && post.querySelector(linkSelector)) {
+    if (post.querySelector(linkSelector)) {
       const commentButton = newCommentButton(postId, post.querySelector(linkSelector));
       const footer = post.querySelector('.co-thread-footer');
       const footerStartWrapper = post.querySelector(wrapperSelector);
+      const defaultReply = noact({
+        className: `${customClass} my-3 flex min-w-0 flex-col gap-2`,
+        dataset: { postId },
+        children: [{
+          className: 'co-themed-box co-comment-box cohost-shadow-light dark:cohost-shadow-dark flex w-full min-w-0 max-w-full flex-col gap-4 rounded-lg p-3 lg:max-w-prose',
+          children: [newReplyBox(postId)]
+        }]
+      });
 
       footerStartWrapper.append(commentButton);
+      footer.append(defaultReply);
 
-      Object.keys(postComments).forEach((shareId, i) => {
-        const commentCollection = postComments[shareId];
-        const irt = String(postId) === shareId ? handle : handleMap[shareId];
-        const commentWrapper = newCommentWrapper(irt, shareId, i);
-  
-        footer.append(commentWrapper);
-        commentCollection.forEach(({ comment, poster } )=> {
-          commentWrapper.append(newCommentBox(comment, poster, singlePostPageUrl));
+      if (postComments !== null) {
+        Object.keys(postComments).forEach(shareId => {
+          const commentCollection = postComments[shareId];
+          const irt = String(postId) === shareId ? handle : handleMap[shareId];
+          const commentWrapper = newCommentWrapper(irt, shareId);
+    
+          footer.append(commentWrapper);
+          commentCollection.forEach(({ comment, poster } )=> {
+            commentWrapper.append(newCommentBox(comment, poster, singlePostPageUrl));
+          });
         });
-      });
+      }
     }
   }
 };
