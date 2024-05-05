@@ -61,9 +61,9 @@ const newCommentWrapper = (irt, shareId) => noact({
     }
   ]
 });
-const newCommentBox = (comment, poster, extLink) => noact({
+const newCommentBox = (comment, poster, canInteract, extLink) => noact({
   className: 'co-themed-box co-comment-box cohost-shadow-light dark:cohost-shadow-dark flex w-full min-w-0 max-w-full flex-col gap-4 rounded-lg p-3 lg:max-w-prose',
-  children: [newComment(comment, poster, extLink)]
+  children: [newComment(comment, poster, canInteract, extLink)]
 });
 const hiddenButton = () => { return {
   className: 'co-info-box co-info text-sm mx-auto flex w-full flex-row gap-4 rounded-lg p-3 mb-4 max-w-full',
@@ -98,7 +98,7 @@ const hiddenButton = () => { return {
     }
   ]
 }};
-const newComment = (comment, poster, extLink) => { return {
+const newComment = (comment, poster, canInteract, extLink) => {return {
   className: 'flex flex-col gap-4',
   children: [
     {
@@ -162,7 +162,7 @@ const newComment = (comment, poster, extLink) => { return {
                     },
                     {
                       className: 'flex flex-row items-center gap-2',
-                      children: [{
+                      children: canInteract ? [{
                         className: 'co-link-button flex cursor-pointer flex-row items-center gap-1 text-sm font-bold hover:underline',
                         dataset: { replyBox: false },
                         onclick: function () {
@@ -190,7 +190,7 @@ const newComment = (comment, poster, extLink) => { return {
                           },
                           'reply'
                         ]
-                      }]
+                      }] : ''
                     }
                   ]
                 }
@@ -200,9 +200,9 @@ const newComment = (comment, poster, extLink) => { return {
         }
       ]
     },
-    ...comment.children.map(({ comment, poster }) => {return {
+    ...comment.children.map(({ comment, poster, canInteract }) => {return {
       className: 'co-hairline ml-0 flex flex-col gap-4 border-l pl-6 lg:ml-6 lg:pl-4',
-      children: [newComment(comment, poster, extLink)]
+      children: [newComment(comment, poster, canInteract, extLink)]
     }})
   ]
 }};
@@ -344,7 +344,7 @@ const addPopovers = async posts => {
     post.setAttribute(customAttribute, '')
 
     let handleMap = {};
-    const { postingProject, postId, shareTree, singlePostPageUrl } = await getViewModel(post);
+    const { postingProject, postId, shareTree, singlePostPageUrl, commentsLocked } = await getViewModel(post);
     const { handle } = postingProject;
     shareTree.map(treeItem => handleMap[treeItem.postId] = treeItem.postingProject.handle);
     const postComments = await getComments(handle, postId);
@@ -358,7 +358,31 @@ const addPopovers = async posts => {
         dataset: { postId },
         children: [{
           className: 'co-themed-box co-comment-box cohost-shadow-light dark:cohost-shadow-dark flex w-full min-w-0 max-w-full flex-col gap-4 rounded-lg p-3 lg:max-w-prose',
-          children: [newReplyBox(postId)]
+          children: [
+            commentsLocked ? {
+              className: 'co-info-box co-info text-sm mx-auto flex w-full flex-row gap-4 rounded-lg p-3',
+              children: [
+                {
+                  className: 'w-6 self-start',
+                  fill: 'none',
+                  viewBox: '0 0 24 24',
+                  'stroke-width': 1.5,
+                  stroke: 'currentColor',
+                  'aria-hidden': true,
+                  children: [{
+                    'stroke-linecap': 'round',
+                    'stroke-linejoin': 'round',
+                    d: 'M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z'
+                  }]
+                },
+                {
+                  tag: 'div',
+                  className: 'flex-1 self-center',
+                  children: ['Comments on this post are locked.']
+                }
+              ]
+            } : newReplyBox(postId)
+          ]
         }]
       });
 
@@ -372,8 +396,8 @@ const addPopovers = async posts => {
           const commentWrapper = newCommentWrapper(irt, shareId);
     
           footer.append(commentWrapper);
-          commentCollection.forEach(({ comment, poster } )=> {
-            commentWrapper.append(newCommentBox(comment, poster, singlePostPageUrl));
+          commentCollection.forEach(({ comment, poster, canInteract } )=> {
+            commentWrapper.append(newCommentBox(comment, poster, canInteract, singlePostPageUrl));
           });
         });
       }
