@@ -13,7 +13,7 @@ const descriptors = [
   { descriptor: 'rechost', weight: 7 },
   { descriptor: 'rebug', weight: 6.6 },
   { descriptor: 'reblog', weight: 4 },
-  { descriptor: 'rechlog', weight: 2 }, // shoutout to tooie dragongirlslime
+  { descriptor: 'rechlog', weight: 3.2 }, // shoutout to tooie dragongirlslime
   { descriptor: 'clone', weight: 1 },
   { descriptor: 'propagate', weight: .5 },
   { descriptor: 'assimilate', weight: .2 },
