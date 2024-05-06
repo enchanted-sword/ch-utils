@@ -263,6 +263,39 @@
                   });
                 });
                 break;
+              } case 'slider': {
+                const sliderInputWrapper = $('<div>', { class: 'ui-selectWrapper' });
+                const label = $(`<label for="ui-feature-${name}-${key}" name="${name}-${key}">${option.name}</label>`);
+                const sliderInput = $('<input>', {
+                  class: 'ui-slider',
+                  type: 'range',
+                  id: `ui-feature-${name}-${key}`,
+                  list: `ui-feature-${name}-${key}-list`,
+                  name: `${name}-${key}`,
+                  min: option.min,
+                  max: option.max,
+                  step: option.step,
+                  value: preference.options[key],
+                  default: option.default
+                });
+                const datalist = $('<datalist>', { id: `ui-feature-${name}-${key}-list` });
+                for (const listOption of option.datalist) {
+                  const option = $('<option>', { value: listOption.value, label: listOption.label });
+                  datalist.append(option);
+                }
+
+                sliderInputWrapper.append(label);
+                sliderInputWrapper.append(sliderInput);
+                sliderInputWrapper.append(datalist);
+                optionsWrapper.append(sliderInputWrapper);
+
+                sliderInput.on('change', async function (event) {
+                  const value = event.target.value;
+                  let { preferences } = await browser.storage.local.get('preferences');
+                  preferences[name].options[key] = value;
+                  browser.storage.local.set({ preferences });
+                });
+                break;
               }
             }
           });
