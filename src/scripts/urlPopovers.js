@@ -2,6 +2,10 @@ import { activeProjectId, apiFetch, followState, getProject } from './utils/apiF
 import { mutationManager, postFunction } from './utils/mutation.js';
 import { getViewModel } from './utils/react.js';
 import { noact } from './utils/noact.js';
+import { parseMd } from './utils/markdown.js';
+import { getOptions } from './utils/jsTools.js';
+
+let showDescriptions;
 
 const customClass = 'ch-utils-urlPopovers';
 const customAttribute = 'data-url-popovers';
@@ -140,7 +144,57 @@ const urlPopover = async (project, xPos, yPos, targetLink) => {
                 className: 'text-lg font-bold',
                 children: [project.displayName]
               } : null,
-              project.dek ? project.dek : null
+              project.pronouns || project.url ? {
+                tag: 'ul',
+                className: 'break-word mb-2 mt-2 flex min-w-0 flex-row flex-wrap justify-center gap-x-3 text-sm lg:flex-row',
+                children: [
+                  project.pronouns ? {
+                    tag: 'li',
+                    children: [
+                      {
+                        viewBox: '0 0 24 24',
+                        fill: 'currentColor',
+                        'aria-hidden': true,
+                        className: 'inline-block h-4 text-accent',
+                        children: [{
+                          'fill-rule': 'evenodd',
+                          'clip-rule': 'evenodd',
+                          d: 'M7.5 6a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM3.751 20.105a8.25 8.25 0 0116.498 0 .75.75 0 01-.437.695A18.683 18.683 0 0112 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 01-.437-.695z'
+                        }]
+                      },
+                      project.pronouns
+                    ]
+                  } : null,
+                  project.url ? {
+                    tag: 'li',
+                    children: [
+                      {
+                        viewBox: '0 0 24 24',
+                        fill: 'currentColor',
+                        'aria-hidden': true,
+                        className: 'inline-block h-4 text-accent',
+                        children: [{
+                          'fill-rule': 'evenodd',
+                          'clip-rule': 'evenodd',
+                          d: 'M7.5 6a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM3.751 20.105a8.25 8.25 0 0116.498 0 .75.75 0 01-.437.695A18.683 18.683 0 0112 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 01-.437-.695z'
+                        }]
+                      },
+                      {
+                        href: project.url,
+                        rel: 'me nofollower noopener',
+                        target: '_blank',
+                        className: 'break-all text-accent hover:underline',
+                        children: [project.url]
+                      }
+                    ]
+                  } : null
+                ]
+              } : null,
+              project.dek ? project.dek : null,
+              project.description && showDescriptions ? {
+                className: 'prose-invert prose-stone min-w-0 max-w-full overflow-hidden max-h-60 prose-a:text-accent lg:text-center',
+                innerHTML: parseMd(project.description)
+              } : null
             ]
           }
         ]
@@ -181,6 +235,7 @@ const addPopovers = async anchors => {
 };
 
 export const main = async () => {
+  ({ showDescriptions } = await getOptions('urlPopovers'));
   postFunction.start(addPopoversInPosts);
   mutationManager.start(anchorSelector, addPopovers);
 };

@@ -2,7 +2,17 @@
   "name": "urlPopovers",
   "title": "show page info on hover",
   "description": "adds tumblr-style popup info cards to header links in posts",
-  "preferences": { "enabled": false },
+  "preferences": {
+    "enabled": false,
+    "options": {
+      "showDescriptions": {
+        "value": false,
+        "type": "toggle",
+        "name": "show description",
+        "tooltip": "shows page descriptions on the info card if the given page has a description"
+      }
+    }
+  },
   "js": true,
   "css": true
 }
