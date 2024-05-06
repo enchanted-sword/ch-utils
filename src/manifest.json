@@ -1,7 +1,7 @@
 {
-  "manifest_version": 3,
+  "manifest_version": 2,
   "name": "CHUtils",
-  "version": "1.0.1",
+  "version": "1.1.0",
 
   "description": "Utilities for cohost",
   "icons": {
@@ -13,11 +13,10 @@
   "permissions": [
     "storage"
   ],
-  "host_permissions": ["*://*.cohost.org/*"],
-  "web_accessible_resources": [{
-    "resources": [ "*.js", "*.json", "*.css", "*.svg", ".png" ],
-    "matches": ["*://*.cohost.org/*"]
-  }],
+  "optional_permissions": [
+    "*://*.cohost.org/*"
+  ],
+  "web_accessible_resources": [ "*.js", "*.json", "*.css", "*.svg", ".png" ],
 
   "content_scripts": [
     {
@@ -40,7 +39,7 @@
     ]
   },
 
-  "action": {
+  "browser_action": {
     "default_icon" : {
       "48": "icons/icon.svg",
       "96": "icons/icon.svg"
