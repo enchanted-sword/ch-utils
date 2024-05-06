@@ -66,8 +66,7 @@
     font-size: inherit !important;
   }
   h1, h2, h3, h4, h5, h6 { font-weight: bold; }
-  ul { display: none !important; }
-  img, video { max-height: 20px !important; }
+  ul, img, audio, video { display: none !important; }
 }
 .block-children { img, video { max-width: 100% !important; }; }
 

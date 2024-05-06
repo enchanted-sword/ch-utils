@@ -54,7 +54,7 @@ const getTransformedNotifications = async () => {
     if (notification.type === 'comment') preview = newBodyPreview(notification.targetPost, notification.comment);
     else if (notification.type === 'reply') preview = newBodyPreview(notification.targetPost, notification.comment, notification.replyTo);
     else if (notification.type === 'groupedFollow') preview = undefined;
-    else notification.preview =cloneInto(newBodyPreview(notification.targetPost), notification);  
+    else notification.preview = cloneInto(newBodyPreview(notification.targetPost), notification);
 
     notification.lineOfAction = cloneInto([notifier, interaction], notification);
 
@@ -184,6 +184,8 @@ const interactionMap = notification => {
   }
 };
 
+const imageRegex = /<img\s[^>]+>/;
+
 const newIcon = type => {return {
   viewBox: '0 0 24 24',
   className: 'h-6 w-6 flex-none',
@@ -207,7 +209,30 @@ const newBodyPreview = (post, comment = null, reply = null) => {
   else body = post.headline ? post.headline : post.plainTextBody;
 
   if (!body) return;
-  else return {
+
+  let previewImage;
+
+  if (post.blocks.some(block => block?.attachment?.kind === 'image')) {
+    const { attachment } = post.blocks.find(block => block?.attachment?.kind === 'image');
+    previewImage = {
+      className: 'cohost-shadow-light aspect-square h-8 w-8 rounded-lg object-cover',
+      src: attachment.previewURL,
+      alt: attachment.altText
+    }
+  }
+  else if (post.plainTextBody) {
+    const extractedString = imageRegex.exec(parseMd(post.plainTextBody));
+    if (extractedString && extractedString.length) {
+      const extractedImage = $(extractedString[0])[0];
+      previewImage = {
+        className: 'cohost-shadow-light aspect-square h-8 w-8 rounded-lg object-cover',
+        src: extractedImage.src,
+        alt: extractedImage.alt
+      }
+    }
+  }
+
+  const previewLine = {
     tag: 'span',
     className: "co-inline-quote flex-1 truncate before:content-['“'] after:content-['”']",
     children: [{
@@ -216,6 +241,8 @@ const newBodyPreview = (post, comment = null, reply = null) => {
       innerHTML: parseMd(body)
     }]
   };
+
+  return { previewImage, previewLine };
 };
 const newNotification = notification => {
   return [
@@ -230,10 +257,11 @@ const newNotification = notification => {
           className: 'flex w-full flex-1 flex-row flex-wrap overflow-auto gap-space',
           children: notification.lineOfAction
         }]
-      }
+      },
+      notification.preview && notification.preview.previewImage ? notification.preview.previewImage : ''
     ]
   },
-  notification.preview,
+  notification.preview ? notification.preview.previewLine : '',
   notification.grouped ? {
     className: 'flex flex-col gap-4',
     children: [{
