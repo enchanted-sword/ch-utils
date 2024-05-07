@@ -309,6 +309,17 @@
       return featureItem;
     };
 
+    const transformPreferences = preferences => {
+      const returnObj = { enabled: preferences.enabled };
+      if ('options' in preferences) {
+        returnObj.options = {};
+        Object.keys(preferences.options).map(option => {
+          returnObj.options[option] = preferences.options[option].value;
+        });
+      }
+      return returnObj;
+    };
+
     const setupButtons = className => {
       document.querySelectorAll(`.${className}`).forEach(btn => btn.addEventListener('click', function () {
         [...this.closest(`#${className}s`).querySelectorAll(`:scope .${className}`)].filter(elem => elem.matches(`.${className}`)).forEach(btn => btn.setAttribute('active', 'false'));
@@ -332,11 +343,11 @@
     };
 
     const init = async () => {
-      const features = await importFeatures(); // "await has no effect on this type of expression"- it does, actually!
+      const installedFeatures = await importFeatures(); // "await has no effect on this type of expression"- it does, actually!
       const { preferences } = await browser.storage.local.get('preferences');
 
-      Object.keys(features).forEach(key => {
-        const feature = features[key];
+      Object.keys(installedFeatures).forEach(key => {
+        const feature = installedFeatures[key];
         const preference = preferences[key];
 
         if (feature && preference) {
@@ -393,7 +404,16 @@
         input.click();
         input.remove();
       });
+      document.getElementById('ui-reset').addEventListener('click', () => {
+        const preferences = {};
+        Object.keys(installedFeatures).map(feature => preferences[feature] = transformPreferences(installedFeatures[feature].preferences));
+
+        browser.storage.local.set({ preferences });
+      });
       document.getElementById('ui-featureSearch').addEventListener('input', debounce(onSearch));
+
+      const version = browser.runtime.getManifest().version;
+      document.getElementById('version').innerText = `version: v${version}`;
     };
 
     const onColorChange = async (color, input) => {

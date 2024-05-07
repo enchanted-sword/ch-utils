@@ -564,20 +564,29 @@ input.ui-numInput {
   }
 }
 
+#version {
+  font-weight: bold;
+  color: rgb(var(--cherry));
+  text-align: center;
+}
+
 .ui-preferenceIo {
   display: flex;
+  flex-flow: row wrap;
+  gap: 8px;
   justify-content: space-between;
 
   button {
+    width: 308px;
     font-size: 20px;
     text-align: center;
     border: 3px solid rgba(var(--cherry),.2);
     border-radius: 3px;
     text-decoration: none;
-    width: 150px;
     position: relative;
     background-color: rgb(var(--mango));
   
+    &:is(#ui-import, #ui-export) { width: 150px; }
     &:hover { background-color: color-mix(in srgb, rgb(var(--mango)), rgb(var(--cherry)) 10%); }
   }
 }
