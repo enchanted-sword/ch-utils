@@ -109,10 +109,24 @@
         let { preferences } = await browser.storage.local.get('preferences');
   
         if (typeof preferences !== 'undefined') {
-          await Promise.all(Object.keys(installedFeatures).map(async feature => {
+          Object.keys(installedFeatures).forEach(feature => { // push new features and options to existing preferences
             if (!preferences[feature]) preferences[feature] = installedFeatures[feature].preferences;
-          }));
-          Object.keys(preferences).forEach(key => { if (!(key in installedFeatures)) delete preferences[key]; });
+            if ('options' in installedFeatures[feature].preferences) {
+              Object.keys(installedFeatures[feature].preferences.options).forEach(option => {
+                if (!preferences[feature].options[option]) {
+                  preferences[feature].options[option] = installedFeatures[feature].preferences.options[option].value;
+                }
+              });
+            }
+          })
+          Object.keys(preferences).forEach(feature => { // delete removed features and options from existing preferences
+            if (!(feature in installedFeatures)) delete preferences[feature];
+            if ('options' in preferences[feature]) {
+              Object.keys(preferences[feature].options).forEach(option => {
+                if (!installedFeatures[feature].preferences.options[option]) delete preferences[feature].options[option];
+              });
+            }
+          });
         } else {
           preferences = {};
           Object.keys(installedFeatures).map(feature => preferences[feature] = transformPreferences(installedFeatures[feature].preferences));
