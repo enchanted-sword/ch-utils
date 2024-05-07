@@ -1,6 +1,6 @@
 {
   "addons": {
-    "{chutils@girldragon.neocities.org}": {
+    "chutils@girldragon.neocities.org": {
       "updates": [
         {
           "version": "1.0.1",
