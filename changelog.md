@@ -1,3 +1,9 @@
+# v1.1.1
+### General
+- Added better system for managing updates to feature options
+- Added a version display and "reset preferences" button to the manage section of the menu
+- chutils is now hosted on AMO! https://addons.mozilla.org/en-US/firefox/addon/chutils/
+
 # v1.1.0
 ### General
 - The extension now uses MV2 instead of MV3
