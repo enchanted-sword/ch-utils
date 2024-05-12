@@ -68,6 +68,7 @@
     margin: 0 !important;
     font-size: inherit !important;
   }
+  details { width: fit-content !important; } /* https://bugzilla.mozilla.org/show_bug.cgi?id=1896299 */
   h1, h2, h3, h4, h5, h6 { font-weight: bold; }
   ul, img, audio, video { display: none !important; }
 }
