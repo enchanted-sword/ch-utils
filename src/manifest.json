@@ -11,9 +11,7 @@
   "author": "April Lunarii",
 
   "permissions": [
-    "storage"
-  ],
-  "optional_permissions": [
+    "storage",
     "*://*.cohost.org/*"
   ],
   "web_accessible_resources": [ "*.js", "*.json", "*.css", "*.svg", ".png" ],
@@ -49,7 +47,7 @@
 
   "browser_specific_settings": {
     "gecko": {
-      "id": "chutils@girldragon.neocities.org",
+      "id": "chutilz@girldragon.neocities.org",
       "strict_min_version": "121.0"
     }
   }
