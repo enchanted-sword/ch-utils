@@ -84,10 +84,7 @@ const selectableProject = (project, index, activeProjectId, postId) => {
   }
 };
 const newMenu = async postId => {
-  const [
-    { projectId },
-    { projects }
-  ] = await batchTrpc(['login.loggedIn', 'projects.listEditedProjects']);
+  const [{ projectId }, { projects }] = await batchTrpc(['login.loggedIn', 'projects.listEditedProjects']);
   const activeProject = projects.find(project => project.projectId === projectId);
   return noact({
     className: `${customClass} co-themed-box co-comment-box cohost-shadow-light dark:cohost-shadow-dark w-15 rounded-lg p-2 lg:max-w-prose`,
