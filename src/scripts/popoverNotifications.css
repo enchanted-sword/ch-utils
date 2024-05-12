@@ -45,6 +45,8 @@
       background-color: rgb(var(--color-notBlack) / var(--tw-bg-opacity));
       color: rgb(var(--color-notWhite));
     }
+
+    .inline-children * { color: rgb(160 156 152) !important; }
   }
 }
 
@@ -58,6 +60,7 @@
 .gap-space { gap: 0 .3em; }
 .inline-children {
   * {
+    color: rgb(130 127 124) !important;
     display: inline !important;
     background: none !important;
     border: none !important;
