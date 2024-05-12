@@ -1,23 +1,27 @@
 import { noact } from './utils/noact.js';
-import { apiFetch, postBoxTheme, activeProjectId } from './utils/apiFetch.js';
+import { postBoxTheme, batchTrpc } from './utils/apiFetch.js';
+import { activeProject } from './utils/user.js';
 import { getOptions } from './utils/jsTools.js';
 import { parseMd } from './utils/markdown.js';
 
 // eslint-disable-next-line no-undef
 const { DateTime } = luxon;
-let numFetch;
+let numFetch, highlightUnread;
 const buttonSelector = '[href="https://cohost.org/rc/project/notifications"]';
 const customClass = 'ch-utils-popover-notifications';
-const activeProject = await activeProjectId();
 const app = document.getElementById('app');
 
 const dateFormat = { weekday: 'long', month: 'long', day: 'numeric' };
 
 const getTransformedNotifications = async () => {
-  const { comments, posts, projects, notifications } = await apiFetch(`/v1/notifications/list?limit=${numFetch}`);
+  let count = 0;
+  if (highlightUnread) ([{ count }] = await batchTrpc(['notifications.count'], { 0: { projectHandle: activeProject.handle } }));
+  const [{ comments, posts, projects, notifications }] = await batchTrpc(['notifications.list'], { 0: { limit: numFetch } })
   const sortedNotifications = {};
+  console.log(count);
 
-  notifications.forEach(notification => {
+  notifications.forEach((notification, i) => {
+    notification.unread = i < count;
     if (notification.fromProjectIds
       && notification.fromProjectIds.constructor.name === 'Array' 
       && notification.fromProjectIds.length === 1) notification.fromProjectId = notification.fromProjectIds[0];
@@ -109,7 +113,7 @@ const pathMap = {
 };
 const interactionMap = notification => {
   let reshare = false;
-  if (notification.targetPost && (notification.targetPost.postingProject.projectId !== activeProject)) reshare = true;
+  if (notification.targetPost && (notification.targetPost.postingProject.projectId !== activeProject.projectId)) reshare = true;
 
   switch (notification.type) {
     case 'like':
@@ -232,13 +236,15 @@ const newBodyPreview = (post, comment = null, reply = null) => {
     }
   }
 
+  const htmlBody = parseMd(body);
+
   const previewLine = {
     tag: 'span',
     className: "co-inline-quote flex-1 truncate before:content-['“'] after:content-['”']",
     children: [{
       className: 'inline-children hover:underline',
       href: `${post.singlePostPageUrl}${comment ? `#comment${comment.commentId}` : ''}`,
-      innerHTML: parseMd(body)
+      innerHTML: htmlBody ? htmlBody : '[no text]'
     }]
   };
 
@@ -278,6 +284,7 @@ const newNotification = notification => {
 ]};
 const newNotificationCard = notification => {return {
   className: 'co-notification-card flex flex-col p-3 last:rounded-b-lg',
+  dataset: { unread: notification.unread },
   children: [newNotification(notification)] // this can conditionally return an array, however noact will automatically flatten the array to a single level to prevent issues
 }};
 const newNotificationPage = (date, notifications, theme) => {return {
@@ -356,10 +363,10 @@ const onNotificationButtonClick = async event => {
 };
 
 export const main = async () => {
+  ({ numFetch, highlightUnread } = await getOptions('popoverNotifications'));
+
   const button = document.querySelector(buttonSelector);
   if (!button) return;
-  
-  ({ numFetch } = await getOptions('popoverNotifications'));
   button.addEventListener('click', onNotificationButtonClick);
 };
 

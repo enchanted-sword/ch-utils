@@ -13,6 +13,12 @@
         "type": "number",
         "name": "number of notifications to display",
         "tooltip": "the number of notifications displayed. larger numbers will take longer to load."
+      },
+      "highlightUnread": {
+        "value": false,
+        "type": "toggle",
+        "name": "highlight unread notifs",
+        "tooltip": "highlights new notifications recieved since the last time the notifications were viewed"
       }
     }
   },
