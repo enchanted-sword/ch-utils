@@ -1,4 +1,5 @@
-import { apiFetch, batchTrpc, postBoxTheme } from './utils/apiFetch.js';
+import { apiFetch, postBoxTheme } from './utils/apiFetch.js';
+import { activeProject, managedProjects } from './utils/user.js';
 import { getViewModel } from './utils/react.js';
 import { postFunction } from './utils/mutation.js';
 import { noact } from './utils/noact.js';
@@ -84,8 +85,6 @@ const selectableProject = (project, index, activeProjectId, postId) => {
   }
 };
 const newMenu = async postId => {
-  const [{ projectId }, { projects }] = await batchTrpc(['login.loggedIn', 'projects.listEditedProjects']);
-  const activeProject = projects.find(project => project.projectId === projectId);
   return noact({
     className: `${customClass} co-themed-box co-comment-box cohost-shadow-light dark:cohost-shadow-dark w-15 rounded-lg p-2 lg:max-w-prose`,
     id: `qrc-menu-${postId}`,
@@ -161,7 +160,7 @@ const newMenu = async postId => {
                 window.setTimeout(() => selector.dataset.headlessuiState = '', hideMenuDelay);
               },
               tabindex: 0,
-              children: projects.map((project, index) => selectableProject(project, index, projectId, postId))
+              children: managedProjects.map((project, index) => selectableProject(project, index, activeProject.projectId, postId))
             },
             {
               className: 'co-filled-button flex items-center justify-center rounded-lg px-4 py-2 text-sm font-bold',

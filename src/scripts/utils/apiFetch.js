@@ -57,14 +57,6 @@ export const followState = async handle => {
 };
 
 /**
- * @returns {Promise <Number>} the id of the user's active project
- */
-export const activeProjectId = async () => {
-  const { projectId } = await apiFetch('/v1/trpc/login.loggedIn');
-  return projectId;
-}
-
-/**
  * fetches data for a single post
  * @param {string} handle - handle of post author
  * @param {Number} postId - id of post

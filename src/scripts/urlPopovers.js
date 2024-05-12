@@ -1,4 +1,5 @@
-import { activeProjectId, apiFetch, followState, getProject } from './utils/apiFetch.js';
+import { apiFetch, followState, getProject } from './utils/apiFetch.js';
+import { activeProject } from './utils/user.js';
 import { mutationManager, postFunction } from './utils/mutation.js';
 import { getViewModel } from './utils/react.js';
 import { noact } from './utils/noact.js';
@@ -11,7 +12,6 @@ const customClass = 'ch-utils-urlPopovers';
 const customAttribute = 'data-url-popovers';
 const anchorSelector = `a[href^="https://cohost.org/"]:not([href="https://cohost.org/"],[href^="https://cohost.org/rc"],[href*="/post/"],[href$="/ask"],[href*="/tagged/"],[${customAttribute}])`;
 
-const activeProject = await activeProjectId();
 const addPopoverDelay = 100;
 const removePopoverDelay = 300;
 const k = str => str.split(' ').map(key => `urlPopover-${key}`).join(' ');
@@ -30,7 +30,7 @@ const followCancelOrUnfollowRequest = async (state, toProjectId) => apiFetch(`/v
   queryParams: { batch: 1 },
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({ 
-    0: { fromProjectId: activeProject, toProjectId } 
+    0: { fromProjectId: activeProject.projectId, toProjectId } 
   })
 });
 
@@ -94,7 +94,7 @@ const urlPopover = async (project, xPos, yPos, targetLink) => {
                 href: projectURL,
                 children: [`@${project.handle}`]
               },
-              activeProject !== project.projectId ? {
+              activeProject.projectId !== project.projectId ? {
                 className: 'leading-none align-middle py-2 px-4 no-select font-atkinson font-bold rounded-full border-2 border-cherry hover:bg-cherry text-cherry active:bg-cherry-600 active:border-cherry-600 disabled:text-cherry-300 disabled:border-cherry-300 focus:outline-cherry focus:ring-cherry bg-notWhite hover:text-notWhite text-sm hover:border-accent',
                 onclick: async ({ target }) => {
                   const state = await followState(project.handle);

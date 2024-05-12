@@ -1,4 +1,5 @@
-import { apiFetch, followState, activeProjectId } from './utils/apiFetch.js';
+import { apiFetch, followState } from './utils/apiFetch.js';
+import { activeProject } from './utils/user.js';
 import { noact } from './utils/noact.js';
 import { getOptions } from './utils/jsTools.js';
 
@@ -6,7 +7,6 @@ const boxSelector = '.co-themed-box';
 const headerSelector = '.co-themed-box > h1';
 const customClass = 'ch-utils-followers';
 
-const activeProject = await activeProjectId();
 const states = [
   'follow',
   'cancel follow request',
@@ -22,7 +22,7 @@ const followCancelOrUnfollowRequest = async (state, toProjectId) => apiFetch(`/v
   queryParams: { batch: 1 },
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({ 
-    0: { fromProjectId: activeProject, toProjectId } 
+    0: { fromProjectId: activeProject.projectId, toProjectId } 
   })
 });
 
