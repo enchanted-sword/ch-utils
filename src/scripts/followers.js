@@ -26,7 +26,7 @@ const followCancelOrUnfollowRequest = async (state, toProjectId) => apiFetch(`/v
   })
 });
 
-const limit = 500;
+const limit = 100; // API no longer returns more than 100
 
 const countElement = $('<span>', { class: `follow-count ${customClass}` });
 const loader = $(`<span class='counter-loading ${customClass}'>(counting<span class='loader'></span>)</span>`);
@@ -147,11 +147,13 @@ const countFollowers = async () => {
 
   ({ projects } = await apiFetch('/v1/projects/followers', { method: 'GET', queryParams: { offset, limit } }));
   total.push(...projects);
+
   while (projects.length === limit) {
     offset += projects.length;
     ({ projects } = await apiFetch('/v1/projects/followers', { method: 'GET', queryParams: { offset, limit } }));
     total.push(...projects);
   }
+  
   return total;
 };
 
