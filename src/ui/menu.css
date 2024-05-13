@@ -19,6 +19,7 @@
   --mango: 255, 171, 92;
   --text: var(--notBlack);
   --notWhite: 255, 249, 242;
+  --blueberry: 37 99 235;
 }
 
 * {
@@ -223,7 +224,7 @@ div.ui-caretWrapper {
   padding-top: 6px;
 }
 
-input.ui-toggle, input.ui-select, input.ui-listSelect {
+input.ui-toggle, input.ui-listSelect {
   position: absolute;
   width: 0;
   height: 0;
@@ -359,39 +360,6 @@ input.ui-multiSelect {
   }
 }
 
-input.ui-select + label {
-  cursor: pointer;
-  font-size: 18px;
-  text-indent: -9999px;
-  width: 20px;
-  height: 20px;
-  background: rgba(var(--cherry), .4);
-  transition: 0.3s;
-  display: block;
-  border-radius: 20px;
-  position: relative;
-}
-input.ui-select + label:before {
-  content: "";
-  position: absolute;
-  top: 2px;
-  left: 2px;
-  width: 16px;
-  height: 16px;
-  border-radius: 16px;
-  border: 2px solid rgba(var(--white), .4);
-  box-sizing: border-box;
-  transition: 0.1s;
-}
-input.ui-select + label:hover { background: rgba(var(--cherry), .64);}
-input.ui-select + label:hover:before {
-  border: 3px solid rgba(var(--white), .64);
-}
-input.ui-select:checked + label { background: rgb(var(--mango)); }
-input.ui-select:checked + label:before {
-  border: 3px solid rgb(var(--white));
-}
-
 .ui-inputWrapper[type="slider"] {
   display: flex;
   flex-direction: column;
@@ -521,6 +489,26 @@ input.ui-numInput {
   padding: .25rem;
 }
 
+select {
+  appearance: none;
+  border: 1px solid rgba(var(--cherry), .5);
+  border-radius: .25rem;
+  padding: .5rem 2.5rem .5rem .75rem;
+  font-size: 1rem;
+  font-family: inherit;
+  line-height: 1.5rem;
+  background-image: url("data:image/svg+xml,%3csvg xmlns=%27http://www.w3.org/2000/svg%27 fill=%27none%27 viewBox=%270 0 20 20%27%3e%3cpath stroke=%27%23827F7C%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27 stroke-width=%271.5%27 d=%27M6 8l4 4 4-4%27/%3e%3c/svg%3e");
+  background-position: right .5rem center;
+  background-repeat: no-repeat;
+  background-size: 1.5em 1.5em;
+  background-color: rgb(var(--white));
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+  width: 100%;
+
+  &:focus { border-color: rgb(var(--blueberry)); }
+}
+
 .ui-tooltip {
   pointer-events: none;
   position: absolute;
@@ -546,6 +534,7 @@ input.ui-numInput {
     z-index: 99;
   }
 }
+select + .ui-tooltip { bottom: 3rem; }
 :hover > .ui-tooltip { opacity: 1; }
 
 .ui-card {

@@ -106,13 +106,13 @@
 
           Object.keys(feature.preferences.options).forEach(key => {
             const option = feature.preferences.options[key];
+            const tooltip = $(`<div class="ui-tooltip">${option.tooltip}</div>`);
 
             switch (option.type) {
               case 'toggle':
                 const toggleWrapper = $(`<div class="ui-multiSelectWrapper"></div>`);
                 const input = $('<input>', { class: 'ui-multiSelect', type: 'checkbox', id: `ui-feature-${name}-${key}`, name: `${name}-${key}` });
                 const label = $(`<label for="ui-feature-${name}-${key}" name="${name}-${key}">${option.name}</label>`);
-                const tooltip = $(`<div class="ui-tooltip">${option.tooltip}</div>`);
 
                 toggleWrapper.append(label);
                 toggleWrapper.append(input);
@@ -161,29 +161,29 @@
                 });
                 break;
               case 'select':
-                const selectInputWrapper = $(`<div class="ui-extendedSelectWrapper "><h3>${option.name}</h3></div>`);
-                optionsWrapper.append(selectInputWrapper);
+                const selectInputWrapper = $(`<div class="ui-extendedSelectWrapper "><label for="ui-feature-${name}-${key}">${option.name}</label></div>`);
+                const selectInput = $(`<select class="ui-select" id="ui-feature-${name}-${key}" name="${name}-${key}"></select>`);
 
                 Object.keys(option.options).forEach(subKey => {
                   const subOption = option.options[subKey];
-                  const selectWrapper = $(`<div class="ui-multiSelectWrapper ui-extendedSelect"><h2>${subOption.name}</h2></div>`);
-                  const input = $('<input>', { class: 'ui-multiSelect', type: 'checkbox', id: `ui-feature-${name}-${key}-${subKey}`, name: `${name}-${key}` });
-                  const label = $(`<label for="ui-feature-${name}-${key}-${subKey}" name="${name}-${key}">select ${subOption.name}</label>`);
+                  const value = $(`<option value="${subOption.value}">${subOption.name}</option>`);
       
-                  selectWrapper.append(input);
-                  selectWrapper.append(label);
-                  selectInputWrapper.append(selectWrapper);
+                  selectInput.append(value);
       
-                  if (preference.options[key][subKey]) input.attr('checked', '');
-      
-                  input.on('change', async function () {
-                    const checked = this.checked ? true : false;
-                    let { preferences } = await browser.storage.local.get('preferences');
-          
-                    if (checked) preferences[name].options[key] = subKey;
-      
-                    browser.storage.local.set({ preferences });
-                  });
+                  if (preference.options[key] === subOption.value) value.attr('selected', '');
+                });
+
+                selectInputWrapper.append(selectInput);
+                selectInputWrapper.append(tooltip);
+                optionsWrapper.append(selectInputWrapper);
+
+                selectInput.on('change', async function () {
+                  const { value } = this;
+                  let { preferences } = await browser.storage.local.get('preferences');
+        
+                  preferences[name].options[key] = value;
+    
+                  browser.storage.local.set({ preferences });
                 });
                 break;
               case 'textarea':
@@ -219,7 +219,6 @@
                   id: `ui-feature-${name}-${key}`,
                   name: `${name}-${key}`
                 });
-                const tooltip = $(`<div class="ui-tooltip">${option.tooltip}</div>`);
 
                 numInputWrapper.append(label);
                 numInputWrapper.append(numInput);
