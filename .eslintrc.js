@@ -27,7 +27,8 @@ module.exports = {
     "cloneInto": "readonly",
     "Coloris": "readonly",
     "marked": "readonly",
-    "DOMPurify": "readonly"
+    "DOMPurify": "readonly",
+    "Prism": "readonly"
   },
   "rules": {
     "no-case-declarations": "off",
