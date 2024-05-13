@@ -86,7 +86,6 @@ const addButtons = async posts => {
     post.setAttribute(customAttribute, '');
     let { blocks, shareTree } = await getViewModel(post);
     if (shareTree) shareTree = shareTree.map(branch => branch.blocks);
-    console.log(blocks, shareTree)
     
     let headers = post.querySelectorAll('.co-post-header');
     if (!headers.length) headers = [post.querySelector('.co-thread-header')];
