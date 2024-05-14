@@ -12,6 +12,7 @@
 - Colour contrast is now enforced in preview text
 - Added a manual fix for https://bugzilla.mozilla.org/show_bug.cgi?id=1896299
 - Implemented the "[no text]" label for non-transparent with no text
+- numFetch is now explicitly converted to a number
 
 ### Follower page tweaks
 - Fixed counting methods (the API now only returns a max of 100 projects at a time, the previous bucket size used was 500)
