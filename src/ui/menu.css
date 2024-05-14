@@ -418,7 +418,7 @@ input.ui-slider:active::-moz-range-thumb { border: 2px solid rgb(var(--white)); 
 textarea.ui-textInput {
   resize: none;
   width: 100%;
-  border: none;
+  border: 2px solid rgba(var(--cherry), .8);
   border-radius: 3px;
   height: 96px;
   outline: none;
@@ -426,8 +426,12 @@ textarea.ui-textInput {
   font-size: 14px;
   box-sizing: border-box;
   background: rgba(var(--white), .64);
+
+  &:focus {
+    border-color: rgb(var(--blueberry));
+    background: rgb(var(--white));
+  }
 }
-textarea.ui-textInput:focus { background: rgb(var(--white)); }
 
 input.ui-colors {
   position: relative;
@@ -578,6 +582,11 @@ select + .ui-tooltip { bottom: 3rem; }
     &:is(#ui-import, #ui-export) { width: 150px; }
     &:hover { background-color: color-mix(in srgb, rgb(var(--mango)), rgb(var(--cherry)) 10%); }
   }
+}
+#ui-preferenceText {
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: bold;
+  height: 332px;
 }
 
 .ui-aboutLink {

@@ -357,6 +357,7 @@
 
       setupButtons('ui-tab');
       setupButtons('ui-featureTab');
+      document.getElementById('ui-preferenceText').value = JSON.stringify(preferences, null, 2);
 
       document.getElementById('ui-export').addEventListener('click', async () => {
         const { preferences } = await browser.storage.local.get('preferences');
@@ -368,7 +369,7 @@
         const mm = (date.getMonth()).toString();
         const dd = date.getDate().toString();
         exportLink.href = url;
-        exportLink.download = `dashboard plus preference export ${mm}-${dd}-${yy}`;
+        exportLink.download = `chutils preference export ${mm}-${dd}-${yy}`;
 
         document.documentElement.append(exportLink);
         exportLink.click();
@@ -377,31 +378,22 @@
       });
       document.getElementById('ui-import').addEventListener('click', () => {
         let preferences;
-        const input = document.createElement('input');
-        input.type = 'file';
-        input.accept = 'application/json';
-        input.addEventListener('change', async function () {
-          const [file] = this.files;
+        const input = document.getElementById('ui-preferenceText');
+        if (!input.value) return;
 
-          if (file) {
-            try {
-              let obj = await file.text();
-            preferences = JSON.parse(obj);
-            if (typeof preferences === 'object') {
-              browser.storage.local.set({ preferences });
-              console.log('successfully imported preferences from file!');
-            } else throw 'invalid data type';
-            } catch (e) {
-              console.error('failed to import preferences from file!', e);
-              $('#ui-import').text('import failed!').css('background-color', 'rgb(var(--red))');
-              setTimeout(() => {
-                $('#ui-import').text('import preferences').css('background-color', 'rgb(var(--white))');
-              }, 2000);
-            }
+        preferences = JSON.parse(input.value);
+        try {
+          if (typeof preferences === 'object') {
+            browser.storage.local.set({ preferences });
+            console.log('successfully imported preferences from file!');
+          } else throw 'invalid data type';
+        } catch (e) {
+            console.error('failed to import preferences from file!', e);
+            $('#ui-import').text('import failed!').css('background-color', 'rgb(var(--red))');
+            setTimeout(() => {
+              $('#ui-import').text('import preferences').css('background-color', 'rgb(var(--white))');
+            }, 2000);
           }
-        });
-        input.click();
-        input.remove();
       });
       document.getElementById('ui-reset').addEventListener('click', () => {
         const preferences = {};
