@@ -16,7 +16,7 @@ const dateFormat = { weekday: 'long', month: 'long', day: 'numeric' };
 const getTransformedNotifications = async () => {
   let count = 0;
   if (highlightUnread) ([{ count }] = await batchTrpc(['notifications.count'], { 0: { projectHandle: activeProject.handle } }));
-  const [{ comments, posts, projects, notifications }] = await batchTrpc(['notifications.list'], { 0: { limit: numFetch } })
+  const [{ comments, posts, projects, notifications }] = await batchTrpc(['notifications.list'], { 0: { limit: Number(numFetch) } })
   const sortedNotifications = {};
   console.log(count);
 
