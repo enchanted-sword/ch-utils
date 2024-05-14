@@ -3,6 +3,7 @@
 - Tweaked permission structure to better fit MV2
 - Debug logging for apiFetch calls
 - Tidied up user methods
+- Importing/exporting preferences now works correctly
 
 ### **New!** Display post source code
 - Adds a toggle to view a post's source markdown, complete with syntax highlighting
@@ -13,6 +14,7 @@
 - Added a manual fix for https://bugzilla.mozilla.org/show_bug.cgi?id=1896299
 - Implemented the "[no text]" label for non-transparent with no text
 - numFetch is now explicitly converted to a number
+- Replies to comments on your post are now correctly identified as such
 
 ### Follower page tweaks
 - Fixed counting methods (the API now only returns a max of 100 projects at a time, the previous bucket size used was 500)
