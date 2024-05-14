@@ -110,7 +110,7 @@
   
         if (typeof preferences !== 'undefined') {
           Object.keys(installedFeatures).forEach(feature => { // push new features and options to existing preferences
-            if (!preferences[feature]) preferences[feature] = installedFeatures[feature].preferences;
+            if (!preferences[feature]) preferences[feature] = transformPreferences(installedFeatures[feature].preferences);
             if ('options' in installedFeatures[feature].preferences) {
               Object.keys(installedFeatures[feature].preferences.options).forEach(option => {
                 if (!preferences[feature].options[option]) {
