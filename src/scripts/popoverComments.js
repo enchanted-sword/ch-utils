@@ -17,6 +17,11 @@ const submitComment = obj => apiFetch('/v1/comments', {
   headers: { 'content-type': 'application/json' },
   body: JSON.stringify(obj)
 });
+const ctrlEnter = event => {
+  if (event.ctrlKey && event.key === 'Enter') {
+    document.getElementById(`${event.target.id}-button`).click();
+  }
+};
 
 const newCommentButton = (postId, link) => noact({
   id: `headlessui-comments-button-:${postId}:`,
@@ -229,6 +234,7 @@ const newReplyBox = (id, inReplyToCommentId = false) => {
               if (this.value) $(`#ch-utils-replyBox-${postId}${inReplyToCommentId ? `-${inReplyToCommentId}` : ''} button`).removeAttr('disabled');
               else $(`#ch-utils-replyBox-${postId}${inReplyToCommentId ? `-${inReplyToCommentId}` : ''} button`).attr('disabled', '');
             },
+            onkeydown: ctrlEnter,
             className: 'co-composer-text-box w-full row-start-1 row-end-2 col-start-1 col-end-2 min-h-0',
             style: 'resize: none; overflow: hidden;'
           }
@@ -247,6 +253,7 @@ const newReplyBox = (id, inReplyToCommentId = false) => {
             children: ['discard']
           },
           {
+            id: `ch-utils-commentArea-${postId}${inReplyToCommentId ? `-${inReplyToCommentId}` : ''}-button`,
             className: 'co-filled-button flex items-center justify-center rounded-lg px-4 py-2 text-sm font-bold',
             onclick: async () => {
               const textarea = $(`#ch-utils-commentArea-${postId}${inReplyToCommentId ? `-${inReplyToCommentId}` : ''}`);
