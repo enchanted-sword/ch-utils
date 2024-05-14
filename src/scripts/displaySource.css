@@ -34,9 +34,7 @@ div.ch-utils-displaySource {
   ~ [data-display-source="switch"] { display: none; }
   ~ div.ch-utils-displaySource { display: flex; }
 }
-@media screen {
-  
-}
+
 [data-theme="abyss"] {
   background-color: rgb(0 12 24);
   color: rgb(102 136 204);
