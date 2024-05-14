@@ -1,3 +1,21 @@
+# v1.2.0
+### General
+- Tweaked permission structure to better fit MV2
+- Debug logging for apiFetch calls
+- Tidied up user methods
+
+### **New!** Display post source code
+- Adds a toggle to view a post's source markdown, complete with syntax highlighting
+- 3 colour themes: abyss, fruit, and reef
+
+### Open notifications in popover view
+- Colour contrast is now enforced in preview text
+- Added a manual fix for https://bugzilla.mozilla.org/show_bug.cgi?id=1896299
+- Implemented the "[no text]" label for non-transparent with no text
+
+### Follower page tweaks
+- Fixed counting methods (the API now only returns a max of 100 projects at a time, the previous bucket size used was 500)
+
 # v1.1.1
 ### General
 - Added better system for managing updates to feature options
