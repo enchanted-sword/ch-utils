@@ -19,6 +19,9 @@
 ### Follower page tweaks
 - Fixed counting methods (the API now only returns a max of 100 projects at a time, the previous bucket size used was 500)
 
+### Show comments under posts
+- Comments can now be submitted with ctrl-enter
+
 # v1.1.1
 ### General
 - Added better system for managing updates to feature options
