@@ -3,7 +3,7 @@ import { postFunction } from './utils/mutation.js';
 import { getViewModel } from './utils/react.js';
 import { getOptions } from './utils/jsTools.js';
 
-let theme;
+let theme, showBoth;
 
 const customClass = 'ch-utils-displaySource';
 const customAttribute = 'data-display-source';
@@ -94,7 +94,7 @@ const addButtons = async posts => {
     let bodies = post.querySelectorAll('.co-post-header + div');
     if (!bodies.length) bodies = [post.querySelector('.co-thread-header ~ div')];
     bodies.forEach((body, i) => {
-      body.setAttribute(customAttribute, '')
+      body.setAttribute(customAttribute, showBoth ? 'showBoth' : 'switch');
       if (blocks && !shareTree.length) body.parentElement.insertBefore(newSourceDisplay(blocks), post.querySelector('.co-thread-footer'));
       else if (shareTree[i]) body.parentElement.append(newSourceDisplay(shareTree[i]));
       else if (blocks) body.parentElement.append(newSourceDisplay(blocks));
@@ -103,7 +103,7 @@ const addButtons = async posts => {
 }
 
 export const main = async () => {
-  ({ theme } = await getOptions('displaySource'));
+  ({ theme, showBoth } = await getOptions('displaySource'));
   Prism.plugins.customClass.prefix('prism-');
 
   postFunction.start(addButtons, `:not([${customAttribute}])`);

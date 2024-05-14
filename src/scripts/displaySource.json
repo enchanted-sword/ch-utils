@@ -24,6 +24,12 @@
             "name": "reef"
           }
         ]
+      },
+      "showBoth": {
+        "value": false,
+        "type": "toggle",
+        "name": "compare mode",
+        "tooltip": "displays the source view below the post content, instead of replacing it"
       }
     }
   },

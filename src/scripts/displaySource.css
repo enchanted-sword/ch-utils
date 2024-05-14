@@ -31,7 +31,7 @@ div.ch-utils-displaySource {
 }
 
 .co-thread-header:has([data-active="true"]), .co-post-header:has([data-active="true"]) {
-  ~ [data-display-source] { display: none; }
+  ~ [data-display-source="switch"] { display: none; }
   ~ div.ch-utils-displaySource { display: flex; }
 }
 @media screen {
