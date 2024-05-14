@@ -120,7 +120,11 @@
             }
           })
           Object.keys(preferences).forEach(feature => { // delete removed features and options from existing preferences
-            if (!(feature in installedFeatures)) delete preferences[feature];
+            if (!(feature in installedFeatures)) {
+              delete preferences[feature];
+              return;
+            }
+
             if ('options' in preferences[feature]) {
               Object.keys(preferences[feature].options).forEach(option => {
                 if (!installedFeatures[feature].preferences.options[option]) delete preferences[feature].options[option];
