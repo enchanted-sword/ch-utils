@@ -330,6 +330,19 @@
         target.setAttribute('active', 'true');
       }));
     };
+    const createFeatures = (installedFeatures, preferences) => {
+      $('[data-searchable]').remove();
+
+      Object.keys(installedFeatures).forEach(key => {
+        const feature = installedFeatures[key];
+        const preference = preferences[key];
+
+        if (feature && preference) {
+          const featureItem = newFeatureItem(key, feature, preference, preferences);
+          $(`#ui-featureContainer`).append(featureItem);
+        }
+      });
+    };
 
     const onSearch = ({ target }) => {
       const query = target.value.replace(/[^\w]/g, '');
@@ -345,15 +358,7 @@
       const installedFeatures = await importFeatures(); // "await has no effect on this type of expression"- it does, actually!
       const { preferences } = await browser.storage.local.get('preferences');
 
-      Object.keys(installedFeatures).forEach(key => {
-        const feature = installedFeatures[key];
-        const preference = preferences[key];
-
-        if (feature && preference) {
-          const featureItem = newFeatureItem(key, feature, preference, preferences);
-          $(`#ui-featureContainer`).append(featureItem);
-        }
-      });
+      createFeatures(installedFeatures, preferences);
 
       setupButtons('ui-tab');
       setupButtons('ui-featureTab');
@@ -388,18 +393,21 @@
             console.log('successfully imported preferences from file!');
           } else throw 'invalid data type';
         } catch (e) {
-            console.error('failed to import preferences from file!', e);
-            $('#ui-import').text('import failed!').css('background-color', 'rgb(var(--red))');
-            setTimeout(() => {
-              $('#ui-import').text('import preferences').css('background-color', 'rgb(var(--white))');
-            }, 2000);
-          }
+          console.error('failed to import preferences from file!', e);
+          $('#ui-import').text('import failed!').css('background-color', 'rgb(var(--red))');
+          setTimeout(() => {
+            $('#ui-import').text('import preferences').css('background-color', 'rgb(var(--white))');
+          }, 2000);
+        }
+
+        createFeatures(installedFeatures, preferences);
       });
       document.getElementById('ui-reset').addEventListener('click', () => {
         const preferences = {};
         Object.keys(installedFeatures).map(feature => preferences[feature] = transformPreferences(installedFeatures[feature].preferences));
 
         browser.storage.local.set({ preferences });
+        createFeatures(installedFeatures, preferences);
       });
       document.getElementById('ui-featureSearch').addEventListener('input', debounce(onSearch));
 
