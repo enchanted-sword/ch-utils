@@ -586,7 +586,7 @@ select + .ui-tooltip { bottom: 3rem; }
 #ui-preferenceText {
   font-family: 'Courier New', Courier, monospace;
   font-weight: bold;
-  height: 332px;
+  height: 335px;
 }
 
 .ui-aboutLink {
