@@ -32,6 +32,7 @@ const getTransformedNotifications = async () => {
     notification.sharePost = posts[notification.sharePostId];
     notification.comment = comments[notification.commentId]?.comment;
     notification.replyTo = comments[notification.inReplyTo]?.comment;
+    if (notification.replyTo) notification.replyTo.canEdit = comments[notification.inReplyTo]?.canEdit;
 
     if (notification.toPostId && typeof notification.targetPost === 'undefined') return null; // cohost doesn't delete notifications attached to deleted posts, so we have to trim them out manually
 
@@ -113,7 +114,9 @@ const pathMap = {
 };
 const interactionMap = notification => {
   let reshare = false;
-  if (notification.targetPost && (notification.targetPost.postingProject.projectId !== activeProject.projectId)) reshare = true;
+  let replyToOwnComment = true
+  if (notification.targetPost && !notification.targetPost.isEditor) reshare = true;
+  if (notification.replyTo && (notification.replyTo.canEdit === 'not-allowed')) replyToOwnComment = false
 
   switch (notification.type) {
     case 'like':
@@ -182,7 +185,7 @@ const interactionMap = notification => {
         {
           href: notification.targetPost ? `${notification.targetPost.singlePostPageUrl}#comment-${notification.replyTo.commentId}` : '',
           className: 'font-bold hover:underline',
-          children: ['to your comment']
+          children: [replyToOwnComment ? 'to your comment' : 'to a comment on your post']
         },
       ];
   }
