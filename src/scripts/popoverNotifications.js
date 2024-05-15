@@ -18,7 +18,6 @@ const getTransformedNotifications = async () => {
   if (highlightUnread) ([{ count }] = await batchTrpc(['notifications.count'], { 0: { projectHandle: activeProject.handle } }));
   const [{ comments, posts, projects, notifications }] = await batchTrpc(['notifications.list'], { 0: { limit: Number(numFetch) } })
   const sortedNotifications = {};
-  console.log(count);
 
   notifications.forEach((notification, i) => {
     notification.unread = i < count;
