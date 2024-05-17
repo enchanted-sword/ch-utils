@@ -20,11 +20,10 @@ const removeParams = obj => {
  */
 export const apiFetch = async (path, body = {}) => fetch(`https://cohost.org/api${path}${stringifyParams(body?.queryParams)}`, removeParams(body))
   .then(response => {
-    console.debug(response);
-
+    //console.debug(response);
     if (response.headers.get('content-type')) {
       return response.json().then(response => {
-        console.debug(response);
+        //console.debug(response);
         if (response.constructor.name === 'Array') return response.map(({ result, error }) => {
           if (result && result.data) return result.data;
           else if (error) throw error;
