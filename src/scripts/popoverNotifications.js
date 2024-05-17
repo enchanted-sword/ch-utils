@@ -14,13 +14,31 @@ const app = document.getElementById('app');
 const dateFormat = { weekday: 'long', month: 'long', day: 'numeric' };
 
 const getTransformedNotifications = async () => {
+  let comments, posts, projects, notifications;
   let count = 0;
-  if (highlightUnread) ([{ count }] = await batchTrpc(['notifications.count'], { 0: { projectHandle: activeProject.handle } }));
-  const [{ comments, posts, projects, notifications }] = await batchTrpc(['notifications.list'], { 0: { limit: Number(numFetch) } })
+  numFetch = Number(numFetch);
   const sortedNotifications = {};
 
-  notifications.forEach((notification, i) => {
-    notification.unread = i < count;
+  if (highlightUnread) {
+    ([{ count }] = await batchTrpc(['notifications.count'], { 0: { projectHandle: activeProject.handle } }));
+    count = Math.min(count, numFetch);
+    const remainder = numFetch - count;
+    const [unreadNotifications] = await batchTrpc(['notifications.list'], { 0: { limit: count } });
+
+    unreadNotifications.notifications.forEach(function (notification) { notification.unread = true });
+
+    if (remainder > 0) {
+      const [readNotifications] = await batchTrpc(['notifications.list'], { 0: { limit: remainder, cursor: unreadNotifications.nextCursor } });
+      unreadNotifications.notifications.push(...readNotifications.notifications);
+      ['comments', 'posts', 'projects'].forEach(function (key) {
+        unreadNotifications[key] = Object.assign(unreadNotifications[key], readNotifications[key]);
+      });
+    }
+
+    ({ comments, posts, projects, notifications } = unreadNotifications);
+  } else ([{ comments, posts, projects, notifications }] = await apiFetch(`/v1/notifications/list?limit=${numFetch}`));
+
+  notifications.forEach(notification => {
     if (notification.fromProjectIds
       && notification.fromProjectIds.constructor.name === 'Array' 
       && notification.fromProjectIds.length === 1) notification.fromProjectId = notification.fromProjectIds[0];
@@ -287,7 +305,7 @@ const newNotification = notification => {
 ]};
 const newNotificationCard = notification => {return {
   className: 'co-notification-card flex flex-col p-3',
-  dataset: { unread: notification.unread },
+  dataset: { unread: notification.unread ? true : false }, // sneakily converting undefined to false for aesthetics purposes
   children: [newNotification(notification)] // this can conditionally return an array, however noact will automatically flatten the array to a single level to prevent issues
 }};
 const newNotificationPage = (date, notifications, theme) => {return {
