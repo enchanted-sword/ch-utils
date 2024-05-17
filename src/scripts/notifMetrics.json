@@ -1,0 +1,8 @@
+{
+  "name": "notifMetrics",
+  "title": "notification metrics",
+  "description": "calculates pages metrics based on notifications",
+  "preferences": { "enabled": false },
+  "js": true,
+  "css": true
+}
