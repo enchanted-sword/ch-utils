@@ -27,11 +27,18 @@
   }
 
   &:has([data-theme="dark"]) {
+    color: rgb(var(--color-notWhite));
     background-color: rgb(0 0 0 / var(--tw-bg-opacity));
 
     > header {
       background-color: rgb(var(--color-notBlack) / var(--tw-bg-opacity));
       color: rgb(var(--color-notWhite));
+    }
+
+    .co-notification-card[data-unread="true"] {
+      background-color: rgb(var(--color-foreground-500));
+    
+      &:hover { background-color: rgb(var(--color-foreground-600)) !important; }
     }
   }
 }
@@ -50,9 +57,9 @@
   }
 
   .co-notification-card[data-unread="true"] {
-    background-color: rgb(var(--color-foreground-400));
+    background-color: rgb(var(--color-foreground-500));
   
-    &:hover { background-color: rgb(var(--color-foreground-500)) !important; }
+    &:hover { background-color: rgb(var(--color-foreground-600)) !important; }
   }
 }
 
