@@ -286,7 +286,7 @@ const newNotification = notification => {
   } : ''
 ]};
 const newNotificationCard = notification => {return {
-  className: 'co-notification-card flex flex-col p-3 last:rounded-b-lg',
+  className: 'co-notification-card flex flex-col p-3',
   dataset: { unread: notification.unread },
   children: [newNotification(notification)] // this can conditionally return an array, however noact will automatically flatten the array to a single level to prevent issues
 }};

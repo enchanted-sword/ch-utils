@@ -48,6 +48,12 @@
 
     .inline-children * { color: rgb(160 156 152) !important; }
   }
+
+  .co-notification-card[data-unread="true"] {
+    background-color: rgb(var(--color-foreground-400));
+  
+    &:hover { background-color: rgb(var(--color-foreground-500)) !important; }
+  }
 }
 
 .header-sticky {
