@@ -1,0 +1,17 @@
+{
+  "name": "yinglation",
+  "title": "yinglet translation",
+  "description": "converts the zh phenome in yinglet-ified text to the usual th phenome",
+  "preferences": {
+    "enabled": false,
+    "options": {
+      "reverseMode": {
+        "value": false,
+        "type": "toggle",
+        "name": "reverse translation mode",
+        "tooltip": "does exactly what you would expect"
+      }
+    }
+  },
+  "js": true
+}
