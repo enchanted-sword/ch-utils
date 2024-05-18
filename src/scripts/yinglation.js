@@ -262,7 +262,9 @@ let map = {
   'zhreatening': 'threatening',
   'bozher': 'bother',
   'strengzhening': 'strengthening',
-  'zheta': 'theta'
+  'zheta': 'theta',
+  'zhunderstorm': 'thunderstorm',
+  'zhunderstorms': 'thunderstorms',
 }
 
 const textNodeDescendants = node => [
