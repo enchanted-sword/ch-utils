@@ -36,7 +36,7 @@ const getTransformedNotifications = async () => {
     }
 
     ({ comments, posts, projects, notifications } = unreadNotifications);
-  } else ([{ comments, posts, projects, notifications }] = await apiFetch(`/v1/notifications/list?limit=${numFetch}`));
+  } else ([{ comments, posts, projects, notifications }] = await batchTrpc(['notifications.list'], { 0: { limit: numFetch } }));
 
   notifications.forEach(notification => {
     if (notification.fromProjectIds
