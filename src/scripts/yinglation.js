@@ -283,7 +283,6 @@ const translatePosts = posts => {
     post.setAttribute(customAttribute, '');
     if (!post.textContent.toLowerCase().includes(phenome)) continue;
     const translatableNodes = textNodeDescendants(post).filter(({ textContent }) => textContent.toLowerCase().includes(phenome));
-    console.log(translatableNodes);
     translatableNodes.forEach(function(node) { node.textContent = node.textContent.replace(regex, replacer); });
   }
 };
