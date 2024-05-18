@@ -18,9 +18,8 @@
 
   "content_scripts": [
     {
-      "matches": [
-        "*://*.cohost.org/*"
-      ],
+      "matches": [ "*://*.cohost.org/*" ],
+      "exclude_matches": [ "*://*.cohost.org/rc/login" ],
       "run_at": "document_end",
       "js": [
         "control/content-script.js",
@@ -33,9 +32,7 @@
     }
   ],
   "background": {
-    "scripts": [
-      "control/background.js"
-    ]
+    "scripts": [ "control/background.js" ]
   },
 
   "browser_action": {
