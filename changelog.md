@@ -2,7 +2,7 @@
 ### General
 - Preferences should hopefully now transition seamlessly when adding or removing features or options
 
-### **New!** Yinglet translation
+### **New feature:** Yinglet translation
 - Converts the zh phoneme in yinglet-ified post text to the usual th phoneme
 - Also works in reverse
 
