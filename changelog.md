@@ -1,3 +1,20 @@
+# v1.2.1
+### General
+- Preferences should hopefully now transition seamlessly when adding or removing features or options
+
+### **New!** Yinglet translation
+- Converts the zh phoneme in yinglet-ified post text to the usual th phoneme
+- Also works in reverse
+
+### Open notifications in popover view
+- Fixed bug where cohost tries to serve you posts from blocked projects
+- Unread notifications now contrast correctly on both forced and inherited dark mode
+- Unread notifications are now counted correctly
+- Fixed headline-only opaque shares not displaying preview text
+
+### Show comments under posts
+- Comments are no longer haunted (ghost comments could previously be left on transparent shares)
+
 # v1.2.0
 ### General
 - Tweaked permission structure to better fit MV2
