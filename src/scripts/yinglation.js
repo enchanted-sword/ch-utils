@@ -265,6 +265,8 @@ let map = {
   'zheta': 'theta',
   'zhunderstorm': 'thunderstorm',
   'zhunderstorms': 'thunderstorms',
+  'pazhway' : 'pathway',
+  'pazhways' : 'pathways',
 }
 
 const textNodeDescendants = node => [
