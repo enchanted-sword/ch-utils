@@ -351,7 +351,7 @@ const addPopovers = async posts => {
     post.setAttribute(customAttribute, '')
 
     let handleMap = {};
-    const { postingProject, postId, shareTree, singlePostPageUrl, commentsLocked } = await getViewModel(post);
+    const { postingProject, postId, shareTree, singlePostPageUrl, commentsLocked, transparentShareOfPostId } = await getViewModel(post);
     const { handle } = postingProject;
     shareTree.map(treeItem => handleMap[treeItem.postId] = treeItem.postingProject.handle);
     const postComments = await getComments(handle, postId);
@@ -388,7 +388,7 @@ const addPopovers = async posts => {
                   children: ['Comments on this post are locked.']
                 }
               ]
-            } : newReplyBox(postId)
+            } : newReplyBox(transparentShareOfPostId || postId)
           ]
         }]
       });
