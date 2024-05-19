@@ -1,7 +1,7 @@
 {
   "name": "yinglation",
   "title": "yinglet translation",
-  "description": "converts the zh phenome in yinglet-ified text to the usual th phenome",
+  "description": "converts the zh phoneme in yinglet-ified text to the usual th phoneme",
   "preferences": {
     "enabled": false,
     "options": {

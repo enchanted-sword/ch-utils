@@ -3,7 +3,7 @@ import { postFunction } from './utils/mutation.js';
 
 const customAttribute = 'ch-utils-yinglation';
 let reverseMode
-let phenome = 'zh';
+let phoneme = 'zh';
 let regex = /(\w*(?:zh)\w*)/gi;
 let map = {
   'zhe': 'the',
@@ -285,8 +285,8 @@ const replacer = word => {
 const translatePosts = posts => {
   for (const post of posts) {
     post.setAttribute(customAttribute, '');
-    if (!post.textContent.toLowerCase().includes(phenome)) continue;
-    const translatableNodes = textNodeDescendants(post).filter(({ textContent }) => textContent.toLowerCase().includes(phenome));
+    if (!post.textContent.toLowerCase().includes(phoneme)) continue;
+    const translatableNodes = textNodeDescendants(post).filter(({ textContent }) => textContent.toLowerCase().includes(phoneme));
     translatableNodes.forEach(function(node) { node.textContent = node.textContent.replace(regex, replacer); });
   }
 };
@@ -296,7 +296,7 @@ export const main = async () => {
 
   if (reverseMode) {
     Object.entries(map).forEach(([key, value]) => map[value] = key);
-    phenome = 'th'
+    phoneme = 'th'
     regex = /(\w*(?:th)\w*)/gi;
   }
   postFunction.start(translatePosts, `:not([${customAttribute}])`);
