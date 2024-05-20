@@ -9,6 +9,7 @@ const customAttribute = 'data-quick-rechost';
 const linkSelector = '[href*="compose?"]';
 
 const hideMenuDelay = 500;
+const longPressDelay = 500;
 const descriptors = [
   { descriptor: 'reshare', weight: 8 },
   { descriptor: 'rechost', weight: 7 },
@@ -27,6 +28,21 @@ const randomDescriptor = () => {
   for (i = 0; i < weights.length; i++) if (weights[i] > random) break;
   return descriptors[i].descriptor;
 }
+
+export const onLongPress = (elem, func) => {
+  let timeoutId;
+
+  elem.addEventListener('touchstart', e => {
+    timeoutId = setTimeout(() => {
+      timeoutId = null;
+      e.stopPropagation();
+      func(e);
+    }, longPressDelay);
+  });
+  elem.addEventListener('contextmenu', e => e.preventDefault());
+  elem.addEventListener('touchend', () =>  timeoutId && clearTimeout(timeoutId));
+  elem.addEventListener('touchmove', () => timeoutId && clearTimeout(timeoutId));
+};
 
 const rechost = async (shareOfPostId, projectHandle, tags = []) => apiFetch('/v1/trpc/posts.create', { 
   method: 'POST',
@@ -64,6 +80,7 @@ const selectableProject = (project, index, activeProjectId, postId) => {
       const selector = document.getElementById(`qrc-selector-${postId}`);
       const avatar = selector.querySelector('img');
       selector.activeProject = project;
+      selector.click();
       avatar.src = `${avatarURL}?dpr=2&amp;width=80&amp;height=80&amp;fit=cover&amp;auto=webp`;
       avatar.alt = `@${handle}`;
       document.getElementById(`qrc-${postId}`).title = `share this post as ${handle}`;
@@ -152,7 +169,7 @@ const newMenu = async postId => {
             },
             {
               tag: 'ul',
-              className: 'ch-utils-quickRechost-list lg:cohost-shadow-light dark:lg:cohost-shadow-dark fixed left-0 top-8 max-w-xs divide-y divide-foreground-500 !overflow-y-auto truncate bg-foreground !outline-none lg:absolute lg:max-h-[calc(100vh_-_100px)] lg:divide-none lg:rounded-lg lg:bg-notWhite lg:text-notBlack',
+              className: 'ch-utils-quickRechost-list lg:cohost-shadow-light dark:lg:cohost-shadow-dark fixed lg:left-0 right-0 top-8 max-w-xs !overflow-y-auto truncate bg-foreground !outline-none absolute lg:max-h-[calc(100vh_-_100px)] lg:divide-none rounded-lg bg-notWhite text-notBlack',
               'aria-orientation': 'vertical',
               role: 'listbox',
               onmouseleave: () => {
@@ -245,11 +262,11 @@ const ctrlEnter = event => {
 };
 
 const showMenu = event => {
-  const { pageX, pageY } = event;
   const target = event.target.closest(linkSelector);
   const id = target.href.split('shareOfPostId=')[1];
 
-  document.getElementById(`qrc-menu-${id}`).style = `top: ${pageY + 16}px; left: ${pageX - 120}px; display: block;`;
+  if (event.type === 'touchstart') document.getElementById(`qrc-menu-${id}`).style = `top: ${event.changedTouches[0].pageY + 16}px; right: 0; display: block;`;
+  else document.getElementById(`qrc-menu-${id}`).style = `top: ${event.pageY + 16}px; left: ${event.pageX - 120}px; display: block;`;
 };
 const hideMenu = event => {
   const target = event.target.closest(linkSelector);
@@ -258,7 +275,10 @@ const hideMenu = event => {
     const menu =  document.getElementById(`qrc-menu-${id}`)
     if (menu && !menu.matches(':hover')) menu.style = null;
   }, hideMenuDelay);
-}
+};
+const hideMenuOnTouch = event => {
+  if (!event.originalTarget.matches(`.${customClass},.${customClass} *,${linkSelector},${linkSelector} svg`)) document.querySelectorAll(`.${customClass}`).forEach(function (menu) { menu.style = null });
+};
 const menuSelfHide = event => {
   event.stopPropagation();
   const menu = event.target.closest('.co-themed-box');
@@ -277,6 +297,7 @@ const addMenus = async posts => {
     const shareButton = post.querySelector(linkSelector);
     $(shareButton).on('mouseenter', showMenu);
     $(shareButton).on('mouseleave', hideMenu);
+    onLongPress(shareButton, showMenu);
 
     document.body.append(await newMenu(postId));
   }
@@ -284,6 +305,7 @@ const addMenus = async posts => {
 
 export const main = async () => {
   postFunction.start(addMenus, ':not([data-quick-rechost="true"])');
+  document.addEventListener('touchstart', hideMenuOnTouch);
 };
 
 export const clean = async () => {
@@ -292,4 +314,5 @@ export const clean = async () => {
   $(linkSelector).off('mouseenter', showMenu);
   $(`.${customClass}`).remove();
   $(`[${customAttribute}]`).removeAttr(customAttribute);
+  document.removeEventListener('touchstart', hideMenuOnTouch);
 };
