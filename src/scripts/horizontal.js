@@ -2,7 +2,7 @@ import { getOptions } from './utils/jsTools.js';
 import { style } from './utils/style.js';
 
 const navSelector = 'header > .container > nav';
-const menuSelector = 'ul[role="menu"]';
+const menuSelector = 'ul[role="menu"]:not([class~="lg\:hidden"])';
 const buttonSelector = '#live-dashboard .flex-col > button.w-full';
 const linkSelector = '[href="#"]';
 const observerTargetSelector = '#live-dashboard > .flex-col';
