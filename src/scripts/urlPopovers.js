@@ -245,6 +245,10 @@ export const main = async () => {
 export const clean = async () => {
   postFunction.stop(addPopoversInPosts);
   mutationManager.stop(addPopovers);
+  document.querySelectorAll(anchorSelector).forEach(anchor => {
+    anchor.removeEventListener('mouseenter', displayPopover);
+    anchor.removeEventListener('mouseleave', removePopover);
+  })
 
   $(`.${customClass}`).remove();
   $(`[${customAttribute}]`).removeAttr(customAttribute);
