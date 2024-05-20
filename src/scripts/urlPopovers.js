@@ -235,6 +235,8 @@ const addPopovers = async anchors => {
 };
 
 export const main = async () => {
+  if (!matchMedia('(pointer:fine)').matches) return; // if the device has no mouse (and thus no ability to hover) we don't want to clog up our web requests
+
   ({ showDescriptions } = await getOptions('urlPopovers'));
   postFunction.start(addPopoversInPosts);
   mutationManager.start(anchorSelector, addPopovers);
@@ -246,4 +248,4 @@ export const clean = async () => {
 
   $(`.${customClass}`).remove();
   $(`[${customAttribute}]`).removeAttr(customAttribute);
-}
+};
