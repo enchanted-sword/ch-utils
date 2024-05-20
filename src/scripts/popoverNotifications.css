@@ -88,6 +88,15 @@
 }
 .block-children { img, video { max-width: 100% !important; }; }
 
+.lg\:hidden .ch-utils-popover {
+  overflow: clip;
+  position: static;
+  width: 58vw;
+  border-radius: 0;
+
+  header[data-theme] { display: none; }
+}
+
 .loader { /*adapted from https://cssloaders.github.io/*/
   width: 6px;
   height: 6px;

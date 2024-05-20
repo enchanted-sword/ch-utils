@@ -3,12 +3,14 @@ import { postBoxTheme, batchTrpc } from './utils/apiFetch.js';
 import { activeProject } from './utils/user.js';
 import { getOptions } from './utils/jsTools.js';
 import { parseMd } from './utils/markdown.js';
+import { mutationManager } from './utils/mutation.js';
 
 // eslint-disable-next-line no-undef
 const { DateTime } = luxon;
 let numFetch, highlightUnread;
 const buttonSelector = '[href="https://cohost.org/rc/project/notifications"]';
-const customClass = 'ch-utils-popover-notifications';
+const smListSelector = 'ul[role="menu"][class~="lg\:hidden"]';
+const customClass = 'ch-utils-popoverNotifications';
 const app = document.getElementById('app');
 
 const dateFormat = { weekday: 'long', month: 'long', day: 'numeric' };
@@ -360,20 +362,25 @@ const onNotificationButtonClick = async event => {
 
   const { target, clientX, clientY } = event;
   const button = target.closest(buttonSelector);
+  const smList = document.querySelector(smListSelector);
   const { dataset } = button;
   const state = dataset.notificationPopoverState;
 
-  if (state !== 'open') {
+  if (state !== 'open' && button.scrollHeight) {
     dataset.notificationPopoverState = 'open';
     window.setTimeout(() => document.addEventListener('click', closePopover), 200);
 
     const popover = newNotificationPopover(clientX, clientY, postBoxTheme);
-    app.append(popover)
+
+    if (smList) {
+      const beforeItem = document.querySelector(`${buttonSelector} + a`);
+      smList.insertBefore(popover, beforeItem);
+    } else app.append(popover);
 
     const notifications = await getTransformedNotifications();
     popover.querySelector('.loader').replaceWith(noact({
       tag: 'section',
-      className: 'col-span-1 flex flex-col lg:col-span-2',
+      className: 'flex flex-col',
       children: Object.keys(notifications).map(date => newNotificationPage(date, notifications[date], postBoxTheme))
     }));
   } else {
@@ -383,15 +390,20 @@ const onNotificationButtonClick = async event => {
   }
 };
 
+const addPopovers = buttons => {
+  for (const button of buttons) {
+    button.addEventListener('click', onNotificationButtonClick);
+  }
+}
+
 export const main = async () => {
   ({ numFetch, highlightUnread } = await getOptions('popoverNotifications'));
 
-  const button = document.querySelector(buttonSelector);
-  if (!button) return;
-  button.addEventListener('click', onNotificationButtonClick);
+  mutationManager.start(buttonSelector, addPopovers);
 };
 
 export const clean = async () => {
+  mutationManager.stop(addPopovers);
   document.querySelector(buttonSelector).removeEventListener('click', onNotificationButtonClick);
   $(`.${customClass}`).remove();
 };
