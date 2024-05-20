@@ -52,7 +52,7 @@ const displayPopover = async event => {
     document.body.append(popover);
   }, addPopoverDelay);
 };
-const removePopover = event => {
+const removePopover = () => {
   window.setTimeout(() => {
     const popover = document.getElementById('urlPopover');
     if (popover) {
@@ -212,7 +212,7 @@ const attachPopover = (anchor, project) => {
 };
 
 const addPopoversInPosts = async posts => {
-  for (const post of posts) {
+  await Promise.all(posts.map(async post => {
     if (post.matches(`[${customAttribute}]`)) return;
     post.setAttribute(customAttribute, '');
 
@@ -222,16 +222,16 @@ const addPopoversInPosts = async posts => {
     projects.map(project => {
       post.querySelectorAll(`[href*="https://cohost.org/${project.handle}"]:is(.co-project-handle,.co-project-display-name)`).forEach(anchor => attachPopover(anchor, project));
     });
-  }
+  }));
 };
 const addPopovers = async anchors => {
-  for (const anchor of anchors) {
+  await Promise.all(anchors.map(async anchor => {
     const handle = anchor.href.split('https://cohost.org/')[1];
-    if (anchor.matches(`[${customAttribute}]`) || !handle) continue;
+    if (anchor.matches(`[${customAttribute}]`) || !handle) return;
     
     const project = await getProject(handle);
     attachPopover(anchor, project);
-  }
+  }));
 };
 
 export const main = async () => {
