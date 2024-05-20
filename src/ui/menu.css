@@ -19,7 +19,7 @@
   --mango: 255, 171, 92;
   --text: var(--notBlack);
   --notWhite: 255, 249, 242;
-  --blueberry: 37 99 235;
+  --blueberry: 37, 99, 235;
 }
 
 * {
@@ -175,12 +175,17 @@ ul.ui-featureCategory {
   border: 2px solid rgba(var(--cherry), .4);
   border-radius: 3px;
   margin-bottom: 4px;
-}
 
-#ui-featureContainer > li:has(input:checked:not([dummy], .ui-options input)),
-#ui-featureContainer > li:has(input[active="true"]) {
-  background: rgb(var(--notWhite));
-  border: 2px solid rgb(var(--mango));
+  &:has(input:checked:not([dummy], .ui-options input)),
+  &:has(input[active="true"]) {
+    background: rgb(var(--notWhite));
+    border: 2px solid rgb(var(--mango));
+  }
+
+  &[data-new="true"] {
+    background: rgba(var(--blueberry), .16) !important;
+    border: 2px solid rgba(var(--blueberry), .8) !important;
+  }
 }
 
 div.ui-primaryContent {

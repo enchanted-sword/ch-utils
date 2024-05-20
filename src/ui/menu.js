@@ -32,6 +32,7 @@
       return {
         className: 'ui-featureTitle',
         onclick: function () {
+          this.closest('li').dataset.new = false;
           const secondaryContent = this.closest('li').querySelector('.ui-secondaryContent');
           const caret = this.querySelector('svg');
           if (secondaryContent.getAttribute('active') === 'true') {
@@ -66,11 +67,15 @@
 
     const newFeatureItem = (name, feature = {}, preference = {}) => {
       let featureItem;
+      console.log(preference);
 
       try {
         featureItem = noact({
           tag: 'li',
-          dataset: { searchable: JSON.stringify(feature) },
+          dataset: {
+            searchable: JSON.stringify(feature),
+            new: preference.new ? true : false
+          },
           children: [
             {
               className: 'ui-primaryContent',
@@ -355,6 +360,8 @@
     };
 
     const init = async () => {
+      browser.browserAction.setBadgeText({ text: '' });
+
       const installedFeatures = await importFeatures(); // "await has no effect on this type of expression"- it does, actually!
       const { preferences } = await browser.storage.local.get('preferences');
 
@@ -413,6 +420,9 @@
 
       const version = browser.runtime.getManifest().version;
       document.getElementById('version').innerText = `version: v${version}`;
+
+      Object.keys(preferences).forEach(key => {if (preferences[key].new) delete preferences[key].new; });
+      browser.storage.local.set({ preferences });
     };
 
     const onColorChange = async (color, input) => {

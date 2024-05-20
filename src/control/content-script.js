@@ -110,12 +110,19 @@
   
         if (typeof preferences !== 'undefined') {
           Object.keys(installedFeatures).forEach(feature => { // push new features and options to existing preferences
-            if (!preferences[feature]) preferences[feature] = transformPreferences(installedFeatures[feature].preferences);
+            if (!preferences[feature]) {
+              preferences[feature] = transformPreferences(installedFeatures[feature].preferences);
+              preferences[feature].new = true;
+            }
             if ('options' in installedFeatures[feature].preferences) {
-              if (!('options' in preferences[feature])) preferences[feature].options = {};
+              if (!('options' in preferences[feature])) {
+                preferences[feature].options = {};
+                preferences[feature].new = true;
+              }
               Object.keys(installedFeatures[feature].preferences.options).forEach(option => {
-                if (!preferences[feature].options[option]) {
+                if (!(option in preferences[feature].options)) {
                   preferences[feature].options[option] = installedFeatures[feature].preferences.options[option].value;
+                  preferences[feature].new = true;
                 }
               });
             }
