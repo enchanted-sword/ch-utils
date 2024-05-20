@@ -54,14 +54,15 @@
     }
 
     .inline-children * { color: rgb(160 156 152) !important; }
-  }
 
-  .co-notification-card[data-unread="true"] {
-    background-color: rgb(var(--color-foreground-500));
-  
-    &:hover { background-color: rgb(var(--color-foreground-600)) !important; }
+    .co-notification-card[data-unread="true"] {
+      background-color: rgb(var(--color-foreground-500));
+    
+      &:hover { background-color: rgb(var(--color-foreground-600)) !important; }
+    }
   }
 }
+
 
 .header-sticky {
   position: sticky;
@@ -86,12 +87,6 @@
   ul, img, audio, video { display: none !important; }
 }
 .block-children { img, video { max-width: 100% !important; }; }
-
-.co-notification-card[data-unread="true"] {
-  background-color: rgb(var(--color-tertiary-200));
-
-  &:hover { background-color: rgb(var(--color-tertiary-300)) !important; }
-}
 
 .loader { /*adapted from https://cssloaders.github.io/*/
   width: 6px;
