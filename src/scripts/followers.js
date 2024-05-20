@@ -16,7 +16,7 @@ const followCancelOrUnfollow = [
   'createFollowRequest',
   'declineOrCancelFollowRequest',
   'unfollow'
-]
+];
 const followCancelOrUnfollowRequest = async (state, toProjectId) => apiFetch(`/v1/trpc/relationships.${followCancelOrUnfollow[state]}`, {
   method: 'POST',
   queryParams: { batch: 1 },
@@ -96,6 +96,14 @@ const followCard = project => noact({ className: `${customClass} flex flex-row i
       {
         className: 'items-left flex flex-shrink flex-row gap-1 lg:flex-col',
         children: [
+          {
+            className: 'flex-0 mask relative aspect-square h-8 w-8 lg:hidden inline-block',
+            children: [{
+              src: project.avatarURL,
+              className: `mask mask-${project.avatarShape} h-full w-full object-cover`,
+              alt: project.handle
+            }]
+          },
           {
             rel: 'author',
             href: `https://cohost.org/${project.handle}`,
