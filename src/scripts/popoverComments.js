@@ -67,7 +67,7 @@ const newCommentWrapper = (irt, shareId) => noact({
   ]
 });
 const newCommentBox = (comment, poster, canInteract, extLink) => noact({
-  className: 'co-themed-box co-comment-box cohost-shadow-light dark:cohost-shadow-dark flex w-full min-w-0 max-w-full flex-col gap-4 rounded-lg p-3 lg:max-w-prose',
+  className: 'co-themed-box co-comment-box cohost-shadow-light dark:cohost-shadow-dark flex w-full min-w-0 max-w-full flex-col gap-4 rounded-lg p-3 lg:max-w-prose overflow-clip overflow-x-auto',
   children: [newComment(comment, poster, canInteract, extLink)]
 });
 const hiddenButton = () => { return {
@@ -103,7 +103,7 @@ const hiddenButton = () => { return {
     }
   ]
 }};
-const newComment = (comment, poster, canInteract, extLink) => {return {
+const newComment = (comment, poster, canInteract, extLink) => { return {
   className: 'flex flex-col gap-4',
   children: [
     {
@@ -120,7 +120,7 @@ const newComment = (comment, poster, canInteract, extLink) => {return {
               className: 'flex flex-row gap-4',
               dataset: { popoverCommentsHidden: comment.hidden },
               children: [
-                {
+                comment.deleted ? '' : {
                   href: `https://cohost.org/${poster.handle}`,
                   className: 'flex-0 mask relative aspect-square cohost-shadow-light dark:cohost-shadow-dark h-12 w-12 lg:block',
                   title: `@${poster.handle}`,
@@ -136,18 +136,23 @@ const newComment = (comment, poster, canInteract, extLink) => {return {
                     {
                       className: 'flex flex-row flex-wrap items-center gap-2',
                       children: [
-                        poster.displayName ? {
-                          rel: 'author',
-                          href: `https://cohost.org/${poster.handle}`,
-                          title: poster.displayName,
-                          className: 'co-project-display-name max-w-full flex-shrink truncate font-atkinson font-bold hover:underline',
-                          children: [poster.displayName]
-                        } : '',
-                        {
-                          href: `https://cohost.org/${poster.handle}`,
-                          className: 'co-project-handle font-atkinson font-normal hover:underline',
-                          children: [`@${poster.handle}`]
-                        },
+                        comment.deleted ? {
+                          tag: 'span',
+                          children: ['[deleted]']
+                        } : [
+                          poster.displayName ? {
+                            rel: 'author',
+                            href: `https://cohost.org/${poster.handle}`,
+                            title: poster.displayName,
+                            className: 'co-project-display-name max-w-full flex-shrink truncate font-atkinson font-bold hover:underline',
+                            children: [poster.displayName]
+                          } : '',
+                          {
+                            href: `https://cohost.org/${poster.handle}`,
+                            className: 'co-project-handle font-atkinson font-normal hover:underline',
+                            children: [`@${poster.handle}`]
+                          }
+                        ],
                         {
                           tag: 'time',
                           className: 'block flex-none text-xs tabular-nums text-gray-500',
@@ -167,7 +172,7 @@ const newComment = (comment, poster, canInteract, extLink) => {return {
                     },
                     {
                       className: 'flex flex-row items-center gap-2',
-                      children: canInteract ? [{
+                      children: [ canInteract && !comment.deleted ? {
                         className: 'co-link-button flex cursor-pointer flex-row items-center gap-1 text-sm font-bold hover:underline',
                         dataset: { replyBox: false },
                         onclick: function () {
@@ -195,7 +200,24 @@ const newComment = (comment, poster, canInteract, extLink) => {return {
                           },
                           'reply'
                         ]
-                      }] : ''
+                      } : comment.deleted ? {
+                        tag: 'span',
+                        className: 'co-link-button-disabled flex cursor-not-allowed flex-row items-center gap-1 text-sm font-bold text-gray-400',
+                        children: [
+                          {
+                            viewBox: '0 0 24 24',
+                            fill: 'currentColor',
+                            'aria-hidden': true,
+                            className: 'h-4 w-4',
+                            children: [{
+                              'fill-rule': 'evenodd',
+                              'clip-rule': 'evenodd',
+                              d: 'M9.53 2.47a.75.75 0 010 1.06L4.81 8.25H15a6.75 6.75 0 010 13.5h-3a.75.75 0 010-1.5h3a5.25 5.25 0 100-10.5H4.81l4.72 4.72a.75.75 0 11-1.06 1.06l-6-6a.75.75 0 010-1.06l6-6a.75.75 0 011.06 0z'
+                            }]
+                          },
+                          'replies locked'
+                        ]
+                      } : ''] 
                     }
                   ]
                 }
