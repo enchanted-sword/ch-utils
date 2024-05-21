@@ -82,7 +82,7 @@
               children: [
                 title(feature.title),
                 {
-                  className: 'ui-inputWrapper',
+                  className: 'ui-toggleWrapper',
                   children: [
                     {
                       tag: 'input',
@@ -102,12 +102,12 @@
             }
           ]
         });
-        featureItem.querySelector('.ui-inputWrapper').append($(`<label for="ui-feature-${name}">toggle ${feature.name}</label`)[0]); // for some reason, vanilla js is incapable of setting the for attribute on labels, so jquery is used
+        featureItem.querySelector('.ui-toggleWrapper').append($(`<label for="ui-feature-${name}">toggle ${feature.name}</label`)[0]); // for some reason, vanilla js is incapable of setting the for attribute on labels, so jquery is used
 
         if (preference.enabled) featureItem.querySelector('input').setAttribute('checked', '');
 
         if ('options' in preference) {
-          const optionsWrapper = $('<div>', { class: 'ui-inputWrapper ui-options', type: 'multiSelect' });
+          const optionsWrapper = $('<div>', { class: 'ui-options' });
 
           Object.keys(feature.preferences.options).forEach(key => {
             const option = feature.preferences.options[key];
@@ -115,8 +115,8 @@
 
             switch (option.type) {
               case 'toggle':
-                const toggleWrapper = $(`<div class="ui-multiSelectWrapper"></div>`);
-                const input = $('<input>', { class: 'ui-multiSelect', type: 'checkbox', id: `ui-feature-${name}-${key}`, name: `${name}-${key}` });
+                const toggleWrapper = $(`<div class="ui-inputWrapper ui-checkboxWrapper"></div>`);
+                const input = $('<input>', { class: 'ui-checkbox', type: 'checkbox', id: `ui-feature-${name}-${key}`, name: `${name}-${key}` });
                 const label = $(`<label for="ui-feature-${name}-${key}" name="${name}-${key}">${option.name}</label>`);
 
                 toggleWrapper.append(label);
@@ -136,37 +136,8 @@
                   browser.storage.local.set({ preferences });
                 });
                 break;
-              case 'multiSelect':
-                const multiSelectInputWrapper = $(`<div class="ui-extendedSelectWrapper "><h3>${option.name}</h3></div>`);
-                optionsWrapper.append(multiSelectInputWrapper);
-
-                Object.keys(option.options).forEach(subKey => {
-                  const subOption = option.options[subKey];
-                  const multiSelectWrapper = $(`<div class="ui-multiSelectWrapper ui-extendedSelect"><h2>${subOption.name}</h2></div>`);
-                  const input = $('<input>', { class: 'ui-multiSelect', type: 'checkbox', id: `ui-feature-${name}-${key}-${subKey}`, name: `${name}-${key}` });
-                  const label = $(`<label for="ui-feature-${name}-${key}-${subKey}" name="${name}-${key}">select ${subOption.name}</label>`);
-      
-                  multiSelectWrapper.append(input);
-                  multiSelectWrapper.append(label);
-                  multiSelectInputWrapper.append(multiSelectWrapper);
-      
-                  if (preference.options[key][subKey]) input.attr('checked', '');
-      
-                  input.on('change', async function () {
-                    const checked = this.checked ? true : false;
-                    let { preferences } = await browser.storage.local.get('preferences');
-          
-                    if (checked) preferences[name].options[key].push(subKey);
-                    else preferences[name].options[key] = preferences[name].options[key].filter(item => item !== subKey);
-
-                    preferences[name].options[key] = [...new Set(preferences[name].options[key])];
-      
-                    browser.storage.local.set({ preferences });
-                  });
-                });
-                break;
               case 'select':
-                const selectInputWrapper = $(`<div class="ui-extendedSelectWrapper "><label for="ui-feature-${name}-${key}">${option.name}</label></div>`);
+                const selectInputWrapper = $(`<div class="ui-inputWrapper "><label for="ui-feature-${name}-${key}">${option.name}</label></div>`);
                 const selectInput = $(`<select class="ui-select" id="ui-feature-${name}-${key}" name="${name}-${key}"></select>`);
 
                 Object.keys(option.options).forEach(subKey => {
@@ -191,26 +162,8 @@
                   browser.storage.local.set({ preferences });
                 });
                 break;
-              case 'textarea':
-                const textInputWrapper = $(`<div class="ui-extendedSelectWrapper"><h3>${option.name}</h3></div>`);
-                const textInput = $('<textarea>', {
-                  class: 'ui-textInput',
-                  autocomplete: 'off',
-                  autofill: 'off',
-                  spellcheck: 'false',
-                  placeholder: option.placeholder,
-                  id: `ui-feature-${name}-${key}`,
-                  name: `${name}-${key}`
-                });
-                textInput.text(preference.options[key]);
-
-                textInputWrapper.append(textInput);
-                optionsWrapper.append(textInputWrapper);
-
-                textInput.on('input', debounce(onTextInput));
-                break;
               case 'number': {
-                const numInputWrapper = $(`<div class="ui-extendedSelectWrapper align-end"></div>`);
+                const numInputWrapper = $(`<div class="ui-inputWrapper ui-numInputWrapper"></div>`);
                 const label = $(`<label for="ui-feature-${name}-${key}" name="${name}-${key}">${option.name}</label>`);
                 const numInput = $('<input>', {
                   type: 'number',
@@ -237,70 +190,7 @@
                   browser.storage.local.set({ preferences });
                 });
                 break;
-              } case 'listSelect': {
-                const listSelectInputWrapper = $(`<div class="ui-extendedSelectWrapper"><h3>${option.name}</h3></div>`);
-                const listSelectWrapper = $(`<div class="ui-listSelectWrapper"></div>`);
-
-                optionsWrapper.append(listSelectInputWrapper);
-                listSelectInputWrapper.append(listSelectWrapper);
-
-                option.listOptions.forEach(listItem => {
-                  const normalizedString = listItem.replace(/\s/g, '');
-                  const input = $('<input>', { class: 'ui-listSelect', type: 'checkbox', id: `ui-feature-${name}-${key}-${normalizedString}`, name: `${name}-${key}` });
-                  const label = $(`<label for="ui-feature-${name}-${key}-${normalizedString}" name="${name}-${key}">${listItem}</label>`);
-      
-                  listSelectWrapper.append(input);
-                  listSelectWrapper.append(label);
-      
-                  if (preference.options[key].includes(listItem)) input.attr('checked', '');
-      
-                  input.on('change', async function (event) {
-                    const checked = event.target.checked ? true : false;
-                    let { preferences } = await browser.storage.local.get('preferences');
-          
-                    if (checked) preferences[name].options[key].push(listItem);
-                    else preferences[name].options[key] = preferences[name].preferences[key].list.filter(item => item !== listItem);
-
-                    preferences[name].options[key] = [...new Set(preferences[name].options[key])];
-
-                    browser.storage.local.set({ preferences });
-                  });
-                });
-                break;
-              } case 'slider': {
-                const sliderInputWrapper = $('<div>', { class: 'ui-selectWrapper' });
-                const label = $(`<label for="ui-feature-${name}-${key}" name="${name}-${key}">${option.name}</label>`);
-                const sliderInput = $('<input>', {
-                  class: 'ui-slider',
-                  type: 'range',
-                  id: `ui-feature-${name}-${key}`,
-                  list: `ui-feature-${name}-${key}-list`,
-                  name: `${name}-${key}`,
-                  min: option.min,
-                  max: option.max,
-                  step: option.step,
-                  value: preference.options[key],
-                  default: option.default
-                });
-                const datalist = $('<datalist>', { id: `ui-feature-${name}-${key}-list` });
-                for (const listOption of option.datalist) {
-                  const option = $('<option>', { value: listOption.value, label: listOption.label });
-                  datalist.append(option);
-                }
-
-                sliderInputWrapper.append(label);
-                sliderInputWrapper.append(sliderInput);
-                sliderInputWrapper.append(datalist);
-                optionsWrapper.append(sliderInputWrapper);
-
-                sliderInput.on('change', async function (event) {
-                  const value = event.target.value;
-                  let { preferences } = await browser.storage.local.get('preferences');
-                  preferences[name].options[key] = value;
-                  browser.storage.local.set({ preferences });
-                });
-                break;
-              }
+              } 
             }
           });
 
@@ -422,14 +312,6 @@
       document.getElementById('version').innerText = `version: v${version}`;
 
       Object.keys(preferences).forEach(key => {if (preferences[key].new) delete preferences[key].new; });
-      browser.storage.local.set({ preferences });
-    };
-
-    const onColorChange = async (color, input) => {
-      let { preferences } = await browser.storage.local.get('preferences');
-      $(input.nextElementSibling).css('background', color);
-      const [name, key, optionsKey] = input.getAttribute('name').split('-');
-      preferences[name].preferences[key][optionsKey] = color;
       browser.storage.local.set({ preferences });
     };
     
