@@ -270,7 +270,7 @@ let map = {
 }
 
 const textNodeDescendants = node => [
-    ...node.childNodes, ...Array.from(node.childNodes)
+    ...node.childNodes, ...Array.from(node.childNodes).filter(child => child.nodeName !== 'CODE')
     .flatMap(child => textNodeDescendants(child))
   ].filter(child => child.nodeName === '#text');
 const caseMatch = (str0, str1) => {
