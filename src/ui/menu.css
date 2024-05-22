@@ -439,7 +439,7 @@ textarea.ui-textInput {
   pointer-events: none;
   position: absolute;
   opacity: 0;
-  bottom: 36px;
+  bottom: 48px;
   left: 0;
   padding: 8px;
   background-color: rgb(var(--white));
@@ -450,7 +450,7 @@ textarea.ui-textInput {
   &:after {
     content: '';
     left: calc(50% - 8px);
-    bottom: -16px;
+    bottom: -17px;
     position: absolute;
     border: 16px solid rgb(var(--mango));
     border-top-color: transparent;
