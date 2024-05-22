@@ -2,13 +2,13 @@
   font-family: "Atkinson Hyperlegible";
   src:
     local("Atkinson Hyperlegible"),
-    url('fonts/Atkinson-Hyperlegible-Regular.ttf') format('truetype');
+    url('fonts/Atkinson-Hyperlegible-Regular.woff') format('woff');
 }
 @font-face {
   font-family: "Atkinson Hyperlegible";
   src:
     local("Atkinson Hyperlegible Bold"),
-    url('fonts/Atkinson-Hyperlegible-Bold.ttf') format('truetype');
+    url('fonts/Atkinson-Hyperlegible-Bold.woff') format('woff');
   font-weight: 700;
 }
 
