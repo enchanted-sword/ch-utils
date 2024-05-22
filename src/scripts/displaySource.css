@@ -30,7 +30,11 @@ div.ch-utils-displaySource {
   }
 }
 
-.co-thread-header:has([data-active="true"]), .co-post-header:has([data-active="true"]) {
+[data-display-source] {
+  &[data-display-source="switch"] .co-post-header:has([data-active="true"]) + div { display: none; }
+  &:has([data-active="true"]) + div.ch-utils-displaySource { display: flex; }
+}
+.co-thread-header:has([data-active="true"]) {
   ~ [data-display-source="switch"] { display: none; }
   ~ div.ch-utils-displaySource { display: flex; }
 }

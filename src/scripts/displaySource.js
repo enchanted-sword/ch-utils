@@ -1,7 +1,10 @@
 import { noact } from './utils/noact.js';
-import { postFunction } from './utils/mutation.js';
+import { branchFunction } from './utils/mutation.js';
 import { getViewModel } from './utils/react.js';
+import { displayPrefs } from './utils/apiFetch.js';
 import { getOptions } from './utils/jsTools.js';
+
+const { collapseLongThreads } = await displayPrefs();
 
 let theme, showBoth;
 
@@ -81,24 +84,16 @@ const newSourceDisplay = blocks => noact({
   })
 });
 
-const addButtons = async posts => {
-  for (const post of posts) {
-    post.setAttribute(customAttribute, '');
-    let { blocks, shareTree } = await getViewModel(post);
-    if (shareTree) shareTree = shareTree.map(branch => branch.blocks);
-    
-    let headers = post.querySelectorAll('.co-post-header');
-    if (!headers.length) headers = [post.querySelector('.co-thread-header')];
-    headers.forEach(header => header.append(newIcon()));
+const addButtons = async branches => {
+  for (const branch of branches) {
+    branch.setAttribute(customAttribute, showBoth ? 'showBoth' : 'switch');
+    let { blocks } = await getViewModel(branch);
 
-    let bodies = post.querySelectorAll('.co-post-header + div');
-    if (!bodies.length) bodies = [post.querySelector('.co-thread-header ~ div')];
-    bodies.forEach((body, i) => {
-      body.setAttribute(customAttribute, showBoth ? 'showBoth' : 'switch');
-      if (blocks && !shareTree.length) body.parentElement.insertBefore(newSourceDisplay(blocks), post.querySelector('.co-thread-footer'));
-      else if (shareTree[i]) body.parentElement.append(newSourceDisplay(shareTree[i]));
-      else if (blocks) body.parentElement.append(newSourceDisplay(blocks));
-    });
+    let header = branch.querySelector('.co-post-header');
+    if (!header) header = branch.parentElement.querySelector('.co-thread-header');
+    header.append(newIcon());
+
+    branch.parentElement.insertBefore(newSourceDisplay(blocks), branch.nextElementSibling); // why isn't insertAfter a thing?
   }
 }
 
@@ -106,11 +101,11 @@ export const main = async () => {
   ({ theme, showBoth } = await getOptions('displaySource'));
   Prism.plugins.customClass.prefix('prism-');
 
-  postFunction.start(addButtons, `:not([${customAttribute}])`);
+  branchFunction.start(addButtons, `:not([${customAttribute}])`);
 };
 export const clean = async () => {
   $(`.${customClass}`).remove();
   $(`[${customAttribute}]`).removeAttr(customAttribute);
 
-  postFunction.stop(addButtons);
+  branchFunction.stop(addButtons);
 };
