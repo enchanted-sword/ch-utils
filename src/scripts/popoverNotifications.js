@@ -149,9 +149,8 @@ const interactionMap = notification => {
         {
           href: notification.targetPost.singlePostPageUrl,
           className: 'font-bold hover:underline',
-          children: [reshare ? 'a share' : 'your post']
-        },
-        reshare ? ' of your post' : ''
+          children: [`${reshare ? 'a share of' : ''} your post`]
+        }
       ];
     case 'share':
       return [
@@ -162,7 +161,7 @@ const interactionMap = notification => {
         {
           href: notification.sharePost.singlePostPageUrl,
           className: 'font-bold hover:underline',
-          children: ['your post and added']
+          children: [`${reshare ? 'a share of' : ''} your post and added`]
         },
       ];
     case 'groupedShare':
@@ -174,9 +173,8 @@ const interactionMap = notification => {
         {
           href: notification.targetPost.singlePostPageUrl,
           className: 'font-bold hover:underline',
-          children: [reshare ? 'a share' : 'your post']
-        },
-        reshare ? ' of your post' : ''
+          children: [`${reshare ? 'a share of' : ''} your post`]
+        }
       ];
     case 'groupedFollow':
       return {
