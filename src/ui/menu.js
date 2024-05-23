@@ -67,7 +67,6 @@
 
     const newFeatureItem = (name, feature = {}, preference = {}) => {
       let featureItem;
-      console.log(preference);
 
       try {
         featureItem = noact({
