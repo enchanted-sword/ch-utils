@@ -1,3 +1,31 @@
+# v1.2.2
+### General
+- Now more mobile-friendly!
+- Minor tweaks to the menu appearance
+- Parallel processing should speed up some features
+- The extension will now show a badge to indicate that an update has occured, and new or updated features will be highlighted in the menu 
+
+### Quick rechost
+- Added touch support; tap and hold the button to bring up the quick rechost menu
+
+### Open notifications in popover view
+- Unread notifications now contrast correctly on both forced and inherited dark mode (for real this time)
+- Added mobile support
+- Interaction dialog is now slightly more accurate
+
+### Show page info on hover
+- Will now only run if the device has a mouse active (and thus can actually hover), to save on network requests
+- Hover event handlers should now be properly removed when disabling the feature
+
+### Horizontal navigation
+- No longer messes with the menu if in sub-1024px mode
+
+### Yinglet translation
+- Contents of &lt;code&gt; elements are now preserved and will not be translated
+
+### Display post source code
+- Should now correctly work on long threads with the "collapse long threads" cohost setting enabled
+
 # v1.2.1
 ### General
 - Preferences should hopefully now transition seamlessly when adding or removing features or options
