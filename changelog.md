@@ -1,6 +1,6 @@
 # v1.2.2
 ### General
-- Now more mobile-friendly!
+- Now mobile-friendly!
 - Minor tweaks to the menu appearance
 - Parallel processing should speed up some features
 - The extension will now show a badge to indicate that an update has occured, and new or updated features will be highlighted in the menu 
