@@ -1,7 +1,7 @@
 {
   "name": "quickRechost",
   "title": "quick rechost",
-  "description": "adds a popup menu that allows fast-resharing a post with tags",
+  "description": "adds a popup menu that allows fast-resharing a post with tags. to display the menu, hover over the reshare button on a device with mouse input, or tap and hold it on a device with touch input.",
   "preferences": { "enabled": false },
   "js": true,
   "css": true
