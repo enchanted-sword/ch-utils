@@ -24,6 +24,7 @@
   --white-cherry-80: color-mix(in srgb, rgb(var(--white)), rgb(var(--cherry)) 80%);
   --white-cherry-90: color-mix(in srgb, rgb(var(--white)), rgb(var(--cherry)) 90%);
   --white-mango-10: color-mix(in srgb, rgb(var(--white)), rgb(var(--mango)) 10%);
+  --white-mango-50: color-mix(in srgb, rgb(var(--white)), rgb(var(--mango)) 50%);
   --cherry: 131 37 79;
   --notBlack: 40 25 25;
   --notBlack-cherry-50: color-mix(in srgb, rgb(var(--notBlack)), rgb(var(--cherry)) 50%);
@@ -40,13 +41,13 @@
   transition: 0.3s;
   scrollbar-width: none;
 }
-html, menu, body {
-  width: 360px;
-}
 body {
+  min-width: 360px;
+  min-height: 6000px;
+  overflow: hidden;
   margin: 0;
   padding: 0;
-  overflow: hidden;
+  background: rgb(var(--cherry));
 }
 p, h1, h2, h3, span, a, ul, li, figure, section, button, textarea, input { 
   font-family: "Atkinson Hyperlegible", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
@@ -65,13 +66,14 @@ h3 { font-size: 18px; }
 }
 
 #ui-menu {
-  height: 600px;
-  overflow: hidden;
+  position: relative;
   background: rgb(var(--cherry));
   border-radius: var(--border-radius-sm);
 }
 
 #ui-tabs {
+  position: fixed;
+  top: 0;
   width: 100%;
   display: flex;
   flex-flow: row nowrap;
@@ -103,10 +105,12 @@ h3 { font-size: 18px; }
 }
 
 .ui-section {
+  position: absolute;
+  top: 48px;
+  left: 8px;
   display: none;
   overflow: clip;
   width: calc(100% - 16px);
-  margin: 8px auto 0;
   background: rgb(var(--white));
   border-radius: var(--border-radius-sm);
 }
@@ -179,12 +183,13 @@ ul.ui-featureCategory {
   margin: 8px 0;
   padding: 0;
 }
+
 #ui-featureContainer {
+  height: calc(100vh - 96px);
   padding: 0 8px 8px;
-  height: 504px;
   overflow-y: auto;
   overflow-x: hidden;
-  scrollbar-width: auto;
+  scrollbar-width: thin;
   scrollbar-color: var(--white-cherry-40) var(--white-cherry-20);
 }
 #ui-featureContainer > li {
@@ -194,8 +199,8 @@ ul.ui-featureCategory {
   background: var(--white-cherry-10);
   border: var(--border-thickness-sm) solid var(--white-cherry-60);
   border-radius: var(--border-radius-sm);
-  margin-bottom: 4px;
 
+  &:not(:last-of-type) { margin-bottom: 4px; }
   &:has(input:checked:not([dummy], .ui-options input)),
   &:has(input[active="true"]) {
     background: var(--white-mango-10);
@@ -260,6 +265,11 @@ ul.ui-featureCategory {
 .ui-options {
   display: flex;
   flex-flow: column nowrap;
+
+  h2 {
+    border-bottom: var(--border-thickness-sm) solid var(--white-mango-50);
+    margin-bottom: 8px;
+  }
 }
 
 input.ui-toggle + label {
@@ -492,7 +502,7 @@ select + .ui-tooltip { bottom: 48px; }
   justify-content: space-between;
 
   button {
-    width: 308px;
+    flex: 1;
     font-size: 20px;
     text-align: center;
     border: var(--border-thickness-lg) solid var(--mango-cherry-30);
@@ -501,14 +511,13 @@ select + .ui-tooltip { bottom: 48px; }
     position: relative;
     background-color: rgb(var(--mango));
   
-    &:is(#ui-import, #ui-export) { width: 150px; }
     &:hover { background-color: var(--mango-cherry-10); }
   }
 }
 #ui-preferenceText {
   font-family: 'Courier New', Courier, monospace;
   font-weight: bold;
-  height: 335px;
+  height: calc(100vh - 265px);
 }
 
 .ui-aboutLink {
@@ -518,7 +527,7 @@ select + .ui-tooltip { bottom: 48px; }
   justify-content: center;
   align-items: center;
   background-color: var(--white-cherry-10);
-  border: var(--border-thickness-lg) solid var(--white-cherry-60);
+  border: var(--border-thickness-sm) solid var(--white-cherry-60);
   border-radius: var(--border-radius-sm);
   text-decoration: none;
   

@@ -106,7 +106,7 @@
         if (preference.enabled) featureItem.querySelector('input').setAttribute('checked', '');
 
         if ('options' in preference) {
-          const optionsWrapper = $('<div>', { class: 'ui-options' });
+          const optionsWrapper = $('<div class="ui-options"><h2>options</h2></div>');
 
           Object.keys(feature.preferences.options).forEach(key => {
             const option = feature.preferences.options[key];
