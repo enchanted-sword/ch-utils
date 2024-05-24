@@ -92,7 +92,6 @@
   overflow: clip;
   position: static;
   width: 58vw;
-  border-radius: 0;
 
   header[data-theme] { display: none; }
 }
