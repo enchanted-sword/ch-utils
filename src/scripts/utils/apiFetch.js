@@ -75,7 +75,8 @@ export const getProject = async handle => {
   if (!projectMap.has(handle)) {
     try {
       const [{ projects }] = await batchTrpc(['projects.searchByHandle'], { 0: { query: handle, skipMinimum: false } }); // the search function is currently the fastest way to get info from a handle. it's stupid, i know
-      projectMap.set(handle, projects[0]);
+      const project = projects.find(p => p.handle === handle);
+      projectMap.set(handle, project);
     } catch (e) {
       console.warn('search method failed, attempting slow method', e);
       projectMap.set(handle, await getProjectSlow(handle));
