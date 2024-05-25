@@ -26,6 +26,12 @@
     color: rgb(var(--color-notBlack));
   }
 
+  .co-notification-card[data-unread="true"] {
+    background-color: rgb(var(--color-tertiary-200));
+  
+    &:hover { background-color: rgb(var(--color-tertiary-300)) !important; }
+  }
+
   &:has([data-theme="dark"]) {
     color: rgb(var(--color-notWhite));
     background-color: rgb(0 0 0 / var(--tw-bg-opacity));
