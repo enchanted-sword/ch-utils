@@ -1,0 +1,396 @@
+{
+  "name": "appNav",
+  "title": "mobile quick navigation",
+  "description": "adds a horizontal footer menu with up to 6 navigation icons",
+  "preferences": {
+    "enabled": false,
+    "options": {
+      "icon1": {
+        "value": "home",
+        "type": "select",
+        "name": "icon 1",
+        "tooltip": "first icon in the menu",
+        "options": [
+          {
+            "value": "none",
+            "name": "none"
+          },
+          {
+            "value": "home",
+            "name": "home"
+          },
+          {
+            "value": "notifications",
+            "name": "notifications"
+          },
+          {
+            "value": "tagged",
+            "name": "tagged"
+          },
+          {
+            "value": "liked-posts",
+            "name": "liked"
+          },
+          {
+            "value": "artist-alley",
+            "name": "artist alley"
+          },
+          {
+            "value": "search",
+            "name": "search"
+          },
+          {
+            "value": "profile",
+            "name": "profile"
+          },
+          {
+            "value": "inbox",
+            "name": "inbox"
+          },
+          {
+            "value": "unpublished",
+            "name": "drafts"
+          },
+          {
+            "value": "following",
+            "name": "following"
+          },
+          {
+            "value": "followers",
+            "name": "followers"
+          },
+          {
+            "value": "settings",
+            "name": "settings"
+          },
+          {
+            "value": "compose",
+            "name": "new post"
+          }
+        ]
+      },
+      "icon2": {
+        "value": "notifications",
+        "type": "select",
+        "name": "icon 2",
+        "tooltip": "second icon in the menu",
+        "options": [
+          {
+            "value": "none",
+            "name": "none"
+          },
+          {
+            "value": "home",
+            "name": "home"
+          },
+          {
+            "value": "notifications",
+            "name": "notifications"
+          },
+          {
+            "value": "tagged",
+            "name": "tagged"
+          },
+          {
+            "value": "liked-posts",
+            "name": "liked"
+          },
+          {
+            "value": "artist-alley",
+            "name": "artist alley"
+          },
+          {
+            "value": "search",
+            "name": "search"
+          },
+          {
+            "value": "profile",
+            "name": "profile"
+          },
+          {
+            "value": "inbox",
+            "name": "inbox"
+          },
+          {
+            "value": "unpublished",
+            "name": "drafts"
+          },
+          {
+            "value": "following",
+            "name": "following"
+          },
+          {
+            "value": "followers",
+            "name": "followers"
+          },
+          {
+            "value": "settings",
+            "name": "settings"
+          },
+          {
+            "value": "compose",
+            "name": "new post"
+          }
+        ]
+      },
+      "icon3": {
+        "value": "search",
+        "type": "select",
+        "name": "icon 3",
+        "tooltip": "third icon in the menu",
+        "options": [
+          {
+            "value": "none",
+            "name": "none"
+          },
+          {
+            "value": "home",
+            "name": "home"
+          },
+          {
+            "value": "notifications",
+            "name": "notifications"
+          },
+          {
+            "value": "tagged",
+            "name": "tagged"
+          },
+          {
+            "value": "liked-posts",
+            "name": "liked"
+          },
+          {
+            "value": "artist-alley",
+            "name": "artist alley"
+          },
+          {
+            "value": "search",
+            "name": "search"
+          },
+          {
+            "value": "profile",
+            "name": "profile"
+          },
+          {
+            "value": "inbox",
+            "name": "inbox"
+          },
+          {
+            "value": "unpublished",
+            "name": "drafts"
+          },
+          {
+            "value": "following",
+            "name": "following"
+          },
+          {
+            "value": "followers",
+            "name": "followers"
+          },
+          {
+            "value": "settings",
+            "name": "settings"
+          },
+          {
+            "value": "compose",
+            "name": "new post"
+          }
+        ]
+      },
+      "icon4": {
+        "value": "compose",
+        "type": "select",
+        "name": "icon 4",
+        "tooltip": "fourth icon in the menu",
+        "options": [
+          {
+            "value": "none",
+            "name": "none"
+          },
+          {
+            "value": "home",
+            "name": "home"
+          },
+          {
+            "value": "notifications",
+            "name": "notifications"
+          },
+          {
+            "value": "tagged",
+            "name": "tagged"
+          },
+          {
+            "value": "liked-posts",
+            "name": "liked"
+          },
+          {
+            "value": "artist-alley",
+            "name": "artist alley"
+          },
+          {
+            "value": "search",
+            "name": "search"
+          },
+          {
+            "value": "profile",
+            "name": "profile"
+          },
+          {
+            "value": "inbox",
+            "name": "inbox"
+          },
+          {
+            "value": "unpublished",
+            "name": "drafts"
+          },
+          {
+            "value": "following",
+            "name": "following"
+          },
+          {
+            "value": "followers",
+            "name": "followers"
+          },
+          {
+            "value": "settings",
+            "name": "settings"
+          },
+          {
+            "value": "compose",
+            "name": "new post"
+          }
+        ]
+      },
+      "icon5": {
+        "value": "none",
+        "type": "select",
+        "name": "icon 5",
+        "tooltip": "fifth icon in the menu",
+        "options": [
+          {
+            "value": "none",
+            "name": "none"
+          },
+          {
+            "value": "home",
+            "name": "home"
+          },
+          {
+            "value": "notifications",
+            "name": "notifications"
+          },
+          {
+            "value": "tagged",
+            "name": "tagged"
+          },
+          {
+            "value": "liked-posts",
+            "name": "liked"
+          },
+          {
+            "value": "artist-alley",
+            "name": "artist alley"
+          },
+          {
+            "value": "search",
+            "name": "search"
+          },
+          {
+            "value": "profile",
+            "name": "profile"
+          },
+          {
+            "value": "inbox",
+            "name": "inbox"
+          },
+          {
+            "value": "unpublished",
+            "name": "drafts"
+          },
+          {
+            "value": "following",
+            "name": "following"
+          },
+          {
+            "value": "followers",
+            "name": "followers"
+          },
+          {
+            "value": "settings",
+            "name": "settings"
+          },
+          {
+            "value": "compose",
+            "name": "new post"
+          }
+        ]
+      },
+      "icon6": {
+        "value": "none",
+        "type": "select",
+        "name": "icon 6",
+        "tooltip": "sixth icon in the menu",
+        "options": [
+          {
+            "value": "none",
+            "name": "none"
+          },
+          {
+            "value": "home",
+            "name": "home"
+          },
+          {
+            "value": "notifications",
+            "name": "notifications"
+          },
+          {
+            "value": "tagged",
+            "name": "tagged"
+          },
+          {
+            "value": "liked-posts",
+            "name": "liked"
+          },
+          {
+            "value": "artist-alley",
+            "name": "artist alley"
+          },
+          {
+            "value": "search",
+            "name": "search"
+          },
+          {
+            "value": "profile",
+            "name": "profile"
+          },
+          {
+            "value": "inbox",
+            "name": "inbox"
+          },
+          {
+            "value": "unpublished",
+            "name": "drafts"
+          },
+          {
+            "value": "following",
+            "name": "following"
+          },
+          {
+            "value": "followers",
+            "name": "followers"
+          },
+          {
+            "value": "settings",
+            "name": "settings"
+          },
+          {
+            "value": "compose",
+            "name": "new post"
+          }
+        ]
+      }
+    }
+  },
+  "js": true,
+  "css": true
+}
