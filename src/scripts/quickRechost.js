@@ -266,7 +266,7 @@ const showMenu = event => {
   const id = target.href.split('shareOfPostId=')[1];
 
   if (event.type === 'touchstart') document.getElementById(`qrc-menu-${id}`).style = `top: ${event.changedTouches[0].pageY + 16}px; right: .5rem; display: block;`;
-  else document.getElementById(`qrc-menu-${id}`).style = `top: ${event.pageY + 16}px; left: ${event.pageX - 120}px; display: block;`;
+  else document.getElementById(`qrc-menu-${id}`).style = `top: ${event.pageY + 16}px; ${matchMedia('(pointer:fine)').matches ? `left: ${event.pageX - 120}px;` : 'right: .5rem;'} display: block;`; // occasionally, the touch function will act like a not-touch function. why? who knows
 };
 const hideMenu = event => {
   const target = event.target.closest(linkSelector);
