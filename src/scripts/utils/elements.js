@@ -1,8 +1,8 @@
 import { noact } from './noact.js';
 import { activeProject } from './user.js';
-import { apiFetch, followState } from './apiFetch.js';
+import { apiFetch, batchTrpc, followState } from './apiFetch.js';
 
-const states = [
+const followStates = [
   'follow',
   'cancel follow request',
   'unfollow'
@@ -116,9 +116,45 @@ export const followCard = async (customClass, project) => {
         } else target.innerText = 'follow';
       });
     },
-  
-    children: [project.followState === 0 ? (project.privacy === 'private' ? 'send follow request' : 'follow') : states[project.followState]]
+    children: [project.followState === 0 ? (project.privacy === 'private' ? 'send follow request' : 'follow') : followStates[project.followState]]
 
   }
 ]});
 };
+
+const bookmarkState = async tagName => batchTrpc(['bookmarks.tags.isBookmarked'], { 0: { tagName }});
+const bookmarkOrUnbookmark = state => state ? 'delete' : 'create';
+const bookmarkOrUnbookmarkRequest = async (state, tagName) => apiFetch(`/v1/trpc/bookmarks.tags.${bookmarkOrUnbookmark(state)}`, {
+  method: 'POST',
+  queryParams: { batch: 1 },
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    0 : { tagName }
+  })
+})
+export const tagCard = async (customClass, tag) => {
+  const [bookmarked] = await bookmarkState(tag);
+  return noact({
+    className: `${customClass} flex flex-row justify-between gap-3`,
+    children: [
+      {
+        className: "underline before:content-['#']",
+        href: `https://cohost.org/rc/tagged/${tag}`,
+        children: [tag]
+      },
+      {
+        className: 'leading-none align-middle py-2 px-4 no-select body-2 rounded-lg bg-secondary text-notWhite dark:text-notBlack hover:bg-secondary-600',
+        onclick: async ({ target }) => {
+          const [state] = await bookmarkState(tag);
+          
+          bookmarkOrUnbookmarkRequest(state, tag).then(() => {
+            if (state) {
+              target.innerText = 'bookmark this tag';
+            } else target.innerText = 'unbookmark this tag';
+          });
+        },
+        children: [`${bookmarked ? 'un' : ''}bookmark this tag`]
+      }
+    ]
+  });
+}

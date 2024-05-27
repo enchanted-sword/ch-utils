@@ -1,7 +1,1 @@
 ul[role="menu"] { bottom: 3rem; }
-
-.max-w-screen { max-width: 100vw; }
-
-.ch-utils-quickSearch:has(.ch-utils-quickSearch-result) .ch-utils-quickSearch-placeHolder { display: none; }
-#ch-utils-quickSearch-results:not(:has(.ch-utils-quickSearch-result)) { display: none; }
-.ch-utils-quickSearch-result:first-of-type { margin-top: 1rem; }

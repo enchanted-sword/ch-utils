@@ -26,7 +26,7 @@ export const apiFetch = async (path, body = {}) => fetch(`https://cohost.org/api
       return response.json().then(response => {
         console.debug(response);
         if (response.constructor.name === 'Array') return response.map(({ result, error }) => {
-          if (result && result.data) return result.data;
+          if (result && 'data' in result) return result.data;
           else if (error) throw error;
         });
         else if ('result' in response) return response.result.data;
