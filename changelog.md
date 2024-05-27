@@ -1,3 +1,15 @@
+# v1.2.3
+
+### Quick rechost
+- Should hopefully no longer occasionally overflow on mobile
+
+### Popover notifications
+- Unread highlighting should now be fixed on LIGHT MODE
+- Minor style tweaks
+
+### Show page info on hover
+- Show now always display the correct page
+
 # v1.2.2
 ### General
 - Now mobile-friendly!
