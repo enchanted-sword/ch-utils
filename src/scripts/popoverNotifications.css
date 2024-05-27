@@ -6,6 +6,7 @@
   z-index: 100;
   width: 28rem;
   border-radius: .5rem;
+  border: none;
   overflow: hidden;
   color: rgb(var(--color-notBlack));
   background-color: rgb(255 255 255 / var(--tw-bg-opacity));
