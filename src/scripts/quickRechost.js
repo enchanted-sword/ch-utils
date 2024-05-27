@@ -277,7 +277,9 @@ const hideMenu = event => {
   }, hideMenuDelay);
 };
 const hideMenuOnTouch = event => {
-  if (!event.originalTarget.matches(`.${customClass},.${customClass} *,${linkSelector},${linkSelector} svg`)) document.querySelectorAll(`.${customClass}`).forEach(function (menu) { menu.style = null });
+  try {
+    if (!event.originalTarget.matches(`.${customClass},.${customClass} *,${linkSelector},${linkSelector} svg`)) document.querySelectorAll(`.${customClass}`).forEach(function (menu) { menu.style = null });
+  } catch {} // can't check .matches() on some inputs so this keeps the console free of extra errors
 };
 const menuSelfHide = event => {
   event.stopPropagation();
