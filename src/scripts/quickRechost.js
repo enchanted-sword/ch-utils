@@ -265,7 +265,7 @@ const showMenu = event => {
   const target = event.target.closest(linkSelector);
   const id = target.href.split('shareOfPostId=')[1];
 
-  if (event.type === 'touchstart') document.getElementById(`qrc-menu-${id}`).style = `top: ${event.changedTouches[0].pageY + 16}px; right: 0; display: block;`;
+  if (event.type === 'touchstart') document.getElementById(`qrc-menu-${id}`).style = `top: ${event.changedTouches[0].pageY + 16}px; right: .5rem; display: block;`;
   else document.getElementById(`qrc-menu-${id}`).style = `top: ${event.pageY + 16}px; left: ${event.pageX - 120}px; display: block;`;
 };
 const hideMenu = event => {
@@ -299,7 +299,7 @@ const addMenus = async posts => {
     $(shareButton).on('mouseleave', hideMenu);
     onLongPress(shareButton, showMenu);
 
-    document.body.append(await newMenu(postId));
+    document.getElementById('app').append(await newMenu(postId));
   }
 };
 
