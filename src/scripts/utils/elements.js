@@ -106,7 +106,7 @@ export const followCard = async (customClass, project) => {
     onclick: async ({ target }) => {
       const state = await followState(project.handle);
       
-      followCancelOrUnfollowRequest(state, project.projectId).then(([followingState]) => {
+      followCancelOrUnfollowRequest(state, project.projectId).then(([{ followingState }]) => {
         if (followingState === 2) {
           target.innerText = 'unfollow';
         } else if (followingState === 1) {

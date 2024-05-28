@@ -21,8 +21,9 @@ const loaderButton = followers => noact({
   onclick: async ({ target }) => {
     target.innerHTML = '<span class="spinner"></span>';
     await Promise.all(followers.map(async project => {
+      const card = await followCard(customClass, project);
       if ($(`.co-project-handle[href='https://cohost.org/${project.handle}']`).length) return;
-      $('.co-themed-box .mt-6').append(followCard(customClass, project));
+      $('.co-themed-box .mt-6').append($(card));
     }));
     $('.max-w-xs').css('display', 'none');
   },
