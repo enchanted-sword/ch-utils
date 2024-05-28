@@ -119,12 +119,14 @@ const newIcon = icon => {
 };
 
 export const main = async () => {
- ({ icon1, icon2, icon3, icon4, icon5, icon6 } = await getOptions('appNav'));
+  if (visualViewport.width < 1024) {
+    ({ icon1, icon2, icon3, icon4, icon5, icon6 } = await getOptions('appNav'));
 
- const menu = noact({
-    className: `${customClass} bg-foreground fixed z-30 bottom-0 left-0 h-12 w-full px-2 flex justify-between items-center`,
-    children: [icon1, icon2, icon3, icon4, icon5, icon6].map(newIcon)
-  });
- document.querySelector('#app > .flex-col').append(menu);
+    const menu = noact({
+      className: `${customClass} bg-foreground fixed z-30 bottom-0 left-0 h-12 w-full px-2 flex justify-between items-center`,
+      children: [icon1, icon2, icon3, icon4, icon5, icon6].map(newIcon)
+    });
+    document.querySelector('#app > .flex-col').append(menu);
+  }
 };
 export const clean = async () => $(`.${customClass}`).remove();
