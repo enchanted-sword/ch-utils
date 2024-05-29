@@ -264,9 +264,12 @@ const ctrlEnter = event => {
 const showMenu = event => {
   const target = event.target.closest(linkSelector);
   const id = target.href.split('shareOfPostId=')[1];
+  const yPos = (event.changedTouches[0].pageY || event.pageY) + 16;
+  let xPos = event.changedTouches[0].pageX || event.pageX
+  if (xPos + 128 > visualViewport.width) xPos = visualViewport.width - 248;
+  else xPos -= 120;
 
-  if (event.type === 'touchstart') document.getElementById(`qrc-menu-${id}`).style = `top: ${event.changedTouches[0].pageY + 16}px; right: .5rem; display: block;`;
-  else document.getElementById(`qrc-menu-${id}`).style = `top: ${event.pageY + 16}px; ${matchMedia('(pointer:fine)').matches ? `left: ${event.pageX - 120}px;` : 'right: .5rem;'} display: block;`; // occasionally, the touch function will act like a not-touch function. why? who knows
+  document.getElementById(`qrc-menu-${id}`).style = `top: ${yPos}px; left: ${xPos}px; display: block;`; 
 };
 const hideMenu = event => {
   const target = event.target.closest(linkSelector);
