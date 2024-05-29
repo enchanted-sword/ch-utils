@@ -51,7 +51,7 @@ const getTransformedNotifications = async () => {
     notification.sharePost = posts[notification.sharePostId];
     notification.comment = comments[notification.commentId]?.comment;
     notification.replyTo = comments[notification.inReplyTo]?.comment;
-    if (notification.replyTo) notification.replyTo.canEdit = comments[notification.inReplyTo]?.canEdit;
+    if (typeof notification.replyTo !== 'undefined') notification.replyTo.projectId = comments[notification.inReplyTo].poster.projectId;
 
     if (notification.sharePostId && typeof notification.sharePost === 'undefined') return null; // the api will serve you notifications from blocked projects but not posts, so this results in an error
     if (notification.toPostId && typeof notification.targetPost === 'undefined') return null; // cohost doesn't delete notifications attached to deleted posts, so we have to trim them out manually
@@ -134,9 +134,9 @@ const pathMap = {
 };
 const interactionMap = notification => {
   let reshare = false;
-  let replyToOwnComment = true
+  let replyToOwnComment = false
   if (notification.targetPost && !notification.targetPost.isEditor) reshare = true;
-  if (notification.replyTo && (notification.replyTo.canEdit === 'not-allowed')) replyToOwnComment = false
+  if (notification.replyTo && (notification.replyTo.projectId === activeProject.projectId)) replyToOwnComment = true
 
   switch (notification.type) {
     case 'like':
