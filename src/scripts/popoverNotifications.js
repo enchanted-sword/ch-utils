@@ -261,7 +261,7 @@ const newAvatar = project => {if (project) return { // we need to also account f
 const newBodyPreview = (post, comment = null, reply = null) => {
   let body, htmlBody, previewImage;
   if (reply) ({ body } = reply);
-  else body = post.headline ? post.headline : post.plainTextBody;
+  else body = post.headline ? `## ${post.headline}` : post.plainTextBody;
 
   if (!body) return;
 
@@ -286,6 +286,7 @@ const newBodyPreview = (post, comment = null, reply = null) => {
       htmlBody = parseMd(post.plainTextBody).replace(extractedString[0], `[image: ${extractedImage.alt || extractedImage.src.split('/').pop()}]`);
     } else htmlBody = parseMd(body);
   }
+  else htmlBody = parseMd(body);
 
   const previewLine = {
     tag: 'div',
