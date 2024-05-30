@@ -264,8 +264,8 @@ const ctrlEnter = event => {
 const showMenu = event => {
   const target = event.target.closest(linkSelector);
   const id = target.href.split('shareOfPostId=')[1];
-  const yPos = (event.changedTouches[0].pageY || event.pageY) + 16;
-  let xPos = event.changedTouches[0].pageX || event.pageX
+  const yPos = (event.pageY || event.changedTouches[0].pageY) + 16;
+  let xPos = event.pageX || event.changedTouches[0].pageX;
   if (xPos + 128 > visualViewport.width) xPos = visualViewport.width - 248;
   else xPos -= 120;
 
