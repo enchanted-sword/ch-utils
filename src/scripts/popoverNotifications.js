@@ -40,7 +40,9 @@ const getTransformedNotifications = async () => {
     ({ comments, posts, projects, notifications } = unreadNotifications);
   } else ([{ comments, posts, projects, notifications }] = await batchTrpc(['notifications.list'], { 0: { limit: numFetch } }));
 
-  notifications.forEach(notification => {
+  notifications.forEach(originalNotification => {
+    const notification = structuredClone(originalNotification);
+
     if (notification.fromProjectIds
       && notification.fromProjectIds.constructor.name === 'Array' 
       && notification.fromProjectIds.length === 1) notification.fromProjectId = notification.fromProjectIds[0];
@@ -59,15 +61,23 @@ const getTransformedNotifications = async () => {
     if (notification.type === 'groupedLike' && !notification.grouped) notification.type = 'like';
     if (notification.replyTo) notification.type = 'reply';
 
-    notification.hasBody = cloneInto(['share', 'comment', 'reply'].includes(notification.type), notification); // it's a cross-origin object so we can't use it to define new properties without cloning
+    notification.hasBody = ['share', 'comment', 'reply'].includes(notification.type);
 
-    if (notification.grouped) notification.notifyingProjects = cloneInto(notification.fromProjectIds.map(projectId => projects[projectId]), notification);
+    if (notification.grouped) notification.notifyingProjects = notification.fromProjectIds.map(projectId => projects[projectId]);
     else notification.notifyingProject = projects[notification.fromProjectId];
+
+    notification.id = `${btoa(notification.createdAt + notification.type)}`;
 
     let notifier, interaction, preview;
 
     notifier = notification.grouped ? {
       tag: 'span',
+      className: 'hover:underline cursor-pointer',
+      dataset: { active: '' },
+      onclick: function(event) {
+        event.stopImmediatePropagation();
+        this.dataset.active ? this.dataset.active = '' : this.dataset.active = 'true';
+      },
       children: ['Several pages']
     } : {
       href: `https://cohost.org/${notification.notifyingProject.handle}`,
@@ -76,12 +86,22 @@ const getTransformedNotifications = async () => {
     };
     interaction = interactionMap(notification);
 
-    if (notification.type === 'comment') preview = newBodyPreview(notification.targetPost, notification.comment);
-    else if (notification.type === 'reply') preview = newBodyPreview(notification.targetPost, notification.comment, notification.replyTo);
-    else if (notification.type === 'groupedFollow') preview = undefined;
-    else notification.preview = cloneInto(newBodyPreview(notification.targetPost), notification);
+    switch (notification.type) {
+      case 'comment':
+        preview = newBodyPreview(notification.targetPost, notification.comment);
+        break;
+      case 'reply':
+        preview = newBodyPreview(notification.targetPost, notification.comment, notification.replyTo);
+        break
+      case 'groupedFollow':
+        preview = undefined;
+        break;
+      default: 
+        preview = newBodyPreview(notification.targetPost);
+    }
+    notification.preview = preview;
 
-    notification.lineOfAction = cloneInto([notifier, interaction], notification);
+    notification.lineOfAction = [notifier, interaction];
 
     const date = notification.createdAt.split('T')[0];
     if (!(date in sortedNotifications)) sortedNotifications[date] = [];
@@ -219,23 +239,31 @@ const newIcon = type => {return {
   children: [pathMap[type]]
 }};
 const newAvatar = project => {if (project) return { // we need to also account for deleted projects, their ids are still present in fromProjectIds but the actual project is undefined
-  className: 'flex-0 mask relative aspect-square h-8 w-8',
-  href: `https://cohost.org/${project.handle}`,
-  title: `@${project.handle}`,
-  children: [{
-    className: `mask mask-${project.avatarShape} h-full w-full object-cover`,
-    alt: project.handle,
-    src: `${project.avatarURL}?dpr=2&amp;width=80&amp;height=80&amp;fit=cover&amp;auto=webp`
-  }]
+  className: `${customClass}-avatar flex flex-row gap-2`,
+  children: [
+    {
+      className: 'flex-0 mask relative aspect-square h-8 w-8',
+      href: `https://cohost.org/${project.handle}`,
+      title: `@${project.handle}`,
+      children: [{
+        className: `mask mask-${project.avatarShape} h-full w-full object-cover`,
+        alt: project.handle,
+        src: `${project.avatarURL}?dpr=2&amp;width=80&amp;height=80&amp;fit=cover&amp;auto=webp`
+      }]
+    },
+    {
+      className: `${customClass}-handle font-bold hover:underline`,
+      href: `https://cohost.org/${project.handle}`,
+      children: [`@${project.handle}`]
+    }
+  ]
 }};
 const newBodyPreview = (post, comment = null, reply = null) => {
-  let body;
+  let body, htmlBody, previewImage;
   if (reply) ({ body } = reply);
   else body = post.headline ? post.headline : post.plainTextBody;
 
   if (!body) return;
-
-  let previewImage;
 
   if (post.blocks.some(block => block?.attachment?.kind === 'image')) {
     const { attachment } = post.blocks.find(block => block?.attachment?.kind === 'image');
@@ -243,7 +271,8 @@ const newBodyPreview = (post, comment = null, reply = null) => {
       className: 'cohost-shadow-light aspect-square h-8 w-8 rounded-lg object-cover',
       src: attachment.previewURL,
       alt: attachment.altText
-    }
+    };
+    htmlBody = parseMd(body);
   }
   else if (post.plainTextBody) {
     const extractedString = imageRegex.exec(parseMd(post.plainTextBody));
@@ -253,15 +282,14 @@ const newBodyPreview = (post, comment = null, reply = null) => {
         className: 'cohost-shadow-light aspect-square h-8 w-8 rounded-lg object-cover',
         src: extractedImage.src,
         alt: extractedImage.alt
-      }
-    }
+      };
+      htmlBody = parseMd(post.plainTextBody).replace(extractedString[0], `[image: ${extractedImage.alt || extractedImage.src.split('/').pop()}]`);
+    } else htmlBody = parseMd(body);
   }
 
-  const htmlBody = parseMd(body);
-
   const previewLine = {
-    tag: 'span',
-    className: "co-inline-quote flex-1 truncate before:content-['“'] after:content-['”']",
+    tag: 'div',
+    className: "co-inline-quote max-h-60 flex-1 truncate before:content-['“'] after:content-['”']",
     children: [{
       className: 'inline-children hover:underline',
       href: `${post.singlePostPageUrl}${comment ? `#comment${comment.commentId}` : ''}`,
@@ -271,10 +299,11 @@ const newBodyPreview = (post, comment = null, reply = null) => {
 
   return { previewImage, previewLine };
 };
+
 const newNotification = notification => {
   return [
   {
-    className: 'flex w-full flex-row flex-nowrap align-center items-center gap-3',
+    className: `${customClass}-notifier flex w-full flex-row flex-nowrap align-center items-center gap-3`,
     children: [
       newIcon(notification.type),
       notification.grouped ? '' : newAvatar(notification.notifyingProject),
@@ -290,11 +319,11 @@ const newNotification = notification => {
   },
   notification.preview ? notification.preview.previewLine : '',
   notification.grouped ? {
-    className: 'flex flex-col gap-4',
+    className: `${customClass}-groupAvatars flex flex-col gap-4`,
     children: [{
       className: 'mt-2 flex flex-row flex-nowrap items-center gap-3 overflow-hidden',
       children: [{
-        className: 'flex flex-row flex-nowrap items-center gap-2 overflow-hidden',
+        className: `${customClass}-groupAvatarsInner flex flex-row flex-nowrap gap-2 overflow-hidden`,
         children: notification.notifyingProjects.map(project => newAvatar(project))
       }]
     }]

@@ -80,6 +80,9 @@
 .flex-0 + .max-23 { max-width: 20.5rem; }
 .gap-space { gap: 0 .3em; }
 .inline-children {
+  max-height: 20rem;
+  overflow: hidden;
+
   * {
     color: rgb(130 127 124) !important;
     display: inline !important;
@@ -88,12 +91,20 @@
     padding: 0 !important;
     margin: 0 !important;
     font-size: inherit !important;
+    white-space: nowrap !important;
   }
   details { width: fit-content !important; } /* https://bugzilla.mozilla.org/show_bug.cgi?id=1896299 */
   h1, h2, h3, h4, h5, h6 { font-weight: bold; }
   ul, img, audio, video { display: none !important; }
 }
 .block-children { img, video { max-width: 100% !important; }; }
+
+.ch-utils-popoverNotifications-handle { display: none; }
+.co-notification-card .ch-utils-popoverNotifications-notifier:has([data-active="true"]) ~ .ch-utils-popoverNotifications-groupAvatars .ch-utils-popoverNotifications-groupAvatarsInner {
+  flex-flow: column nowrap;
+
+  .ch-utils-popoverNotifications-handle { display: block; }
+}
 
 .lg\:hidden .ch-utils-popover {
   overflow: clip;
