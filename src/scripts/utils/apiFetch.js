@@ -84,7 +84,7 @@ export const getProject = async handle => {
   }
 
   return projectMap.get(handle);
-}
+};
 
 /**
  * @returns {Promise <object>} user display preferences
