@@ -263,30 +263,28 @@ const newBodyPreview = (post, comment = null, reply = null) => {
   if (reply) ({ body } = reply);
   else body = post.headline ? `## ${post.headline}` : post.plainTextBody;
 
-  if (!body) return;
-
-  if (post.blocks.some(block => block?.attachment?.kind === 'image')) {
+  if (post.blocks.some(block => block?.attachment?.kind === 'image')) { // preview image from attachment
     const { attachment } = post.blocks.find(block => block?.attachment?.kind === 'image');
     previewImage = {
       className: 'cohost-shadow-light aspect-square h-8 w-8 rounded-lg object-cover',
       src: attachment.previewURL,
       alt: attachment.altText
     };
-    htmlBody = parseMd(body);
+    if (!body) htmlBody = parseMd(`[image: ${attachment.previewURL.split('/').pop()}]`); // no body text, inherit text from attachment filename
   }
   else if (post.plainTextBody) {
     const extractedString = imageRegex.exec(parseMd(post.plainTextBody));
-    if (extractedString && extractedString.length) {
+    if (extractedString && extractedString.length) { // preview image from markdown
       const extractedImage = $(extractedString[0])[0];
       previewImage = {
         className: 'cohost-shadow-light aspect-square h-8 w-8 rounded-lg object-cover',
         src: extractedImage.src,
         alt: extractedImage.alt
       };
-      htmlBody = parseMd(post.plainTextBody).replace(extractedString[0], `[image: ${extractedImage.alt || extractedImage.src.split('/').pop()}]`);
-    } else htmlBody = parseMd(body);
+      if (!body) htmlBody = parseMd(post.plainTextBody).replace(extractedString[0], `[image: ${extractedImage.alt || extractedImage.src.split('/').pop()}]`); // no body text, inherit text from image alt text or filename
+    }
   }
-  else htmlBody = parseMd(body);
+  if (!htmlBody) htmlBody = parseMd(body); // normal body
 
   const previewLine = {
     tag: 'div',
