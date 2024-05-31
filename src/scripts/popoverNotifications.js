@@ -347,7 +347,7 @@ const newNotificationPage = (date, notifications, theme) => {return {
       className: 'flex flex-row items-center justify-end p-3 header-sticky',
       children: [{
         className: 'font-league text-xs uppercase',
-        datetime: date,
+        dateTime: date,
         children: [DateTime.fromISO(date).toLocaleString(dateFormat)]
       }]
     },

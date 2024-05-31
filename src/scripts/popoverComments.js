@@ -156,7 +156,7 @@ const newComment = (comment, poster, canInteract, extLink) => { return {
                         {
                           tag: 'time',
                           className: 'block flex-none text-xs tabular-nums text-gray-500',
-                          datetime: comment.postedAtISO,
+                          dateTime: comment.postedAtISO,
                           title: DateTime.fromISO(comment.postedAtISO).toLocaleString(DateTime.DATETIME_MED),
                           children: [{
                             href: `${extLink}#comment-${comment.commentId}`,
