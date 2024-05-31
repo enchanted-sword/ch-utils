@@ -1,8 +1,24 @@
 {
   "name": "quickRechost",
   "title": "quick rechost",
-  "description": "adds a popup menu that allows fast-resharing a post with tags. to display the menu, hover over the reshare button on a device with mouse input, or tap and hold it on a device with touch input.",
-  "preferences": { "enabled": false },
+  "description": "adds a popup menu that allows quick-resharing a post with tags and/or content. to display the menu, hover over the reshare button on a device with mouse input, or tap and hold it on a device with touch input.",
+  "preferences": {
+    "enabled": false,
+    "options": {
+      "addTags": {
+        "value": true,
+        "type": "toggle",
+        "name": "show tags field",
+        "tooltip": "allows adding tags when quick-rechosting"
+      },
+      "addContent": {
+        "value": false,
+        "type": "toggle",
+        "name": "show content field",
+        "tooltip": "allows adding content when quick-rechosting"
+      }
+    }
+  },
   "js": true,
   "css": true
 }

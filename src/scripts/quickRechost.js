@@ -3,10 +3,14 @@ import { activeProject, managedProjects } from './utils/user.js';
 import { getViewModel } from './utils/react.js';
 import { postFunction } from './utils/mutation.js';
 import { noact } from './utils/noact.js';
+import { getOptions } from './utils/jsTools.js';
+import { parseMd } from './utils/markdown.js';  // new record for most imports in a module?
 
 const customClass = 'ch-utils-quickRechost';
 const customAttribute = 'data-quick-rechost';
 const linkSelector = '[href*="compose?"]';
+
+let addTags, addContent;
 
 const hideMenuDelay = 500;
 const longPressDelay = 500;
@@ -44,7 +48,7 @@ export const onLongPress = (elem, func) => {
   elem.addEventListener('touchmove', () => timeoutId && clearTimeout(timeoutId));
 };
 
-const rechost = async (shareOfPostId, projectHandle, tags = []) => apiFetch('/v1/trpc/posts.create', { 
+const rechost = async (shareOfPostId, projectHandle, tags = [], content = '') => apiFetch('/v1/trpc/posts.create', { 
   method: 'POST',
   queryParams: { batch: 1, },
   headers: { 'content-type': 'application/json' },
@@ -55,7 +59,12 @@ const rechost = async (shareOfPostId, projectHandle, tags = []) => apiFetch('/v1
         postState: 1,
         headline: '',
         adultContent: false,
-        blocks: [],
+        blocks: [
+          {
+            type: 'markdown',
+            markdown: { content }
+          }
+        ],
         cws: [],
         tags,
         shareOfPostId: Number(shareOfPostId),
@@ -64,6 +73,24 @@ const rechost = async (shareOfPostId, projectHandle, tags = []) => apiFetch('/v1
   })
 });
 
+const textInput = (type, postId, placeholder) => {return {
+  className: 'relative grid w-full overflow-auto w-14',
+  children: [
+    {
+      className: 'invisible col-start-1 col-end-2 row-start-1 row-end-2 h-min overflow-auto whitespace-pre-wrap break-words',
+      style: 'font-size: 16px; font-family: Atkinson Hyperlegible, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, Roboto, &quot;Helvetica Neue&quot;, Arial, &quot;Noto Sans&quot;, sans-serif, &quot;Apple Color Emoji&quot;, &quot;Segoe UI Emoji&quot;, &quot;Segoe UI Symbol&quot;, &quot;Noto Color Emoji&quot;; font-weight: 400; font-style: normal; letter-spacing: normal; text-transform: none; padding: 8px 12px; line-height: 24px; min-height: 48px;'
+    },
+    {
+      tag: 'input',
+      type: 'text',
+      id: `qrc-${type}-${postId}`,
+      onkeydown: ctrlEnter,
+      className: 'co-composer-text-box w-full row-start-1 row-end-2 col-start-1 col-end-2 min-h-0',
+      style: 'resize: none; overflow: hidden;',
+      placeholder,
+    }
+  ]
+}};
 const selectableProject = (project, index, activeProjectId, postId) => {
   const { projectId, handle, avatarURL } = project;
   const selected = projectId === activeProjectId ? true : false;
@@ -103,31 +130,15 @@ const selectableProject = (project, index, activeProjectId, postId) => {
 };
 const newMenu = async postId => {
   return noact({
-    className: `${customClass} co-themed-box co-comment-box cohost-shadow-light dark:cohost-shadow-dark w-15 rounded-lg p-2 lg:max-w-prose`,
+    className: `${customClass} co-themed-box co-comment-box cohost-shadow-light dark:cohost-shadow-dark rounded-lg p-2 lg:max-w-prose`,
     id: `qrc-menu-${postId}`,
     dataset: { theme: postBoxTheme },
     onmouseleave: menuSelfHide,
     children: [{
       className: 'flex flex-col gap-2',
       children: [
-        {
-          className: 'relative grid w-full overflow-auto',
-          children: [
-            {
-              className: 'invisible col-start-1 col-end-2 row-start-1 row-end-2 h-min overflow-auto whitespace-pre-wrap break-words',
-              style: 'font-size: 16px; font-family: Atkinson Hyperlegible, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, Roboto, &quot;Helvetica Neue&quot;, Arial, &quot;Noto Sans&quot;, sans-serif, &quot;Apple Color Emoji&quot;, &quot;Segoe UI Emoji&quot;, &quot;Segoe UI Symbol&quot;, &quot;Noto Color Emoji&quot;; font-weight: 400; font-style: normal; letter-spacing: normal; text-transform: none; padding: 8px 12px; line-height: 24px; min-height: 48px;'
-            },
-            {
-              tag: 'input',
-              type: 'text',
-              id: `qrc-input-${postId}`,
-              onkeydown: ctrlEnter,
-              className: 'co-composer-text-box w-full row-start-1 row-end-2 col-start-1 col-end-2 min-h-0',
-              style: 'resize: none; overflow: hidden;',
-              placeholder: 'tags (comma-separated)',
-            }
-          ]
-        },
+        addContent ? textInput('content', postId, 'content (markdown)') : '',
+        addTags ? textInput('tags', postId, 'tags (comma-separated)') : '',
         {
           className: 'flex flex-row relative items-center justify-between gap-4',
           children: [
@@ -169,7 +180,7 @@ const newMenu = async postId => {
             },
             {
               tag: 'ul',
-              className: 'ch-utils-quickRechost-list lg:cohost-shadow-light dark:lg:cohost-shadow-dark fixed lg:left-0 right-0 top-8 max-w-xs !overflow-y-auto truncate bg-foreground !outline-none absolute lg:max-h-[calc(100vh_-_100px)] lg:divide-none rounded-lg bg-notWhite text-notBlack',
+              className: 'ch-utils-quickRechost-list lg:cohost-shadow-light dark:lg:cohost-shadow-dark left-0 top-8 !overflow-y-auto truncate bg-foreground !outline-none absolute lg:max-h-[calc(100vh_-_100px)] lg:divide-none rounded-lg bg-notWhite text-notBlack',
               'aria-orientation': 'vertical',
               role: 'listbox',
               onmouseleave: () => {
@@ -208,16 +219,18 @@ const toggleState = event => {
 const quickRechost = event => {
   const target = event.target.closest('button');
   const id = target.id.split('-')[1];
-  const tagsInput = document.getElementById(`qrc-input-${id}`);
+  const contentInput = document.getElementById(`qrc-content-${id}`);
+  const tagsInput = document.getElementById(`qrc-tags-${id}`);
   const pageSelector = document.getElementById(`qrc-selector-${id}`);
   const { handle } = pageSelector.activeProject;
-  let tags = []
+  let tags = [], content = '';
 
-  if (tagsInput.value) tags = tagsInput.value.replace(/#/g, '').split(',').map(tag => tag.trim());
+  if (addContent && contentInput.value) content = parseMd(contentInput.value);
+  if (addTags && tagsInput.value) tags = tagsInput.value.replace(/#/g, '').split(',').map(tag => tag.trim());
 
   target.style = 'color: rgb(var(--color-notWhite)); background-color: rgb(49 157 53);'
   
-  rechost(id, handle, tags)
+  rechost(id, handle, tags, content)
     .then(() => addStatusMessage(true, handle))
     .catch(e => addStatusMessage(false, handle))
     .finally(() => {
@@ -309,6 +322,8 @@ const addMenus = async posts => {
 };
 
 export const main = async () => {
+  ({ addTags, addContent } = await getOptions('quickRechost'));
+
   postFunction.start(addMenus, ':not([data-quick-rechost="true"])');
   document.addEventListener('touchstart', hideMenuOnTouch);
 };

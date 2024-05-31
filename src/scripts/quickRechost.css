@@ -1,9 +1,4 @@
-.w-15 { width: 15rem; }
-@media (min-width: 1024px) {
-  .lg\:left-0 {
-    left: 0;
-  }
-}
+.w-14 { width: 14rem; }
 
 .ch-utils-quickRechost {
   position: absolute;
