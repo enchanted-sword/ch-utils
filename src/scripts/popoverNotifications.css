@@ -110,8 +110,6 @@
   overflow: clip;
   position: static;
   width: 58vw;
-
-  header[data-theme] { display: none; }
 }
 
 .loader { /*adapted from https://cssloaders.github.io/*/
