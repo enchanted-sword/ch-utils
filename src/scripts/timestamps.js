@@ -21,9 +21,15 @@ export const main = async () => {
   ({ formatOpts, opts } = await getOptions('timestamps'));
 
   try { formatOpts = JSON.parse(`"${formatOpts}"`); }
-  catch { formatOpts = JSON.parse( formatOpts); }
+  catch {
+    try { formatOpts = JSON.parse(formatOpts); }
+    catch { formatOpts = DateTime.DATE_MED; }
+  }
   try { opts = JSON.parse(opts); }
-  catch { opts = JSON.parse(`"${opts}"`); }
+  catch {
+    try { opts = JSON.parse(`"${opts}"`); }
+    catch { opts = 'zebes' }
+  }
 
   if (typeof formatOpts === 'string' && formatOpts in DateTime) formatOpts = DateTime[formatOpts];
 
