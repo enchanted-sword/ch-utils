@@ -48,7 +48,7 @@
 
   svg.ch-utils-horizontal:has(text:empty) { display: none; }
 
-  .lg\:grid-cols-4:has(#live-dashboard) { grid-template-columns: .5fr repeat(3, minmax(0, 1fr)); }
+  .lg\:grid-cols-4:has(.ch-utils-horizontal) { grid-template-columns: .5fr repeat(3, minmax(0, 1fr)); }
 
   .artist-alley-grid { margin-left: 0; }
 }
