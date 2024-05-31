@@ -19,9 +19,9 @@
         if (!state && checked || state && !checked) this.closest('.ui-primaryContent').querySelector('.ui-featureTitle').click();
       }
     };
-    const onTextInput = async function () {
-      const value = this.value;
-      const [ name, key ] = this.name.split('-');
+    const onTextInput = async function ({ target }) {
+      const value = target.value;
+      const [ name, key ] = target.name.split('-');
       let { preferences } = await browser.storage.local.get('preferences');
       preferences[name].options[key] = value;
 
@@ -97,7 +97,22 @@
             },
             {
               className: 'ui-secondaryContent',
-              children: [{ children: ['description' in feature ? feature.description : ''] }]
+              children: [
+                'description' in feature ? { children: [feature.description] } : '',
+                'links' in feature ? {
+                  tag: 'p', 
+                  children: [
+                    'see: ',
+                    feature.links.map((link, i) => {return [
+                      {
+                        href: link.url,
+                        children: [link.text]
+                      },
+                      i === feature.links.length - 1 ? '' : ', '
+                    ]})
+                  ]
+                } : ''
+              ]
             }
           ]
         });
@@ -113,7 +128,7 @@
             const tooltip = $(`<div class="ui-tooltip">${option.tooltip}</div>`);
 
             switch (option.type) {
-              case 'toggle':
+              case 'toggle': {
                 const toggleWrapper = $(`<div class="ui-inputWrapper ui-checkboxWrapper"></div>`);
                 const input = $('<input>', { class: 'ui-checkbox', type: 'checkbox', id: `ui-feature-${name}-${key}`, name: `${name}-${key}` });
                 const label = $(`<label for="ui-feature-${name}-${key}" name="${name}-${key}">${option.name}</label>`);
@@ -135,7 +150,7 @@
                   browser.storage.local.set({ preferences });
                 });
                 break;
-              case 'select':
+              } case 'select': {
                 const selectInputWrapper = $(`<div class="ui-inputWrapper "><label for="ui-feature-${name}-${key}">${option.name}</label></div>`);
                 const selectInput = $(`<select class="ui-select" id="ui-feature-${name}-${key}" name="${name}-${key}"></select>`);
 
@@ -161,7 +176,7 @@
                   browser.storage.local.set({ preferences });
                 });
                 break;
-              case 'number': {
+              } case 'number': {
                 const numInputWrapper = $(`<div class="ui-inputWrapper ui-numInputWrapper"></div>`);
                 const label = $(`<label for="ui-feature-${name}-${key}" name="${name}-${key}">${option.name}</label>`);
                 const numInput = $('<input>', {
@@ -185,11 +200,35 @@
                 numInput.on('change', async function () {
                   const value = this.value;
                   let { preferences } = await browser.storage.local.get('preferences');
-                  preferences[name].options[key] = value;
+                  preferences[name].options[key] = Number(value);
                   browser.storage.local.set({ preferences });
                 });
                 break;
-              } 
+              } case 'text': {
+                const textInputWrapper = $(`<div class="ui-inputWrapper"></div>`);
+                const label = $(`<label for="ui-feature-${name}-${key}" name="${name}-${key}" list="${name}-${key}-list">${option.name}</label>`);
+                const textInput = $('<input>', {
+                  class: 'ui-textInput',
+                  autocorrect: 'off',
+                  spellcheck: 'false',
+                  placeholder: option.placeholder,
+                  id: `ui-feature-${name}-${key}`,
+                  name: `${name}-${key}`,
+                  value: preference.options[key]
+                });
+                if ('list' in option) {
+                  const list = $(`<datalist id="${name}-${key}-list">${option.list.map(item => `<option value="${item}"></option>`).join('')}</datalist>`);
+                  textInputWrapper.append(list);
+                }
+
+                textInputWrapper.append(label);
+                textInputWrapper.append(textInput);
+                textInputWrapper.append(tooltip);
+                optionsWrapper.append(textInputWrapper);
+
+                textInput.on('input', debounce(onTextInput));
+                break;
+              }
             }
           });
 

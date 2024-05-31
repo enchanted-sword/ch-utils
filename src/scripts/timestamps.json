@@ -1,0 +1,44 @@
+{
+  "name": "timestamps",
+  "title": "custom timestamps",
+  "description": "formats timestamps with a user-supplied luxon.DateTime preset or Intl.DateTimeFormat constructor options",
+  "links": [
+    {
+      "url": "https://moment.github.io/luxon/api-docs/index.html#datetimetolocalestring",
+      "text": "luxon documentation"
+    },
+    {
+      "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat#using_options",
+      "text": "Intl.DateTimeFormat documentation"
+    }
+  ],
+  "preferences": {
+    "enabled": false,
+    "options": {
+      "formatOpts": {
+        "value": "DATETIME_MED",
+        "type": "text",
+        "name": "date format",
+        "tooltip": "a valid luxon.DateTime preset or Intl.DateTimeFormat constructor object",
+        "list": [
+          "DATE_SHORT",
+          "DATE_MED",
+          "DATE_FULL",
+          "DATE_HUGE",
+          "DATETIME_SHORT",
+          "DATETIME_MED",
+          "DATETIME_FULL",
+          "DATETIME_HUGE"
+        ]
+      },
+      "opts": {
+        "value": "{ \"locale\":\"'en\" }",
+        "type": "text",
+        "name": "format overrides",
+        "tooltip": "overrides for the DateTime configuration"
+      }
+    }
+  },
+  "js": true,
+  "css": true
+}

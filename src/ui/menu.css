@@ -427,18 +427,18 @@ select {
   }
 }
 
-textarea.ui-textInput {
+.ui-textInput {
   resize: none;
   width: 100%;
   border: var(--border-thickness-sm) solid var(--white-cherry-80);
   border-radius: var(--border-radius-sm);
-  height: 96px;
   outline: none;
   padding: 4px;
   font-size: 14px;
   box-sizing: border-box;
   background: var(--white-cherry-5);
 
+  &textarea { height: 96px; }
   &:focus {
     border-color: rgb(var(--blueberry));
     background: rgb(var(--titanium));
