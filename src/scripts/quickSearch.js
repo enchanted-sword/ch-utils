@@ -33,7 +33,7 @@ const searchWindow = noact({
     try {
       event.stopPropagation();
       if (event.target.matches(`dialog, .${customClass}-close`)) searchWindow.removeAttribute('open');
-    } catch {};
+    } catch {null}
   },
   children: [{
     className: 'max-w-screen rounded-lg bg-notWhite p-3 text-notBlack',

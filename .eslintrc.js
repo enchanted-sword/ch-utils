@@ -28,7 +28,8 @@ module.exports = {
     "Coloris": "readonly",
     "marked": "readonly",
     "DOMPurify": "readonly",
-    "Prism": "readonly"
+    "Prism": "readonly",
+    "luxon": "readonly"
   },
   "rules": {
     "no-case-declarations": "off",

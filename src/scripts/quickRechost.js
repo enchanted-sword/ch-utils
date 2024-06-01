@@ -295,7 +295,7 @@ const hideMenu = event => {
 const hideMenuOnTouch = event => {
   try {
     if (!event.originalTarget.matches(`.${customClass},.${customClass} *,${linkSelector},${linkSelector} svg`)) document.querySelectorAll(`.${customClass}`).forEach(function (menu) { menu.style = null });
-  } catch {} // can't check .matches() on some inputs so this keeps the console free of extra errors
+  } catch {null} // can't check .matches() on some inputs so this keeps the console free of extra errors
 };
 const menuSelfHide = event => {
   event.stopPropagation();
