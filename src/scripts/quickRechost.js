@@ -59,12 +59,12 @@ const rechost = async (shareOfPostId, projectHandle, tags = [], content = '') =>
         postState: 1,
         headline: '',
         adultContent: false,
-        blocks: [
+        blocks: content ? [
           {
             type: 'markdown',
             markdown: { content }
           }
-        ],
+        ] : [],
         cws: [],
         tags,
         shareOfPostId: Number(shareOfPostId),
