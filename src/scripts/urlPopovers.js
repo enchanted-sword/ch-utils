@@ -53,7 +53,7 @@ const displayPopover = async event => {
   }, addPopoverDelay);
 };
 const removePopover = () => {
-  /* window.setTimeout(() => {
+  window.setTimeout(() => {
     const popover = document.getElementById('urlPopover');
     if (popover) {
       const projectLinks = Array.from(document.querySelectorAll(`[href='${popover.targetLink}']`));
@@ -62,7 +62,7 @@ const removePopover = () => {
         window.setTimeout(() => { popover.remove() }, 150);
       }
     }
-  }, removePopoverDelay); */
+  }, removePopoverDelay);
 };
 
 const urlPopover = async (project, xPos, yPos, targetLink) => {
