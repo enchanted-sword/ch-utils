@@ -1,9 +1,37 @@
+# v1.3.0
+
+### **New feature:** Mobile quick navigation
+- Add up to 6 navigation icons to a footer menu at the bottom of the screen
+
+### **New feature:** Quick search
+- Displays a popover search menu when clicking on the search button
+
+### **New feature:** Custom timestamps
+- Formats timestamps with a user-supplied luxon.DateTime preset or Intl.DateTimeFormat constructor options
+
+### Open notifications in popover view
+- A million minor tweaks to preview line creation
+- Link to notification page is now shown on mobile
+- Minor style tweaks
+- &lt;pre&gt; elements are now sandboxed correctly
+
+### Quick rechost
+- Positioning in general is now more accurate
+- Added option for showing tag entry
+- Added a new content entry field (handles cohost custom emojis too!)
+
+### Show page info on hover
+- Now shows a link to the ask page
+
+### Horizontal navigation
+- All dashboard pages should now have the same margins
+
 # v1.2.3
 
 ### Quick rechost
 - Should hopefully no longer occasionally overflow on mobile
 
-### Popover notifications
+### Open notifications in popover view
 - Unread highlighting should now be fixed on LIGHT MODE
 - Minor style tweaks
 
