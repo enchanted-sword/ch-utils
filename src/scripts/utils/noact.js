@@ -52,12 +52,12 @@ export const noact = obj => {
     if ('children' in obj && obj.children.constructor.name === 'Array') {
       obj.children.flat(Infinity).forEach(child => { // some implementations of the function can *conditionally* supply an array as an element of the children array, so it must be flattened here
         if (!child) return;
-        if (child.constructor.name.includes('Element')) el.append(child);
+        if (typeof child === 'object' && 'nodeType' in child) el.append(child);
         else if (typeof child === 'object') el.append(noact(child));
         else el.append(document.createTextNode(child));
       });
     }
-  } catch (e) {console.error('noact:', e)}
+  } catch (e) {console.error('noact:', e, obj)}
 
   return el;
 };
