@@ -53,7 +53,7 @@ const displayPopover = async event => {
   }, addPopoverDelay);
 };
 const removePopover = () => {
-  window.setTimeout(() => {
+  /* window.setTimeout(() => {
     const popover = document.getElementById('urlPopover');
     if (popover) {
       const projectLinks = Array.from(document.querySelectorAll(`[href='${popover.targetLink}']`));
@@ -62,7 +62,7 @@ const removePopover = () => {
         window.setTimeout(() => { popover.remove() }, 150);
       }
     }
-  }, removePopoverDelay);
+  }, removePopoverDelay); */
 };
 
 const urlPopover = async (project, xPos, yPos, targetLink) => {
@@ -125,17 +125,38 @@ const urlPopover = async (project, xPos, yPos, targetLink) => {
           } : null,
           {
             className: k('avatar') + ' flex justify-center items-center w-full h-0 relative',
-            children: [{
-              className: 'lg:block flex-0 mask absolute aspect-square h-16 w-16',
-              title: `@${project.handle}`,
-              rel: 'author',
-              target: '_blank',
-              href: projectURL,
-              children: [{
-                className: `mask mask-${project.avatarShape} h-full w-full object-cover bg-cherry`,
-                src: project.avatarURL
-              }]
-            }]
+            children: [
+              activeProject.projectId !== project.projectId ? {
+                className: k('ask') + ' absolute leading-none align-middle py-1 px-1 no-select font-atkinson font-bold rounded-full border-2 border-cherry hover:bg-cherry text-cherry active:bg-cherry-600 active:border-cherry-600 disabled:text-cherry-300 disabled:border-cherry-300 focus:outline-cherry focus:ring-cherry bg-notWhite hover:text-notWhite text-sm hover:border-accent',
+                href: `${projectURL}/ask`,
+                rel: 'author',
+                target: '_blank',
+                children: [{
+                  className: 'h-6 w-6',
+                  viewBox: '0 0 24 24',
+                  fill: 'none',
+                  stroke: 'currentColor',
+                  'stroke-width': '1.5',
+                  'aria-hidden': true,
+                  children: [{
+                    'stroke-linecap': 'round',
+                    'stroke-linejoin': 'round',
+                    d: 'M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z'
+                  }]
+                }]
+              } : null,
+              {
+                className: 'lg:block flex-0 mask absolute aspect-square h-16 w-16',
+                title: `@${project.handle}`,
+                rel: 'author',
+                target: '_blank',
+                href: projectURL,
+                children: [{
+                  className: `mask mask-${project.avatarShape} h-full w-full object-cover bg-cherry`,
+                  src: project.avatarURL
+                }]
+              }
+            ]
           },
           {
             className: k('description') + ' p-3 text-center',

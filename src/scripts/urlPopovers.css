@@ -16,6 +16,7 @@ header + .urlPopover-avatar {
   transform: translateY(-15%);
   top: unset;
 }
+.urlPopover-ask { left: 2.5rem; }
 .urlPopover-description {
   margin-top: 1rem;
   min-height: 2rem;
