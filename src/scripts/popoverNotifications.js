@@ -229,7 +229,7 @@ const interactionMap = notification => {
   }
 };
 
-const imageRegex = /<img\s[^>]+>/;
+const imageRegex = /<img\s[^>]+>/g;
 
 const newIcon = type => {return {
   viewBox: '0 0 24 24',
@@ -258,44 +258,51 @@ const newAvatar = project => {if (project) return { // we need to also account f
     }
   ]
 }};
-const newBodyPreview = (post, comment = null, reply = null) => {
+const newBodyPreview = (post, comment = null, replyTo = null) => {
   let body, htmlBody, previewImage, previewLine;
-  if (reply) ({ body } = reply);
-  else body = post.headline ? `## ${post.headline}` : post.plainTextBody;
+  let { headline, plainTextBody } = post;
 
   if (post.blocks.some(block => block?.attachment?.kind === 'image')) { // preview image from attachment
     const { attachment } = post.blocks.find(block => block?.attachment?.kind === 'image');
     previewImage = {
       className: 'cohost-shadow-light aspect-square h-8 w-8 rounded-lg object-cover',
       src: attachment.previewURL,
-      alt: attachment.altText
+      alt: attachment.altText,
+      filename: attachment.previewURL.split('/').pop()
     };
-    if (!body) htmlBody = parseMd(`[image: ${attachment.previewURL.split('/').pop()}]`); // no body text, inherit text from attachment filename
   }
-  else if (post.plainTextBody) {
-    const extractedString = imageRegex.exec(parseMd(post.plainTextBody));
-    if (extractedString && extractedString.length) { // preview image from markdown
-      const extractedImage = $(extractedString[0])[0];
-      previewImage = {
-        className: 'cohost-shadow-light aspect-square h-8 w-8 rounded-lg object-cover',
-        src: extractedImage.src,
-        alt: extractedImage.alt
-      };
-      htmlBody = parseMd(post.plainTextBody).replace(extractedString[0], '');
-      if (!htmlBody) htmlBody = parseMd(post.plainTextBody).replace(extractedString[0], `[image: ${extractedImage.alt || extractedImage.src.split('/').pop()}]`); // no body text, inherit text from image alt text or filename
+  if (replyTo) ({ body } = replyTo);
+  else {
+    if (!previewImage && plainTextBody) {
+      const extractedString = imageRegex.exec(parseMd(plainTextBody));
+      if (extractedString && extractedString.length) { // preview image from markdown
+        const extractedImage = $(extractedString[0])[0];
+        previewImage = {
+          className: 'cohost-shadow-light aspect-square h-8 w-8 rounded-lg object-cover',
+          src: extractedImage.src,
+          alt: extractedImage.alt,
+          filename: extractedImage.src.split('/').pop()
+        };
+        plainTextBody = parseMd(plainTextBody).replaceAll(imageRegex, '');
+      }
     }
+
+    body = headline || plainTextBody;
   }
-  if (!htmlBody) htmlBody = parseMd(body); // normal body
+  htmlBody = parseMd(body);
 
   previewLine = noact({
     className: "co-inline-quote max-h-60 flex-1 truncate before:content-['“'] after:content-['”']",
     children: [{
       className: 'inline-children hover:underline',
       href: `${post.singlePostPageUrl}${comment ? `#comment${comment.commentId}` : ''}`,
-      innerHTML: htmlBody || '[no text]'
+      innerHTML: htmlBody
     }]
   });
-  if (!previewLine.querySelector('.inline-children').textContent) previewLine.querySelector('.inline-children').textContent = '[no text]'; // fallback for when the body contains html content but no text
+  if (!previewLine.querySelector('.inline-children').textContent) {
+    if (previewImage) previewLine.querySelector('.inline-children').textContent = `[image: ${previewImage.alt || previewImage.filename}]`;
+    else previewLine.querySelector('.inline-children').textContent = '[no text]';
+  }
 
   return { previewImage, previewLine };
 };
