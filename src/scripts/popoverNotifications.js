@@ -281,7 +281,8 @@ const newBodyPreview = (post, comment = null, reply = null) => {
         src: extractedImage.src,
         alt: extractedImage.alt
       };
-      if (!body) htmlBody = parseMd(post.plainTextBody).replace(extractedString[0], `[image: ${extractedImage.alt || extractedImage.src.split('/').pop()}]`); // no body text, inherit text from image alt text or filename
+      htmlBody = parseMd(post.plainTextBody).replace(extractedString[0], '');
+      if (!htmlBody) htmlBody = parseMd(post.plainTextBody).replace(extractedString[0], `[image: ${extractedImage.alt || extractedImage.src.split('/').pop()}]`); // no body text, inherit text from image alt text or filename
     }
   }
   if (!htmlBody) htmlBody = parseMd(body); // normal body
@@ -328,7 +329,7 @@ const newNotification = notification => {
     }]
   } : notification.hasBody ? {
     className: 'co-block-quote block-children ml-20 break-words border-l-2 pl-2 italic',
-    innerHTML: parseMd(notification.sharePost ? notification.sharePost.plainTextBody ? notification.sharePost.plainTextBody : notification.sharePost.headline : notification.comment.body)
+    innerHTML: parseMd(notification.sharePost ? ( notification.sharePost.plainTextBody ? notification.sharePost.plainTextBody : notification.sharePost.headline ) : notification.comment.body) || '[no text]'
   } : ''
 ]};
 const newNotificationCard = notification => {return {
