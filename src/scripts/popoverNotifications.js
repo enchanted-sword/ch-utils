@@ -259,7 +259,7 @@ const newAvatar = project => {if (project) return { // we need to also account f
   ]
 }};
 const newBodyPreview = (post, comment = null, reply = null) => {
-  let body, htmlBody, previewImage;
+  let body, htmlBody, previewImage, previewLine;
   if (reply) ({ body } = reply);
   else body = post.headline ? `## ${post.headline}` : post.plainTextBody;
 
@@ -287,15 +287,15 @@ const newBodyPreview = (post, comment = null, reply = null) => {
   }
   if (!htmlBody) htmlBody = parseMd(body); // normal body
 
-  const previewLine = {
-    tag: 'div',
+  previewLine = noact({
     className: "co-inline-quote max-h-60 flex-1 truncate before:content-['“'] after:content-['”']",
     children: [{
       className: 'inline-children hover:underline',
       href: `${post.singlePostPageUrl}${comment ? `#comment${comment.commentId}` : ''}`,
-      innerHTML: htmlBody ? htmlBody : '[no text]'
+      innerHTML: htmlBody || '[no text]'
     }]
-  };
+  });
+  if (!previewLine.querySelector('.inline-children').textContent) previewLine.querySelector('.inline-children').textContent = '[no text]'; // fallback for when the body contains html content but no text
 
   return { previewImage, previewLine };
 };
