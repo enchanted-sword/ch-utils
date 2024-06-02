@@ -1,5 +1,12 @@
-# v1.3.0
+# v1.3.1
+### General
+- Fixed module-specific errors from halting mutation callbacks for other modules
 
+### Custom timestamps
+- Unset default override
+- Added better handling for invalid locales
+
+# v1.3.0
 ### **New feature:** Mobile quick navigation
 - Add up to 6 navigation icons to a footer menu at the bottom of the screen
 
@@ -27,7 +34,6 @@
 - All dashboard pages should now have the same margins
 
 # v1.2.3
-
 ### Quick rechost
 - Should hopefully no longer occasionally overflow on mobile
 

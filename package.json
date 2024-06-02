@@ -1,6 +1,6 @@
 {
   "name": "ch-utils",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "description": "utilities for cohost",
   "scripts": {
     "test": "web-ext lint",
@@ -8,7 +8,7 @@
     "build": "web-ext build",
     "start": "web-ext run"
   },
-  "author": "",
+  "author": "April Lunarii",
   "license": "GPL-3.0-only",
   "devDependencies": {
     "eslint": "^8.57.0",
