@@ -32,7 +32,7 @@
         ]
       },
       "opts": {
-        "value": "{ \"locale\":\"en\" }",
+        "value": "",
         "type": "text",
         "name": "format overrides",
         "tooltip": "overrides for the DateTime configuration"
