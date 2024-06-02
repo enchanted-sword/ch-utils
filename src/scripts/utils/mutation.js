@@ -114,7 +114,13 @@ const nodeManager = () => {
   for (const [func, selector] of mutationManager.listeners) {
     if (func.length === 0) {
       const shouldRun = addedNodes.some(addedNode => addedNode.matches(selector) || addedNode.querySelector(selector) !== null);
-      if (shouldRun) func();
+      if (shouldRun) {
+        try {
+          func();
+        } catch (e) {
+          console.error(e);
+        }
+      }
       continue;
     }
 
@@ -124,7 +130,11 @@ const nodeManager = () => {
     ].filter((value, index, array) => index === array.indexOf(value));
 
     if (matchingElements.length !== 0) {
-      func(matchingElements);
+      try {
+        func(matchingElements);
+      } catch (e) {
+        console.error(e);
+      }
     }
   }
 };
