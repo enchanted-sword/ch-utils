@@ -103,7 +103,8 @@ const getTransformedNotifications = async () => {
 
     notification.lineOfAction = [notifier, interaction];
 
-    const date = notification.createdAt.split('T')[0];
+    const time = DateTime.fromISO(notification.createdAt);
+    const date = time.toLocaleString()
     if (!(date in sortedNotifications)) sortedNotifications[date] = [];
     sortedNotifications[date].push(notification);
   });
