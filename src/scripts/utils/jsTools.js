@@ -70,14 +70,16 @@ export const deepEquals = (x, y) => {
   ) : (x === y);
 };
 
+export const unique = array => array.filter((val, i, arr) => i === arr.indexOf(val));
+
 /**
  * Delays inputs for a textarea or text input to reduce the amount of events processed by the event handler
  * @param {Function} func - Event handler to debounce
  */
-export const debounce = func => {
+export const debounce = (func, timeout = 500) => {
   let timeoutID;
   return (...args) => {
     clearTimeout(timeoutID);
-    timeoutID = setTimeout(() => func(...args), 500);
+    timeoutID = setTimeout(() => func(...args), timeout);
   };
 };
