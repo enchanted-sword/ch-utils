@@ -81,3 +81,10 @@ export const debounce = func => {
     timeoutID = setTimeout(() => func(...args), 500);
   };
 };
+
+/**
+ * Reduces an array to unqiue entries 
+ * @param {Array} array
+ * @returns {Array}
+ */
+export const unique = array => array.filter((val, i, arr) => i === arr.indexOf(val));
