@@ -16,9 +16,10 @@ const removeParams = obj => {
  * fetches data via the cohost api
  * @param {string} path - request path (e.g. /v1/trpc/users.displayPrefs)
  * @param {object} body - request body
+ * @param {boolean} silent - don't log errors
  * @returns {Promise <object>} the destructured result if successful
  */
-export const apiFetch = async (path, body = {}) => fetch(`https://cohost.org/api${path}${stringifyParams(body?.queryParams)}`, removeParams(body))
+export const apiFetch = async (path, body = {}, silent = false) => fetch(`https://cohost.org/api${path}${stringifyParams(body?.queryParams)}`, removeParams(body))
   .then(response => {
     console.debug(response);
 
@@ -35,8 +36,8 @@ export const apiFetch = async (path, body = {}) => fetch(`https://cohost.org/api
       });
     } else return;
   }).catch(e => {
-    console.error(`apiFetch error: failed to fetch resource at url https://cohost.org/api${path}${stringifyParams(body?.queryParams)}`, e);
-    return Promise.reject();
+    if (!silent) console.error(`apiFetch error: failed to fetch resource at url https://cohost.org/api${path}${stringifyParams(body?.queryParams)}`, e);
+    return Promise.reject(e);
   });
 
 /**
@@ -60,9 +61,10 @@ export const followState = async handle => {
  * fetches data for a single post
  * @param {string} handle - handle of post author
  * @param {Number} postId - id of post
+ * @param {boolean} silent - don't log errors
  * @returns {Promise <object>} post data
  */
-export const singlePost = async (handle, postId) => await apiFetch('/v1/trpc/posts.singlePost', { method: 'GET', queryParams: { input: { handle, postId } } });
+export const singlePost = async (handle, postId, silent = false) => await apiFetch('/v1/trpc/posts.singlePost', { method: 'GET', queryParams: { input: { handle, postId } } }, silent);
 
 const projectMap = new Map();
 
