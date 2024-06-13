@@ -1,6 +1,6 @@
 import { apiFetch } from './utils/apiFetch.js';
 
-const limit = 320000;
+const limit = 90000;
 const chunkSize = 10000;
 const threads = 1000;
 const precision = 2;
