@@ -167,6 +167,7 @@ const newComment = (comment, poster, canInteract, extLink) => { return {
                     },
                     {
                       className: 'co-prose prose overflow-hidden break-words',
+                      style: 'white-space: preserve',
                       innerHTML: parseMd(comment.body)
                     },
                     {
