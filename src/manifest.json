@@ -22,7 +22,7 @@
       "exclude_matches": [ "*://*.cohost.org/rc/login" ],
       "run_at": "document_end",
       "js": [
-        "control/content-script.js",
+        "control/contentScript.js",
         "lib/jquery.min.js",
         "lib/marked.min.js",
         "lib/purify.min.js",
