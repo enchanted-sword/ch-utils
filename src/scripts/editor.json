@@ -1,0 +1,8 @@
+{
+  "name": "editor",
+  "title": "editor",
+  "description": "editor",
+  "preferences": { "enabled": false },
+  "js": true,
+  "css": true
+}
