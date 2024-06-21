@@ -370,7 +370,7 @@ const onHiddenButtonClick = ({ target }) => {
 const addPopovers = async posts => {
   for (const post of posts) {
     if (post.matches(`[${customAttribute}]`)) return;
-    post.setAttribute(customAttribute, '')
+    post.setAttribute(customAttribute, '');
 
     let handleMap = {};
     const { postingProject, postId, shareTree, singlePostPageUrl, commentsLocked, transparentShareOfPostId } = await getViewModel(post);
