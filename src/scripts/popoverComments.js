@@ -1,6 +1,6 @@
 import { postFunction } from './utils/mutation.js';
 import { getViewModel } from './utils/react.js';
-import { apiFetch, singlePost } from './utils/apiFetch.js';
+import { apiFetch, getComments } from './utils/apiFetch.js';
 import { noact } from './utils/noact.js';
 import { parseMd } from './utils/markdown.js';
 
@@ -330,16 +330,6 @@ const addStatusMessage = success => {
 
   document.body.append(message);
   window.setTimeout(() => message.remove(), 5000);
-};
-
-const removeEmptyArrays = obj => {
-  const returnObj = {};
-  Object.keys(obj).filter(key => obj[key].length > 0).map(key => returnObj[key] = obj[key]);
-  return Object.keys(returnObj).length ? returnObj : null;
-};
-const getComments = async (handle, postId) => {
-  const { comments } = await singlePost(handle, postId);
-  return removeEmptyArrays(comments);
 };
 const onButtonClick = event => {
   event.preventDefault();
