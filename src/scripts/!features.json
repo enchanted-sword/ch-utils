@@ -1,8 +1,9 @@
 [
   "horizontal",
   "followers",
-  "collapseComments",
+  "fixComments",
   "popoverComments",
+  "collapseComments",
   "popoverNotifications",
   "quickRechost",
   "urlPopovers",

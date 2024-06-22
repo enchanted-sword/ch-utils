@@ -1,0 +1,7 @@
+{
+  "name": "fixComments",
+  "title": "fix comment counts",
+  "description": "fixes incorrect comment numbers on posts",
+  "preferences": { "enabled": false },
+  "js": true
+}

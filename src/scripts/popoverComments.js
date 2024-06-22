@@ -32,6 +32,7 @@ const newCommentButton = (postId, link) => noact({
     {
       href: link.href,
       target: '_blank',
+      dataset: link.dataset,
       className: 'text-sm',
       children: [link.innerText]
     },
@@ -369,7 +370,8 @@ const addPopovers = async posts => {
     const postComments = await getComments(handle, postId);
 
     if (post.querySelector(linkSelector)) {
-      const commentButton = newCommentButton(postId, post.querySelector(linkSelector));
+      const link = post.querySelector(linkSelector);
+      const commentButton = newCommentButton(postId, link);
       const footer = post.querySelector('.co-thread-footer');
       const footerStartWrapper = post.querySelector(wrapperSelector);
       const defaultReply = noact({
