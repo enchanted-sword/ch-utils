@@ -1,3 +1,19 @@
+# v1.3.2
+### **New feature:** Fix comment counts
+- Fixes incorrect comment numbers on posts
+
+### General
+- Switched to OpenType fonts to fix compatibility issues
+
+### Open notifications in popover view
+- Fixed incorrect timezones on dates
+
+### Popover comments
+- Fixed whitespace not being preserved in comments
+
+### Horizontal navigation
+- Fixed a bug where clicking on project pages would send you back to the previous page
+
 # v1.3.1
 ### General
 - Fixed module-specific errors from halting mutation callbacks for other modules

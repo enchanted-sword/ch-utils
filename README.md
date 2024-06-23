@@ -13,11 +13,14 @@ Pins the navigation controls to the top of the window for ease of access; no mor
 ### Follower page tweaks
 See your follower count or load your entire list of followers at once.
 
-### Collapse comments
-Adds a button to collapse comment trees.
+### Fix comment counts
+Fixes incorrect comment numbers on posts.
 
 ### Show comments under posts
 Displays an expandable comment section under posts on the timeline; no need to click off the page to read or reply to comments!
+
+### Collapse comments
+Adds a button to collapse comment trees.
 
 ### Open notifications in popover view
 Changes the default behaviour of the notification page button to instead show a notification feed popup without navigating to the notification page.
