@@ -1,0 +1,1 @@
+.renderIfVisible:has([data-filtering="hidden"]) { display: none; }

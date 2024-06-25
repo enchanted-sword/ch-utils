@@ -1,0 +1,24 @@
+{
+  "name": "filtering",
+  "title": "post filtering",
+  "description": "control what posts you see on your dashboard",
+  "preferences": {
+    "enabled": false,
+    "options": {
+      "ownPosts": {
+        "value": false,
+        "type": "toggle",
+        "name": "hide your own posts",
+        "tooltip": "hide your own posts on the dashboard"
+      },
+      "duplicates": {
+        "value": false,
+        "type": "toggle",
+        "name": "hide duplicate posts",
+        "tooltip": "hide duplicate posts on the dashboard"
+      }
+    }
+  },
+  "js": true,
+  "css": true
+}
