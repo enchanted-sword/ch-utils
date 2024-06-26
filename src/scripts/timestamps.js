@@ -11,10 +11,10 @@ const addTimestamps = timeElements => {
   for (const timeElement of timeElements) {
     let time;
     const iso = timeElement.dateTime;
-    const url = timeElement.querySelector('a').href;
-    try {
-      time = DateTime.fromISO(iso).toLocaleString(formatOpts, opts).toLowerCase();
-    } catch {
+    let url = timeElement.querySelector('a').href;
+    if (url[0] === '#') url = `https://cohost.org${url}`; // rare edge case
+    try { time = DateTime.fromISO(iso).toLocaleString(formatOpts, opts).toLowerCase(); }
+    catch {
       time = DateTime.fromISO(iso).toLocaleString(formatOpts).toLowerCase(); //fallback for invalid locale
     }
     const formattedTime = $(`<a class="${customClass} hover:underline" href="${url}">${time}</a>`)[0];
