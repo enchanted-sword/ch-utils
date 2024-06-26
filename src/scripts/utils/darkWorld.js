@@ -21,8 +21,12 @@ export const darkWorld = async project => {
 };
 
 export const getProjectSlow = async handle => {
-  const doc = await darkWorld(handle);
-  const { project } = JSON.parse(doc.getElementById('__COHOST_LOADER_STATE__').innerText)['project-page-view'];
-
-  return project || undefined;
+  try {
+    const doc = await darkWorld(handle);
+    const { project } = JSON.parse(doc.getElementById('__COHOST_LOADER_STATE__').innerText)['project-page-view'];
+    return project;
+  } catch {
+    console.warn(`unable to parse handle "${handle}"`);
+    return undefined;
+  }
 };

@@ -36,7 +36,7 @@ export const apiFetch = async (path, body = {}, silent = false) => fetch(`https:
       });
     } else return;
   }).catch(e => {
-    if (!silent) console.error(`apiFetch error: failed to fetch resource at url https://cohost.org/api${path}${stringifyParams(body?.queryParams)}`, e);
+    if (!silent) console.error(`apiFetch error: failed to fetch resource at url https://cohost.org/api${path}${stringifyParams(body?.queryParams)}`,removeParams(body), e);
     return Promise.reject(e);
   });
 
