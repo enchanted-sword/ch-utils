@@ -1,6 +1,6 @@
 import { apiFetch, followState, getProject } from './utils/apiFetch.js';
 import { activeProject } from './utils/user.js';
-import { mutationManager, postFunction } from './utils/mutation.js';
+import { mutationManager, threadFunction } from './utils/mutation.js';
 import { getViewModel } from './utils/react.js';
 import { noact } from './utils/noact.js';
 import { parseMd } from './utils/markdown.js';
@@ -259,12 +259,12 @@ export const main = async () => {
   if (!matchMedia('(pointer:fine)').matches) return; // if the device has no mouse (and thus no ability to hover) we don't want to clog up our web requests
 
   ({ showDescriptions } = await getOptions('urlPopovers'));
-  postFunction.start(addPopoversInPosts);
+  threadFunction.start(addPopoversInPosts);
   mutationManager.start(anchorSelector, addPopovers);
 };
 
 export const clean = async () => {
-  postFunction.stop(addPopoversInPosts);
+  threadFunction.stop(addPopoversInPosts);
   mutationManager.stop(addPopovers);
   document.querySelectorAll(`a[${customAttribute}]`).forEach(anchor => {
     anchor.removeEventListener('mouseenter', displayPopover);

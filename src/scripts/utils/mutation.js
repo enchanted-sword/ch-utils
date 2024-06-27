@@ -16,7 +16,7 @@ export const mutationManager = Object.freeze({
     this.listeners.set(func, selector);
     this.trigger(func);
   },
-
+//
   /**
    * stop a mutation callback
    * @param {Function} func - function to remove
@@ -46,6 +46,35 @@ export const mutationManager = Object.freeze({
   }
 });
 
+export const threadFunction = Object.freeze({
+  functions: new Map(),
+
+  /**
+   * start a mutation callback on new threads
+   * @param {string} selector - css selector for elements to target
+   * @param {Function} func - callback function for matching elements
+   */
+  start (func, filter = false) {
+    if (this.functions.has(func)) this.functions.delete(func);
+    this.functions.set(func, filter);
+    if (mutationManager.listeners.has(onNewThreads)) mutationManager.trigger(onNewThreads);
+    else (mutationManager.start(postSelector, onNewThreads));
+  },
+
+  /**
+   * stop a mutation callback
+   * @param {Function} func - callback function to remove
+   */
+  stop (func) {
+    this.functions.delete(func)
+  }
+});
+const onNewThreads = posts => {
+  for (const [func, filter] of threadFunction.functions) {
+    filter ? func(posts.filter(post => post.matches(filter))) : func(posts);
+  }
+};
+
 export const postFunction = Object.freeze({
   functions: new Map(),
 
@@ -58,7 +87,7 @@ export const postFunction = Object.freeze({
     if (this.functions.has(func)) this.functions.delete(func);
     this.functions.set(func, filter);
     if (mutationManager.listeners.has(onNewPosts)) mutationManager.trigger(onNewPosts);
-    else (mutationManager.start(postSelector, onNewPosts));
+    else (mutationManager.start(branchSelector, onNewPosts));
   },
 
   /**
@@ -69,37 +98,8 @@ export const postFunction = Object.freeze({
     this.functions.delete(func)
   }
 });
-const onNewPosts = posts => {
+const onNewPosts = branches => {
   for (const [func, filter] of postFunction.functions) {
-    filter ? func(posts.filter(post => post.matches(filter))) : func(posts);
-  }
-};
-
-export const branchFunction = Object.freeze({
-  functions: new Map(),
-
-  /**
-   * start a mutation callback on new post branches
-   * @param {string} selector - css selector for elements to target
-   * @param {Function} func - callback function for matching elements
-   */
-  start (func, filter = false) {
-    if (this.functions.has(func)) this.functions.delete(func);
-    this.functions.set(func, filter);
-    if (mutationManager.listeners.has(onNewBranches)) mutationManager.trigger(onNewBranches);
-    else (mutationManager.start(branchSelector, onNewBranches));
-  },
-
-  /**
-   * stop a mutation callback
-   * @param {Function} func - callback function to remove
-   */
-  stop (func) {
-    this.functions.delete(func)
-  }
-});
-const onNewBranches = branches => {
-  for (const [func, filter] of branchFunction.functions) {
     filter ? func(branches.filter(post => post.matches(filter))) : func(branches);
   }
 };

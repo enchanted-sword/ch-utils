@@ -1,4 +1,4 @@
-import { postFunction } from './utils/mutation.js';
+import { threadFunction } from './utils/mutation.js';
 import { getViewModel } from './utils/react.js';
 import { apiFetch, getComments } from './utils/apiFetch.js';
 import { noact } from './utils/noact.js';
@@ -429,11 +429,11 @@ const addPopovers = async posts => {
 export const main = async () => {
   if (location.pathname.includes('/post/')) return;
 
-  postFunction.start(addPopovers, ':not([data-popover-comments="true"])');
+  threadFunction.start(addPopovers, ':not([data-popover-comments="true"])');
 };
 
 export const clean = async () => {
-  postFunction.stop(addPopovers);
+  threadFunction.stop(addPopovers);
   $(`.${customClass}`).remove();
   $(`[${customAttribute}]`).removeAttr(customAttribute);
 }

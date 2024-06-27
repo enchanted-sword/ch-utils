@@ -1,4 +1,4 @@
-import { postFunction } from './utils/mutation.js';
+import { threadFunction } from './utils/mutation.js';
 import { getViewModel } from './utils/react.js';
 import { activeProject } from './utils/user.js';
 import { getOptions } from './utils/jsTools.js';
@@ -20,10 +20,10 @@ const filterPosts = async posts => {
 
 export const main = async () => {
   ({ ownPosts, duplicates } = await getOptions('filtering'));
-  postFunction.start(filterPosts, `:not([${customAttribute}])`);
+  threadFunction.start(filterPosts, `:not([${customAttribute}])`);
 };
 
 export const clean = async () => {
-  postFunction.stop(filterPosts);
+  threadFunction.stop(filterPosts);
   $(`[${customAttribute}]`).removeAttr(customAttribute);
 };

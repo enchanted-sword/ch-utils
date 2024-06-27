@@ -1,5 +1,5 @@
 import { getOptions } from './utils/jsTools.js';
-import { postFunction } from './utils/mutation.js';
+import { threadFunction } from './utils/mutation.js';
 
 const customAttribute = 'ch-utils-yinglation';
 let reverseMode
@@ -299,9 +299,9 @@ export const main = async () => {
     phoneme = 'th'
     regex = /(\w*(?:th)\w*)/gi;
   }
-  postFunction.start(translatePosts, `:not([${customAttribute}])`);
+  threadFunction.start(translatePosts, `:not([${customAttribute}])`);
 }
 export const clean = async () => {
   $(`[${customAttribute}]`).removeAttr(customAttribute);
-  postFunction.stop(translatePosts);
+  threadFunction.stop(translatePosts);
 }

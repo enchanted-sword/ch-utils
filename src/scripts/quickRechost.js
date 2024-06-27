@@ -1,7 +1,7 @@
 import { apiFetch, postBoxTheme } from './utils/apiFetch.js';
 import { activeProject, managedProjects } from './utils/user.js';
 import { getViewModel } from './utils/react.js';
-import { postFunction } from './utils/mutation.js';
+import { threadFunction } from './utils/mutation.js';
 import { noact } from './utils/noact.js';
 import { getOptions } from './utils/jsTools.js';
 import { parseMd } from './utils/markdown.js';  // new record for most imports in a module?
@@ -324,12 +324,12 @@ const addMenus = async posts => {
 export const main = async () => {
   ({ addTags, addContent } = await getOptions('quickRechost'));
 
-  postFunction.start(addMenus, ':not([data-quick-rechost="true"])');
+  threadFunction.start(addMenus, ':not([data-quick-rechost="true"])');
   document.addEventListener('touchstart', hideMenuOnTouch);
 };
 
 export const clean = async () => {
-  postFunction.stop(addMenus);
+  threadFunction.stop(addMenus);
 
   $(linkSelector).off('mouseenter', showMenu);
   $(`.${customClass}`).remove();

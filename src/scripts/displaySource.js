@@ -1,5 +1,5 @@
 import { noact } from './utils/noact.js';
-import { branchFunction } from './utils/mutation.js';
+import { postFunction } from './utils/mutation.js';
 import { getViewModel } from './utils/react.js';
 import { displayPrefs } from './utils/apiFetch.js';
 import { getOptions } from './utils/jsTools.js';
@@ -101,11 +101,11 @@ export const main = async () => {
   ({ theme, showBoth } = await getOptions('displaySource'));
   Prism.plugins.customClass.prefix('prism-');
 
-  branchFunction.start(addButtons, `:not([${customAttribute}])`);
+  postFunction.start(addButtons, `:not([${customAttribute}])`);
 };
 export const clean = async () => {
   $(`.${customClass}`).remove();
   $(`[${customAttribute}]`).removeAttr(customAttribute);
 
-  branchFunction.stop(addButtons);
+  postFunction.stop(addButtons);
 };
