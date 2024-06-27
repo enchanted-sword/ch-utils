@@ -7,7 +7,7 @@ import { mutationManager } from './utils/mutation.js';
 
 // eslint-disable-next-line no-undef
 const { DateTime } = luxon;
-let numFetch, highlightUnread;
+let numFetch, highlightUnread, showTags;
 const buttonSelector = '[href="https://cohost.org/rc/project/notifications"]';
 const smListSelector = 'ul[role="menu"][class~="lg\:hidden"]';
 const customClass = 'ch-utils-popoverNotifications';
@@ -40,6 +40,41 @@ const getTransformedNotifications = async () => {
     ({ comments, posts, projects, notifications } = unreadNotifications);
   } else ([{ comments, posts, projects, notifications }] = await batchTrpc(['notifications.list'], { 0: { limit: numFetch } }));
 
+  notifications = structuredClone(notifications).map(notification => {
+    notification.time = DateTime.fromISO(notification.createdAt).toMillis();
+    return notification;
+  });
+
+  if (showTags) {
+    const newShareNotifications = [];
+
+    notifications.filter(({ type }) => type === 'groupedShare').map(notification => {
+      notification.time = DateTime.fromISO(notification.createdAt).toMillis();
+      notification.sharePostIds.map(shareId => {
+        const post = posts[shareId];
+
+        if (post.tags.length) {
+          const postISO = post.publishedAt;
+          const postTime = DateTime.fromISO(postISO).toMillis();
+          console.log(post.tags);
+          newShareNotifications.push({
+            createdAt: postISO,
+            fromProjectId: post.postingProject.projectId,
+            toPostId: post.transparentShareOfPostId,
+            sharePostId: shareId,
+            transparentShare: true,
+            type: 'groupedShare',
+            time: postTime,
+            unread: (notification.unread && postTime >= notification.time) ? true : false
+          })
+        }
+      });
+    });
+
+    notifications.push(...newShareNotifications)
+    notifications.sort((a, b) => b.time - a.time);
+  }
+
   notifications.forEach(originalNotification => {
     const notification = structuredClone(originalNotification);
 
@@ -62,6 +97,7 @@ const getTransformedNotifications = async () => {
     if (notification.replyTo) notification.type = 'reply';
 
     notification.hasBody = ['share', 'comment', 'reply'].includes(notification.type);
+    notification.hasTags = (notification.sharePost && notification.sharePost.tags.length) ? true : false;
 
     if (notification.grouped) notification.notifyingProjects = notification.fromProjectIds.map(projectId => projects[projectId]);
     else notification.notifyingProject = projects[notification.fromProjectId];
@@ -104,7 +140,7 @@ const getTransformedNotifications = async () => {
     notification.lineOfAction = [notifier, interaction];
 
     const time = DateTime.fromISO(notification.createdAt);
-    const date = time.toLocaleString()
+    const date = time.toISODate({ format: 'basic' });
     if (!(date in sortedNotifications)) sortedNotifications[date] = [];
     sortedNotifications[date].push(notification);
   });
@@ -161,106 +197,113 @@ const interactionMap = notification => {
     reshare = true;
     yourPost = notification.targetPost.shareTree.findLast(share => share.postingProject.projectId === activeProject.projectId);
   }
-  if (notification.replyTo && (notification.replyTo.projectId === activeProject.projectId)) replyToOwnComment = true
+  if (notification.replyTo && (notification.replyTo.projectId === activeProject.projectId)) replyToOwnComment = true;
 
-  switch (notification.type) {
-    case 'like':
-    case 'groupedLike':
-    case 'groupedShare':
-      return [
-        {
-          tag: 'span',
-          children: [notification.type === 'groupedLike' ? 'liked ' : 'shared ']
-        },
-        reshare ? [
+  const targetUrl = notification?.targetPost?.singlePostPageUrl || '';
+  const yourUrl = yourPost?.singlePostPageUrl || '';
+  const shareUrl = notification?.sharePost?.singlePostPageUrl || '';
+
+  try {
+    switch (notification.type) {
+      case 'like':
+      case 'groupedLike':
+      case 'groupedShare':
+        return [
           {
-            href: notification.targetPost.singlePostPageUrl,
-            className: 'font-bold hover:underline',
-            children: ['a share']
+            tag: 'span',
+            children: [notification.type === 'groupedLike' ? 'liked ' : 'shared ']
           },
-          ['of']
-        ] : null,
-        {
-          href: yourPost.singlePostPageUrl,
-          className: 'font-bold hover:underline',
-          children: ['your post']
-        }
-      ];
-    case 'share':
-      return [
-        {
-          tag: 'span',
-          children: [' shared ']
-        },
-        reshare ? [
+          reshare ? [
+            {
+              href: targetUrl,
+              className: 'font-bold hover:underline',
+              children: ['a share']
+            },
+            ['of']
+          ] : null,
           {
-            href: notification.targetPost.singlePostPageUrl,
+            href: yourUrl,
             className: 'font-bold hover:underline',
-            children: ['a share']
-          },
-          ['of']
-        ] : null,
-        {
-          href: yourPost.singlePostPageUrl,
-          className: 'font-bold hover:underline',
-          children: ['your post']
-        },
-        {
-          href: notification.sharePost.singlePostPageUrl,
-          className: 'font-bold hover:underline',
-          children: ['and added']
-        },
-      ];
-    case 'groupedFollow':
-      return {
-        tag: 'span',
-        children: ['followed you']
-      };
-    case 'comment':
-      return [
-        {
-          tag: 'span',
-          children: ['left']
-        },
-        {
-          href: `${notification.targetPost.singlePostPageUrl}#comment-${notification.comment.commentId}`,
-          className: 'font-bold hover:underline',
-          children: ['a comment']
-        },
-        'on',
-        {
-          href: yourPost.singlePostPageUrl,
-          className: 'font-bold hover:underline',
-          children: 'your post'
-        }
-      ];
-    case 'reply':
-      return [
-        {
-          href: notification.targetPost ? `${notification.targetPost.singlePostPageUrl}#comment-${notification.comment.commentId}` : '',
-          className: 'font-bold hover:underline',
-          children: ['replied']
-        },
-        'to',
-        replyToOwnComment ? {
-          href: notification.targetPost ? `${notification.targetPost.singlePostPageUrl}#comment-${notification.replyTo.commentId}` : '',
-          className: 'font-bold hover:underline',
-          children: ['your comment']
-        } : [
+            children: ['your post']
+          }
+        ];
+      case 'share':
+        return [
           {
-            href: notification.targetPost ? `${notification.targetPost.singlePostPageUrl}#comment-${notification.replyTo.commentId}` : '',
+            tag: 'span',
+            children: [' shared ']
+          },
+          reshare ? [
+            {
+              href: targetUrl,
+              className: 'font-bold hover:underline',
+              children: ['a share']
+            },
+            ['of']
+          ] : null,
+          {
+            href: yourUrl,
+            className: 'font-bold hover:underline',
+            children: ['your post']
+          },
+          {
+            href: shareUrl,
+            className: 'font-bold hover:underline',
+            children: ['and added']
+          },
+        ];
+      case 'groupedFollow':
+        return {
+          tag: 'span',
+          children: ['followed you']
+        };
+      case 'comment':
+        return [
+          {
+            tag: 'span',
+            children: ['left']
+          },
+          {
+            href: notification.targetPost ? `${targetUrl}#comment-${notification.comment.commentId}` : '',
             className: 'font-bold hover:underline',
             children: ['a comment']
           },
           'on',
           {
-            href: notification.targetPost ? `${notification.targetPost.singlePostPageUrl}#comment-${notification.replyTo.commentId}` : '',
+            href: yourUrl,
             className: 'font-bold hover:underline',
-            children: 'your post'
+            children: ['your post']
           }
-        ],
-      ];
+        ];
+      case 'reply':
+        return [
+          {
+            href: notification.targetPost ? `${targetUrl}#comment-${notification.comment.commentId}` : '',
+            className: 'font-bold hover:underline',
+            children: ['replied']
+          },
+          'to',
+          replyToOwnComment ? {
+            href: notification.targetPost ? `${targetUrl}#comment-${notification.replyTo.commentId}` : '',
+            className: 'font-bold hover:underline',
+            children: ['your comment']
+          } : [
+            {
+              href: notification.targetPost ? `${targetUrl}#comment-${notification.replyTo.commentId}` : '',
+              className: 'font-bold hover:underline',
+              children: ['a comment']
+            },
+            'on',
+            {
+              href: notification.targetPost ? `${targetUrl}#comment-${notification.replyTo.commentId}` : '',
+              className: 'font-bold hover:underline',
+              children: 'your post'
+            }
+          ],
+        ];
+    }
   }
+  catch (e) {console.error(e, notification)}
 };
 
 const imageRegex = /<img\s[^>]+>/g;
@@ -368,10 +411,22 @@ const newNotification = notification => {
         children: notification.notifyingProjects.map(project => newAvatar(project))
       }]
     }]
-  } : notification.hasBody ? {
-    className: 'co-block-quote block-children ml-20 break-words border-l-2 pl-2 italic',
-    innerHTML: parseMd(notification.sharePost ? ( notification.sharePost.plainTextBody ? notification.sharePost.plainTextBody : notification.sharePost.headline ) : notification.comment.body) || '[no text]'
-  } : ''
+  } : [
+    notification.hasBody ? {
+      className: 'co-block-quote block-children ml-20 break-words border-l-2 pl-2 italic',
+      innerHTML: parseMd(notification.sharePost ? ( notification.sharePost.plainTextBody ? notification.sharePost.plainTextBody : notification.sharePost.headline ) : notification.comment.body) || '[no text]'
+    } : '',
+    notification.hasTags ? {
+      className: 'relative w-full overflow-y-hidden break-words leading-none co-inline-quote',
+      children: [{
+        children: notification.sharePost.tags.map(tag => {return {
+          href: `/rc/tagged/${tag}`,
+          className: 'mr-2 inline-block text-sm hover:underline',
+          children: [`#${tag}`]
+        };})
+      }]
+    } : ''
+  ]
 ]};
 const newNotificationCard = notification => {return {
   className: 'co-notification-card flex flex-col p-3',
@@ -449,7 +504,7 @@ const onNotificationButtonClick = async event => {
     popover.querySelector('.loader').replaceWith(noact({
       tag: 'section',
       className: 'flex flex-col',
-      children: Object.keys(notifications).map(date => newNotificationPage(date, notifications[date], postBoxTheme))
+      children: Object.keys(notifications).sort((a, b) => Number(b) - Number(a)).map(date => newNotificationPage(date, notifications[date], postBoxTheme)) // otherwise it will always be backwards because of how entries are ordered
     }));
   } else {
     dataset.notificationPopoverState = '';
@@ -465,7 +520,7 @@ const addPopovers = buttons => {
 }
 
 export const main = async () => {
-  ({ numFetch, highlightUnread } = await getOptions('popoverNotifications'));
+  ({ numFetch, highlightUnread, showTags } = await getOptions('popoverNotifications'));
 
   mutationManager.start(buttonSelector, addPopovers);
 };

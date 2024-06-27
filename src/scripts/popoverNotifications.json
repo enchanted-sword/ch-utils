@@ -19,6 +19,12 @@
         "type": "toggle",
         "name": "highlight unread notifs",
         "tooltip": "highlights new notifications recieved since the last time the notifications were viewed"
+      },
+      "showTags": {
+        "value": false,
+        "type": "toggle",
+        "name": "show tags on shares",
+        "tooltip": "creates unique notifications for shares with tags and displays the added tags"
       }
     }
   },
