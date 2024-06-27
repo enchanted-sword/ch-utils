@@ -155,22 +155,35 @@ const pathMap = {
 };
 const interactionMap = notification => {
   let reshare = false;
-  let replyToOwnComment = false
-  if (notification.targetPost && !notification.targetPost.isEditor) reshare = true;
+  let replyToOwnComment = false;
+  let yourPost = notification.targetPost;
+  if (notification.targetPost && !notification.targetPost.isEditor) {
+    reshare = true;
+    yourPost = notification.targetPost.shareTree.findLast(share => share.postingProject.projectId === activeProject.projectId);
+  }
   if (notification.replyTo && (notification.replyTo.projectId === activeProject.projectId)) replyToOwnComment = true
 
   switch (notification.type) {
     case 'like':
     case 'groupedLike':
+    case 'groupedShare':
       return [
         {
           tag: 'span',
-          children: [' liked ']
+          children: [notification.type === 'groupedLike' ? 'liked ' : 'shared ']
         },
+        reshare ? [
+          {
+            href: notification.targetPost.singlePostPageUrl,
+            className: 'font-bold hover:underline',
+            children: ['a share']
+          },
+          ['of']
+        ] : null,
         {
-          href: notification.targetPost.singlePostPageUrl,
+          href: yourPost.singlePostPageUrl,
           className: 'font-bold hover:underline',
-          children: [`${reshare ? 'a share of' : ''} your post`]
+          children: ['your post']
         }
       ];
     case 'share':
@@ -179,53 +192,73 @@ const interactionMap = notification => {
           tag: 'span',
           children: [' shared ']
         },
+        reshare ? [
+          {
+            href: notification.targetPost.singlePostPageUrl,
+            className: 'font-bold hover:underline',
+            children: ['a share']
+          },
+          ['of']
+        ] : null,
+        {
+          href: yourPost.singlePostPageUrl,
+          className: 'font-bold hover:underline',
+          children: ['your post']
+        },
         {
           href: notification.sharePost.singlePostPageUrl,
           className: 'font-bold hover:underline',
-          children: [`${reshare ? 'a share of' : ''} your post and added`]
+          children: ['and added']
         },
-      ];
-    case 'groupedShare':
-      return [
-        {
-          tag: 'span',
-          children: [' shared ']
-        },
-        {
-          href: notification.targetPost.singlePostPageUrl,
-          className: 'font-bold hover:underline',
-          children: [`${reshare ? 'a share of' : ''} your post`]
-        }
       ];
     case 'groupedFollow':
       return {
         tag: 'span',
-        children: [' followed you']
+        children: ['followed you']
       };
     case 'comment':
       return [
         {
           tag: 'span',
-          children: [' left ']
+          children: ['left']
         },
         {
           href: `${notification.targetPost.singlePostPageUrl}#comment-${notification.comment.commentId}`,
           className: 'font-bold hover:underline',
           children: ['a comment']
         },
-        ' on your post'
+        'on',
+        {
+          href: yourPost.singlePostPageUrl,
+          className: 'font-bold hover:underline',
+          children: 'your post'
+        }
       ];
     case 'reply':
       return [
         {
-          tag: 'span',
-          children: [' replied ']
+          href: notification.targetPost ? `${notification.targetPost.singlePostPageUrl}#comment-${notification.comment.commentId}` : '',
+          className: 'font-bold hover:underline',
+          children: ['replied']
         },
-        {
+        'to',
+        replyToOwnComment ? {
           href: notification.targetPost ? `${notification.targetPost.singlePostPageUrl}#comment-${notification.replyTo.commentId}` : '',
           className: 'font-bold hover:underline',
-          children: [replyToOwnComment ? 'to your comment' : 'to a comment on your post']
-        },
+          children: ['your comment']
+        } : [
+          {
+            href: notification.targetPost ? `${notification.targetPost.singlePostPageUrl}#comment-${notification.replyTo.commentId}` : '',
+            className: 'font-bold hover:underline',
+            children: ['a comment']
+          },
+          'on',
+          {
+            href: notification.targetPost ? `${notification.targetPost.singlePostPageUrl}#comment-${notification.replyTo.commentId}` : '',
+            className: 'font-bold hover:underline',
+            children: 'your post'
+          }
+        ],
       ];
   }
 };
@@ -296,7 +329,7 @@ const newBodyPreview = (post, comment = null, replyTo = null) => {
     className: "co-inline-quote max-h-60 flex-1 truncate before:content-['“'] after:content-['”']",
     children: [{
       className: 'inline-children hover:underline',
-      href: `${post.singlePostPageUrl}${comment ? `#comment${comment.commentId}` : ''}`,
+      href: `${post.singlePostPageUrl}${replyTo ? `#comment-${replyTo.commentId}` : ''}`,
       innerHTML: htmlBody
     }]
   });
