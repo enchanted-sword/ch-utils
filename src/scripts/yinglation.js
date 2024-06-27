@@ -267,7 +267,7 @@ let map = {
   'zhunderstorms': 'thunderstorms',
   'pazhway' : 'pathway',
   'pazhways' : 'pathways',
-}
+};
 
 const textNodeDescendants = node => [
     ...node.childNodes, ...Array.from(node.childNodes).filter(child => child.nodeName !== 'CODE')
