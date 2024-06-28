@@ -248,9 +248,11 @@ const addPopoversInPosts = async posts => {
 const addPopovers = async anchors => {
   await Promise.all(anchors.map(async anchor => {
     const handle = anchor.href.split('https://cohost.org/')[1];
+    let project;
     if (anchor.matches(`[${customAttribute}]`) || !handle) return;
     
-    const project = await getProject(handle);
+    if ('project' in anchor) ({ project } = anchor);
+    else project = await getProject(handle);
     attachPopover(anchor, project);
   }));
 };

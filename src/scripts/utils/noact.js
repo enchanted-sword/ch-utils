@@ -50,7 +50,7 @@ export const noact = obj => {
 
     if ('dataset' in obj) Object.keys(obj.dataset).forEach(key => el.dataset[key] = obj.dataset[key]);
     if ('children' in obj && obj.children.constructor.name === 'Array') {
-      obj.children.flat(Infinity).forEach(child => { // some implementations of the function can *conditionally* supply an array as an element of the children array, so it must be flattened here
+      obj.children.flat(Infinity).forEach(child => { // some implementations of the function use nesting arrays as children, so they need to be flattened
         if (!child) return;
         if (typeof child === 'object' && 'nodeType' in child) el.append(child);
         else if (typeof child === 'object') el.append(noact(child));

@@ -56,7 +56,6 @@ const getTransformedNotifications = async () => {
         if (post.tags.length) {
           const postISO = post.publishedAt;
           const postTime = DateTime.fromISO(postISO).toMillis();
-          console.log(post.tags);
           newShareNotifications.push({
             createdAt: postISO,
             fromProjectId: post.postingProject.projectId,
@@ -124,10 +123,10 @@ const getTransformedNotifications = async () => {
 
     switch (notification.type) {
       case 'comment':
-        preview = newBodyPreview(notification.targetPost, notification.comment);
+        preview = newBodyPreview(notification.targetPost);
         break;
       case 'reply':
-        preview = newBodyPreview(notification.targetPost, notification.comment, notification.replyTo);
+        preview = newBodyPreview(notification.targetPost, notification.replyTo);
         break
       case 'groupedFollow':
         preview = undefined;
@@ -315,27 +314,29 @@ const newIcon = type => {return {
   'aria-hidden': true,
   children: [pathMap[type]]
 }};
-const newAvatar = project => {if (project) return { // we need to also account for deleted projects, their ids are still present in fromProjectIds but the actual project is undefined
-  className: `${customClass}-avatar flex flex-row gap-2`,
-  children: [
-    {
-      className: 'flex-0 mask relative aspect-square h-8 w-8',
-      href: `https://cohost.org/${project.handle}`,
-      title: `@${project.handle}`,
-      children: [{
-        className: `mask mask-${project.avatarShape} h-full w-full object-cover`,
-        alt: project.handle,
-        src: `${project.avatarURL}?dpr=2&amp;width=80&amp;height=80&amp;fit=cover&amp;auto=webp`
-      }]
-    },
-    {
-      className: `${customClass}-handle font-bold hover:underline`,
-      href: `https://cohost.org/${project.handle}`,
-      children: [`@${project.handle}`]
-    }
-  ]
-}};
-const newBodyPreview = (post, comment = null, replyTo = null) => {
+const newAvatar = project => {
+  if (project) return { // we need to check for deleted or otherwise missing projects, their ids are still present in fromProjectIds but the actual project is undefined
+    className: `${customClass}-avatar flex flex-row gap-2`,
+    children: [
+      {
+        className: 'flex-0 mask relative aspect-square h-8 w-8',
+        href: `https://cohost.org/${project.handle}`,
+        title: `@${project.handle}`,
+        children: [{
+          className: `mask mask-${project.avatarShape} h-full w-full object-cover`,
+          alt: project.handle,
+          src: `${project.avatarURL}?dpr=2&amp;width=80&amp;height=80&amp;fit=cover&amp;auto=webp`
+        }]
+      },
+      {
+        className: `${customClass}-handle font-bold hover:underline`,
+        href: `https://cohost.org/${project.handle}`,
+        children: [`@${project.handle}`]
+      }
+    ]
+  };
+};
+const newBodyPreview = (post, replyTo = null) => {
   let body, htmlBody, previewImage, previewLine;
   let { headline, plainTextBody } = post;
 
@@ -386,47 +387,47 @@ const newBodyPreview = (post, comment = null, replyTo = null) => {
 
 const newNotification = notification => {
   return [
-  {
-    className: `${customClass}-notifier flex w-full flex-row flex-nowrap align-center items-center gap-3`,
-    children: [
-      newIcon(notification.type),
-      notification.grouped ? '' : newAvatar(notification.notifyingProject),
-      {
-        className: 'flex w-full max-23 flex-col',
+    {
+      className: `${customClass}-notifier flex w-full flex-row flex-nowrap align-center items-center gap-3`,
+      children: [
+        newIcon(notification.type),
+        notification.grouped ? '' : newAvatar(notification.notifyingProject),
+        {
+          className: 'flex w-full max-23 flex-col',
+          children: [{
+            className: 'flex w-full flex-1 flex-row flex-wrap overflow-auto gap-space',
+            children: notification.lineOfAction
+          }]
+        },
+        notification.preview && notification.preview.previewImage ? notification.preview.previewImage : ''
+      ]
+    },
+    notification.preview ? notification.preview.previewLine : '',
+    notification.grouped ? {
+      className: `${customClass}-groupAvatars flex flex-col gap-4`,
+      children: [{
+        className: 'mt-2 flex flex-row flex-nowrap items-center gap-3 overflow-hidden',
         children: [{
-          className: 'flex w-full flex-1 flex-row flex-wrap overflow-auto gap-space',
-          children: notification.lineOfAction
+          className: `${customClass}-groupAvatarsInner flex flex-row flex-nowrap gap-2 overflow-hidden`,
+          children: notification.notifyingProjects.map(project => newAvatar(project))
         }]
-      },
-      notification.preview && notification.preview.previewImage ? notification.preview.previewImage : ''
+      }]
+    } : [
+      notification.hasBody ? {
+        className: 'co-block-quote block-children ml-20 break-words border-l-2 pl-2 italic',
+        innerHTML: parseMd(notification.sharePost ? ( notification.sharePost.plainTextBody ? notification.sharePost.plainTextBody : notification.sharePost.headline ) : notification.comment.body) || '[no text]'
+      } : '',
+      notification.hasTags ? {
+        className: 'relative w-full overflow-y-hidden break-words leading-none co-inline-quote',
+        children: [{
+          children: notification.sharePost.tags.map(tag => {return {
+            href: `/rc/tagged/${tag}`,
+            className: 'mr-2 inline-block text-sm hover:underline',
+            children: [`#${tag}`]
+          };})
+        }]
+      } : ''
     ]
-  },
-  notification.preview ? notification.preview.previewLine : '',
-  notification.grouped ? {
-    className: `${customClass}-groupAvatars flex flex-col gap-4`,
-    children: [{
-      className: 'mt-2 flex flex-row flex-nowrap items-center gap-3 overflow-hidden',
-      children: [{
-        className: `${customClass}-groupAvatarsInner flex flex-row flex-nowrap gap-2 overflow-hidden`,
-        children: notification.notifyingProjects.map(project => newAvatar(project))
-      }]
-    }]
-  } : [
-    notification.hasBody ? {
-      className: 'co-block-quote block-children ml-20 break-words border-l-2 pl-2 italic',
-      innerHTML: parseMd(notification.sharePost ? ( notification.sharePost.plainTextBody ? notification.sharePost.plainTextBody : notification.sharePost.headline ) : notification.comment.body) || '[no text]'
-    } : '',
-    notification.hasTags ? {
-      className: 'relative w-full overflow-y-hidden break-words leading-none co-inline-quote',
-      children: [{
-        children: notification.sharePost.tags.map(tag => {return {
-          href: `/rc/tagged/${tag}`,
-          className: 'mr-2 inline-block text-sm hover:underline',
-          children: [`#${tag}`]
-        };})
-      }]
-    } : ''
-  ]
 ]};
 const newNotificationCard = notification => {return {
   className: 'co-notification-card flex flex-col p-3',
