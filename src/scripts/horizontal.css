@@ -9,6 +9,7 @@
     align-items: center;
     padding: 0;
     position: relative;
+    color: rgb(var(--color-notWhite));
 
     > a > li {
       font-size: 0;
@@ -16,13 +17,18 @@
       padding: .5rem;
       position: relative;
 
-      &:hover { --tw-border-opacity: 0; }
+      &:hover {
+        --tw-border-opacity: 0;
+        color: rgb(var(--color-mango));
+      }
 
       svg.ml-auto { 
         position: absolute;
         transform: scale(.8);
         top: -5%;
         left: 40%;
+        fill: rgb(var(--color-mango));
+        color: rgb(var(--color-notBlack));
       }
     }
   }
