@@ -1,3 +1,12 @@
+const renderer = {
+  code: text => `<div style="scrollbar-color:initial" class="co-prose prose overflow-hidden break-words"><pre><code>${text}</code></pre></div>`
+};
+marked.use({
+  renderer,
+  gfm: true,
+  breaks: true
+});
+
 const srcMap = {
   'chunks': 'https://cohost.org/static/f59b84127fa7b6c48b6c.png',
   'eggbug-classic': 'https://cohost.org/static/41454e429d62b5cb7963.png',
@@ -38,4 +47,4 @@ const emoji = (match, p1) => `<img style="height: var(--emoji-scale, 1em); displ
  * @param {string} str - markdown
  * @returns {string} parsed markdown
  */
-export const parseMd = str => DOMPurify.sanitize(marked.parse(str.trim().replace(emojiRegex, emoji).replace(/[\r\n]/g, '<br>')));
+export const parseMd = str => DOMPurify.sanitize(marked.parse(str.trim().replace(emojiRegex, emoji)));
