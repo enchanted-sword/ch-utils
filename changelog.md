@@ -1,3 +1,26 @@
+# v1.3.3
+### **New feature:** Post filtering
+- Control what posts you see on your dashboard
+- Filter out your own posts or duplicate posts
+
+### General
+- Changed the extension icon to use paths instead of glyphs so that it displays correctly regardless of local font availability
+- Fixed colour contrast on machines that prefer light mode
+- Fixed a markdown parsing issue with newlines and carriage returns
+
+### Open notifications in popover view
+- Added a new option to display shares with tags
+- Every item in a notification's line of action is now a unique hyperlink where possible
+
+### Popover comments
+- Fixed excessive whitespace issue
+
+### Custom timestamps
+- Fixed a highly specific bug where notifications for posts containing embedded comments would generate bugged timestamps
+
+### Yinglet translation
+- Translations are now applied per-post instead of per-thread
+
 # v1.3.2
 ### **New feature:** Fix comment counts
 - Fixes incorrect comment numbers on posts

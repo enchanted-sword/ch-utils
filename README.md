@@ -49,6 +49,9 @@ Displays a popover search menu when clicking the navigation search button.
 ### Custom timestamps
 Formats timestamps with a user-supplied luxon.DateTime preset (e.g. DATETIME_MED) or Intl.DateTimeFormat constructor options. See the [luxon documentation](https://moment.github.io/luxon/api-docs/index.html#datetimetolocalestring) and [Intl.DateTimeFormat documentation](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat#using_options) for more info.
 
+### Post filtering
+Control what posts you see on your dashboard, filter out your own posts or duplicate posts.
+
 # Building the extension locally
 - Download and install [Node.js and npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
 - Install the project dependancies using ```npm install```
