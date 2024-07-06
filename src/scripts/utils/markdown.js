@@ -38,4 +38,4 @@ const emoji = (match, p1) => `<img style="height: var(--emoji-scale, 1em); displ
  * @param {string} str - markdown
  * @returns {string} parsed markdown
  */
-export const parseMd = str => DOMPurify.sanitize(marked.parse(str.replace(emojiRegex, emoji))).replace(/\n$/, ''); // i don't know why there was sometimes a trailing newline but it was driving me crazy
+export const parseMd = str => DOMPurify.sanitize(marked.parse(str.trim().replace(emojiRegex, emoji).replace(/[\r\n]/g, '<br>')));
