@@ -1,12 +1,5 @@
 /*loaders adapted from https://cssloaders.github.io/*/
 
-.co-themed-box { position: relative; }
-ul[role="listbox"] { z-index: 1; } /*this element will otherwise get hidden behind other elements if .co-themed-box is set to display: relative;*/
-.load-all {
-  position: absolute;
-  top: .5rem;
-  right: .5rem;
-}
 .load-all:has(.spinner) {
   cursor: wait;
 }

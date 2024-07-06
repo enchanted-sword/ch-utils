@@ -12,12 +12,12 @@ const limit = 100; // API no longer returns more than 100
 const countElement = $('<span>', { class: `follow-count ${customClass}` });
 const loader = $(`<span class='counter-loading ${customClass}'>(counting<span class='loader'></span>)</span>`);
 const loaderButtonPlaceholder = $(`
-  <button class="${customClass} load-all flex h-12 max-w-xs items-center justify-center rounded-lg bg-foreground px-6 text-lg text-text hover:bg-foreground-600 active:bg-foreground-700 disabled:bg-foreground-200">
+  <button class="${customClass} load-all ml-auto flex h-12 max-w-xs items-center justify-center rounded-lg bg-foreground px-6 text-lg text-text hover:bg-foreground-600 active:bg-foreground-700 disabled:bg-foreground-200">
     <span class="spinner"></span>
   </button>
 `);
 const loaderButton = followers => noact({
-  className: `${customClass} load-all flex h-12 max-w-xs items-center justify-center rounded-lg bg-foreground px-6 text-lg text-text hover:bg-foreground-600 active:bg-foreground-700 disabled:bg-foreground-200`,
+  className: `${customClass} load-all ml-auto flex h-12 max-w-xs items-center justify-center rounded-lg bg-foreground px-6 text-lg text-text hover:bg-foreground-600 active:bg-foreground-700 disabled:bg-foreground-200`,
   onclick: async ({ target }) => {
     target.innerHTML = '<span class="spinner"></span>';
     await Promise.all(followers.map(async project => {
@@ -51,11 +51,12 @@ export const main = async () => {
   const { count, loadAll } = await getOptions('followers');
   if (location.pathname !== '/rc/project/followers' || (!count && !loadAll)) return;
 
+  $(headerSelector).addClass('flex items-start');
   if (count) {
     $(headerSelector).prepend(countElement);
     $(headerSelector).append(loader);
   }
-  if (loadAll) $(boxSelector).append(loaderButtonPlaceholder);
+  if (loadAll) $(headerSelector).append(loaderButtonPlaceholder);
 
   const followers = await countFollowers();
 
@@ -66,4 +67,7 @@ export const main = async () => {
   if (loadAll) loaderButtonPlaceholder.replaceWith(loaderButton(followers));
 };
 
-export const clean = async () => $(`.${customClass}`).remove();
+export const clean = async () => {
+  $(`.${customClass}`).remove();
+  $(headerSelector).removeClass('flex items-start');
+};
