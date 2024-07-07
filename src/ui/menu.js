@@ -205,18 +205,21 @@
                 });
                 break;
               } case 'text': {
+                const type = option.textarea ? '<textarea>' : '<input>'
                 const textInputWrapper = $(`<div class="ui-inputWrapper"></div>`);
-                const label = $(`<label for="ui-feature-${name}-${key}" name="${name}-${key}" list="${name}-${key}-list">${option.name}</label>`);
-                const textInput = $('<input>', {
+                const label = $(`<label for="ui-feature-${name}-${key}" name="${name}-${key}">${option.name}</label>`);
+                const textInput = $(type, {
                   class: 'ui-textInput',
                   type: 'text',
                   autocorrect: 'off',
                   spellcheck: 'false',
                   placeholder: option.placeholder,
+                  list: 'list' in option ? `${name}-${key}-list` : '',
                   id: `ui-feature-${name}-${key}`,
                   name: `${name}-${key}`,
                   value: preference.options[key]
                 });
+                if (option.textarea) textInput.text(preference.options[key]);
                 if ('list' in option) {
                   const list = $(`<datalist id="${name}-${key}-list">${option.list.map(item => `<option value="${item}"></option>`).join('')}</datalist>`);
                   textInputWrapper.append(list);

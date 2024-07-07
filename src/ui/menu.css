@@ -438,6 +438,7 @@ select {
   box-sizing: border-box;
   background: var(--white-cherry-5);
 
+  &::placeholder { &::placeholder { opacity: .65; } }
   &textarea { height: 96px; }
   &:focus {
     border-color: rgb(var(--blueberry));
