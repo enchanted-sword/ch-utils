@@ -230,7 +230,7 @@
                 textInputWrapper.append(tooltip);
                 optionsWrapper.append(textInputWrapper);
 
-                textInput.on('input', debounce(onTextInput));
+                textInput.on('change', debounce(onTextInput));
                 break;
               }
             }
