@@ -11,11 +11,54 @@
         "name": "hide your own posts",
         "tooltip": "hide your own posts on the dashboard"
       },
-      "duplicates": {
-        "value": false,
-        "type": "toggle",
+      "duplicatePosts": {
+        "value": "disabled",
+        "type": "select",
         "name": "hide duplicate posts",
-        "tooltip": "hide duplicate posts on the dashboard"
+        "tooltip": "hide duplicate posts on the dashboard",
+        "options": [
+          {
+            "value": "disabled",
+            "name": "disabled"
+          },
+          {
+            "value": "normal",
+            "name": "hide only identical posts"
+          },
+          {
+            "value": "strict",
+            "name": "hide additional shares of the same root post"
+          }
+        ],
+        "inherit": {
+          "inheritFrom": "filtering.duplicates",
+          "false": "disabled",
+          "true": "normal"
+        }
+      },
+      "filterText": {
+        "value": "",
+        "type": "text",
+        "name": "filtered content",
+        "tooltip": "hide posts containing specified content",
+        "placeholder": "comma-separated list of terms. case-insensitive, partial matches are supported.",
+        "textarea": true
+      },
+      "filterTags": {
+        "value": "",
+        "type": "text",
+        "name": "filtered tags",
+        "tooltip": "hide posts containing specified tags",
+        "placeholder": "comma-separated list of tags. case-insensitive, partial matches are supported.",
+        "textarea": true
+      },
+      "filterCws": {
+        "value": "",
+        "type": "text",
+        "name": "filtered content warnings",
+        "tooltip": "hide posts containing specified content warnings",
+        "placeholder": "comma-separated list of cws. case-insensitive, partial matches are supported.",
+        "textarea": true
       }
     }
   },
