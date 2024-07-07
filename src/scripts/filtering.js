@@ -20,6 +20,7 @@ const filterPosts = async posts => {
 
 export const main = async () => {
   ({ ownPosts, duplicates } = await getOptions('filtering'));
+  if (window.location.pathname === `/${activeProject.handle}`) ownPosts = false;
   threadFunction.start(filterPosts, `:not([${customAttribute}])`);
 };
 
