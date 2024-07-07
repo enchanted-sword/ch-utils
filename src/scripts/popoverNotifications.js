@@ -92,7 +92,6 @@ const getTransformedNotifications = async () => {
     if (notification.sharePostId && typeof notification.sharePost === 'undefined') return null; // the api will serve you notifications from blocked projects but not posts, so this results in an error
     if (notification.toPostId && typeof notification.targetPost === 'undefined') return null; // cohost doesn't delete notifications attached to deleted posts, so we have to trim them out manually
 
-    if (notification.type === 'groupedLike' && !notification.grouped) notification.type = 'like';
     if (notification.replyTo) notification.type = 'reply';
 
     notification.hasBody = ['share', 'comment', 'reply'].includes(notification.type);
@@ -204,7 +203,6 @@ const interactionMap = notification => {
 
   try {
     switch (notification.type) {
-      case 'like':
       case 'groupedLike':
       case 'groupedShare':
         return [
