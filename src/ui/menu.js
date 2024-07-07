@@ -125,7 +125,7 @@
 
           Object.keys(feature.preferences.options).forEach(key => {
             const option = feature.preferences.options[key];
-            const tooltip = $(`<div class="ui-tooltip">${option.tooltip}</div>`);
+            const tooltip = $(`<div class="ui-tooltipAnchor"><div class="ui-tooltip">${option.tooltip}</div></div>`);
 
             switch (option.type) {
               case 'toggle': {

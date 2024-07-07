@@ -445,12 +445,17 @@ select {
   }
 }
 
+.ui-tooltipAnchor {
+  position: absolute;
+  top: 0;
+  width: 100%;
+}
 .ui-tooltip {
   pointer-events: none;
   position: absolute;
   opacity: 0;
-  bottom: 48px;
-  left: 0;
+  bottom: 8px;
+  left: -8px;
   padding: 8px;
   background-color: rgb(var(--white));
   border: var(--border-thickness-sm) solid rgb(var(--mango));
@@ -459,7 +464,7 @@ select {
 
   &:after {
     content: '';
-    left: calc(50% - 8px);
+    left: calc(50% - 16px);
     bottom: -17px;
     position: absolute;
     border: 16px solid rgb(var(--mango));
@@ -471,7 +476,7 @@ select {
   }
 }
 select + .ui-tooltip { bottom: 48px; }
-:hover > .ui-tooltip { opacity: 1; }
+:hover > .ui-tooltipAnchor .ui-tooltip { opacity: 1; }
 
 .ui-card {
   background-color: rgb(var(--white));
