@@ -209,6 +209,7 @@
                 const label = $(`<label for="ui-feature-${name}-${key}" name="${name}-${key}" list="${name}-${key}-list">${option.name}</label>`);
                 const textInput = $('<input>', {
                   class: 'ui-textInput',
+                  type: 'text',
                   autocorrect: 'off',
                   spellcheck: 'false',
                   placeholder: option.placeholder,
