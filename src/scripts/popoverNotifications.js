@@ -7,7 +7,7 @@ import { mutationManager } from './utils/mutation.js';
 
 // eslint-disable-next-line no-undef
 const { DateTime } = luxon;
-let numFetch, highlightUnread, showTags;
+let numFetch, highlightUnread, showTags, wrapAvatars;
 const buttonSelector = '[href="https://cohost.org/rc/project/notifications"]';
 const smListSelector = 'ul[role="menu"][class~="lg\:hidden"]';
 const customClass = 'ch-utils-popoverNotifications';
@@ -406,9 +406,9 @@ const newNotification = notification => {
     notification.grouped ? {
       className: `${customClass}-groupAvatars flex flex-col gap-4`,
       children: [{
-        className: 'mt-2 flex flex-row flex-nowrap items-center gap-3 overflow-hidden',
+        className: `mt-2 flex flex-row flex-nowrap items-center gap-3 overflow-hidden`,
         children: [{
-          className: `${customClass}-groupAvatarsInner flex flex-row flex-nowrap gap-2 overflow-hidden`,
+          className: `${customClass}-groupAvatarsInner flex flex-row ${wrapAvatars ? 'flex-wrap' : 'flex-nowrap'} gap-2 overflow-hidden`,
           children: notification.notifyingProjects.map(project => newAvatar(project))
         }]
       }]
@@ -521,7 +521,7 @@ const addPopovers = buttons => {
 }
 
 export const main = async () => {
-  ({ numFetch, highlightUnread, showTags } = await getOptions('popoverNotifications'));
+  ({ numFetch, highlightUnread, showTags, wrapAvatars } = await getOptions('popoverNotifications'));
 
   mutationManager.start(buttonSelector, addPopovers);
 };

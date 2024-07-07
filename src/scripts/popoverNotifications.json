@@ -25,6 +25,12 @@
         "type": "toggle",
         "name": "show tags on shares",
         "tooltip": "creates unique notifications for shares with tags and displays the added tags"
+      },
+      "wrapAvatars": {
+        "value": false,
+        "type": "toggle",
+        "name": "wrap avatars",
+        "tooltip": "wraps the avatars container on notifications with several shares, as opposed to hiding the overflow"
       }
     }
   },
