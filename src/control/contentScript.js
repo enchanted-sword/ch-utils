@@ -110,17 +110,17 @@
   
         if (typeof preferences !== 'undefined') {
           Object.keys(installedFeatures).forEach(feature => { // push new features and options to existing preferences
-            if (!preferences[feature]) {
+            if (typeof preferences[feature] === 'undefined') {
               preferences[feature] = transformPreferences(installedFeatures[feature].preferences);
               preferences[feature].new = true;
             }
             if ('options' in installedFeatures[feature].preferences) {
-              if (!('options' in preferences[feature])) {
+              if (typeof preferences[feature].options === 'undefined') {
                 preferences[feature].options = {};
                 preferences[feature].new = true;
               }
               Object.keys(installedFeatures[feature].preferences.options).forEach(option => {
-                if (!(option in preferences[feature].options)) {
+                if (typeof preferences[feature].options[option] === 'undefined') {
                   if ('inherit' in installedFeatures[feature].preferences.options[option]) {
                     const [inheritFeature, inheritOption] = installedFeatures[feature].preferences.options[option].inherit.inheritFrom.split('.');
                     if (typeof preferences[inheritFeature].options[inheritOption] !== 'undefined') {
@@ -141,21 +141,15 @@
             }
           })
           Object.keys(preferences).forEach(feature => { // delete removed features and options from existing preferences
-            if (!(feature in installedFeatures)) {
-              delete preferences[feature];
-              return;
-            }
-
+            if (!(feature in installedFeatures)) return delete preferences[feature];
             if ('options' in preferences[feature]) {
+              if (!('options' in installedFeatures[feature].preferences)) return delete preferences[feature].options;
               Object.keys(preferences[feature].options).forEach(option => {
-                if (!installedFeatures[feature].preferences.options[option]) delete preferences[feature].options[option];
+                if (!(option in installedFeatures[feature].preferences.options)) delete preferences[feature].options[option];
               });
             }
           });
-        } else {
-          preferences = {};
-          Object.keys(installedFeatures).map(feature => preferences[feature] = transformPreferences(installedFeatures[feature].preferences));
-        }
+        } else preferences = Object.fromEntries(Object.entries(installedFeatures).map(([name, feature]) => [name, transformPreferences(feature.preferences)]));
   
         enabledFeatures = Object.keys(preferences).filter(key => preferences[key].enabled);
   
