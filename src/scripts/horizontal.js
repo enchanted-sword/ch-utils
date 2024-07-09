@@ -100,7 +100,7 @@ export const main = async () => {
   else $('[class~="lg\:grid-cols-4"]:has(ul[role="menu"])').prepend($('<div>', { class: 'ch-utils-horizontal' }));
   document.querySelector(navSelector).prepend(menu);
   menu.prepend(homeIcon);
-  document.querySelector(linkSelector).addEventListener('click', onTagButtonClick);
+  $(linkSelector).on('click', onTagButtonClick);
 
   if (unreadOnNavbar) {
     const target = document.querySelector(observerTargetSelector);
@@ -114,7 +114,7 @@ export const main = async () => {
 
 export const clean = async () => {
   document.removeEventListener('click', closeTagMenu);
-  document(linkSelector).removeEventListener('click', onTagButtonClick);
+  $(linkSelector).off('click', onTagButtonClick);
   unreadOnNavbarStyleElement.remove();
 
   $(menuSelector).insertAfter(`div.${customClass}`);
