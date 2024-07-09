@@ -89,7 +89,7 @@ const getTransformedNotifications = async () => {
     notification.replyTo = comments[notification.inReplyTo]?.comment;
     if (typeof notification.replyTo !== 'undefined') notification.replyTo.projectId = comments[notification.inReplyTo].poster.projectId;
 
-    if (notification.sharePostId && typeof notification.sharePost === 'undefined') return null; // the api will serve you notifications from blocked projects but not posts, so this results in an error
+    if (notification.sharePostId && typeof notification.sharePost === 'undefined') return null; // the api will serve you notifications from blocked/deleted projects but not posts, so this results in an error
     if (notification.toPostId && typeof notification.targetPost === 'undefined') return null; // cohost doesn't delete notifications attached to deleted posts, so we have to trim them out manually
 
     if (notification.replyTo) notification.type = 'reply';
