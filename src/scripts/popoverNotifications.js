@@ -53,7 +53,7 @@ const getTransformedNotifications = async () => {
       notification.sharePostIds.map(shareId => {
         const post = posts[shareId];
 
-        if (post.tags.length) {
+        if (typeof post !== 'undefined' && post.tags.length) {
           const postISO = post.publishedAt;
           const postTime = DateTime.fromISO(postISO).toMillis();
           newShareNotifications.push({
