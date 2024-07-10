@@ -258,16 +258,16 @@ const ctrlEnter = event => {
     document.getElementById(`qrc-${event.target.id.split('-')[2]}`).click();
   }
 };
+const clampX = x => Math.min(Math.max(x, 128), visualViewport.width - 128);
 
 const showMenu = event => {
   const target = event.target.closest(linkSelector);
   const id = target.href.split('shareOfPostId=')[1];
   const yPos = (event.pageY || event.changedTouches[0].pageY) + 16;
   let xPos = event.pageX || event.changedTouches[0].pageX;
-  if (xPos + 128 > visualViewport.width) xPos = visualViewport.width - 248;
-  else xPos -= 120;
+  xPos = clampX(xPos);
 
-  document.getElementById(`qrc-menu-${id}`).style = `top: ${yPos}px; left: ${xPos}px; display: block;`; 
+  document.getElementById(`qrc-menu-${id}`).style = `top: ${yPos}px; left: ${xPos - 120}px; display: block;`; 
 };
 const hideMenu = event => {
   const target = event.target.closest(linkSelector);
