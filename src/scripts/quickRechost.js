@@ -4,6 +4,7 @@ import { getViewModel } from './utils/react.js';
 import { threadFunction } from './utils/mutation.js';
 import { noact } from './utils/noact.js';
 import { getOptions } from './utils/jsTools.js';
+import { onLongPress } from './utils/touch.js';
 import { parseMd } from './utils/markdown.js';  // new record for most imports in a module?
 
 const customClass = 'ch-utils-quickRechost';
@@ -13,7 +14,6 @@ const linkSelector = '[href*="compose?"]';
 let addTags, addContent;
 
 const hideMenuDelay = 500;
-const longPressDelay = 500;
 const descriptors = [
   { descriptor: 'reshare', weight: 8 },
   { descriptor: 'rechost', weight: 7 },
@@ -32,21 +32,6 @@ const randomDescriptor = () => {
   for (i = 0; i < weights.length; i++) if (weights[i] > random) break;
   return descriptors[i].descriptor;
 }
-
-export const onLongPress = (elem, func) => {
-  let timeoutId;
-
-  elem.addEventListener('touchstart', e => {
-    timeoutId = setTimeout(() => {
-      timeoutId = null;
-      e.stopPropagation();
-      func(e);
-    }, longPressDelay);
-  });
-  elem.addEventListener('contextmenu', e => e.preventDefault());
-  elem.addEventListener('touchend', () =>  timeoutId && clearTimeout(timeoutId));
-  elem.addEventListener('touchmove', () => timeoutId && clearTimeout(timeoutId));
-};
 
 const rechost = async (shareOfPostId, projectHandle, tags = [], content = '') => apiFetch('/v1/trpc/posts.create', { 
   method: 'POST',
