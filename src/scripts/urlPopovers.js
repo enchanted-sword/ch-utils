@@ -5,13 +5,15 @@ import { getViewModel } from './utils/react.js';
 import { noact } from './utils/noact.js';
 import { parseMd } from './utils/markdown.js';
 import { getOptions } from './utils/jsTools.js';
+import { onLongPress } from './utils/touch.js';
 
-let showDescriptions;
+let timeoutId, showDescriptions;
 
 const customClass = 'ch-utils-urlPopovers';
 const customAttribute = 'data-url-popovers';
 const anchorSelector = `a[href^="https://cohost.org/"]:not([href="https://cohost.org/"],[href^="https://cohost.org/rc"],[href*="/post/"],[href$="/ask"],[href*="/tagged/"],[${customAttribute}])`;
 
+const hasMouse = () => matchMedia('(pointer:fine)').matches;
 const addPopoverDelay = 100;
 const removePopoverDelay = 300;
 const k = str => str.split(' ').map(key => `urlPopover-${key}`).join(' ');
@@ -33,15 +35,18 @@ const followCancelOrUnfollowRequest = async (state, toProjectId) => apiFetch(`/v
     0: { fromProjectId: activeProject.projectId, toProjectId } 
   })
 });
+const clampX = x => Math.min(Math.max(x, 148), window.visualViewport.width - 148);
 
 const displayPopover = async event => {
-  window.setTimeout(async () => {
-    if (!event.target.matches(':hover')) return;
+  clearTimeout(timeoutId);
+  timeoutId = setTimeout(async () => {
+    if (hasMouse() && !event.target.matches(':hover')) return;
 
     const { project, href } = event.target.closest('a');
-    const { bottom, left, width } = event.target.getBoundingClientRect();
-    const xPos = left + width / 2;
+    const { bottom } = event.target.getBoundingClientRect();
     const yPos = bottom + window.scrollY;
+    let xPos = event.pageX || event.changedTouches[0].pageX;
+    xPos = clampX(xPos);
 
     let popover = document.getElementById('urlPopover');
     if (popover) {
@@ -52,14 +57,16 @@ const displayPopover = async event => {
     document.body.append(popover);
   }, addPopoverDelay);
 };
-const removePopover = () => {
-  window.setTimeout(() => {
+const removePopover = event => {
+  setTimeout(() => {
     const popover = document.getElementById('urlPopover');
     if (popover) {
       const projectLinks = Array.from(document.querySelectorAll(`[href='${popover.targetLink}']`));
-      if (!popover.matches(':hover') && !projectLinks.some(link => link.matches(':hover'))) {
+      if (hasMouse() && (popover.matches(':hover') || projectLinks.some(link => link.matches(':hover')))
+        || !hasMouse() && event.target.matches(`.${customClass} *`)) return;
+      else {
         popover.style.opacity = 0;
-        window.setTimeout(() => { popover.remove() }, 150);
+        setTimeout(() => { popover.remove() }, 150);
       }
     }
   }, removePopoverDelay);
@@ -227,9 +234,11 @@ const urlPopover = async (project, xPos, yPos, targetLink) => {
 const attachPopover = (anchor, project) => {
   anchor.project = project;
   anchor.setAttribute(customAttribute, '');
+  anchor.style.userSelect = 'none';
 
   anchor.addEventListener('mouseenter', displayPopover);
   anchor.addEventListener('mouseleave', removePopover);
+  onLongPress(anchor, displayPopover);
 };
 
 const addPopoversInPosts = async posts => {
@@ -258,11 +267,10 @@ const addPopovers = async anchors => {
 };
 
 export const main = async () => {
-  if (!matchMedia('(pointer:fine)').matches) return; // if the device has no mouse (and thus no ability to hover) we don't want to clog up our web requests
-
   ({ showDescriptions } = await getOptions('urlPopovers'));
   threadFunction.start(addPopoversInPosts);
   mutationManager.start(anchorSelector, addPopovers);
+  document.addEventListener('touchstart', removePopover);
 };
 
 export const clean = async () => {
@@ -271,7 +279,8 @@ export const clean = async () => {
   document.querySelectorAll(`a[${customAttribute}]`).forEach(anchor => {
     anchor.removeEventListener('mouseenter', displayPopover);
     anchor.removeEventListener('mouseleave', removePopover);
-  })
+  });
+  document.removeEventListener('touchstart', removePopover);
 
   $(`.${customClass}`).remove();
   $(`[${customAttribute}]`).removeAttr(customAttribute);
