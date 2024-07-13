@@ -1,7 +1,7 @@
 {
   "name": "urlPopovers",
-  "title": "show page info on hover",
-  "description": "adds tumblr-style popup info cards to header links in posts",
+  "title": "show page info",
+  "description": "adds tumblr-style popup info cards to user page links",
   "preferences": {
     "enabled": false,
     "options": {
