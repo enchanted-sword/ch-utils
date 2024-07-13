@@ -40,7 +40,10 @@ export const main = async () => {
   ({ ownPosts, duplicatePosts, filterText, filterTags, filterCws } = await getOptions('filtering'));
   [filterText, filterTags, filterCws] = [filterText, filterTags, filterCws].map(list => list.trim() === '' ? false : list.split(',').map(str => str.trim().toLowerCase()));
   if (!ownPosts && duplicatePosts === 'disabled' && !filterText && !filterTags && !filterCws) return;
-  if (window.location.pathname === `/${activeProject.handle}`) ownPosts = false;
+  if (window.location.pathname === `/${activeProject.handle}`) {
+    ownPosts = false;
+    duplicatePosts = false;
+  }
   threadFunction.start(filterPosts, `:not([${customAttribute}])`);
 };
 
