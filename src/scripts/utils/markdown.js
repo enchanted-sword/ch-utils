@@ -37,7 +37,7 @@ const preprocess = str => str.trim().replace(emojiRegex, emoji);
 const renderer = {
   code: text => `<div style="scrollbar-color:initial" class="co-prose prose overflow-hidden break-words"><pre><code>${text}</code></pre></div>`
 };
-const postprocess = html => DOMPurify.sanitize(html.replace(/\s+$/, ''));
+const postprocess = html => DOMPurify.sanitize(html.replace(/^\s+|\s+$/g, ''));
 marked.use({
   renderer,
   hooks: { preprocess, postprocess },
