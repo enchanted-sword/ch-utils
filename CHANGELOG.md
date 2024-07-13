@@ -1,3 +1,26 @@
+# v1.3.4
+### General
+- Fixed newlines harder
+- Preference option text inputs now only update when the input loses focus
+
+### Open notifications in popover view
+- Added avatar wrapping option
+- Fixed single likes being labelled as shares
+- Fixed the button still being filled in after feature cleanup
+- Fixed uncaught errors when encountering unavailable posts while mapping shares
+
+### Post filtering
+- Added new options for duplicate post filtering
+- Fixed posts being hidden on your own project page
+- Added content, tag, and CW filtering that supports partial matches and checks all posts in a thread
+
+### Follower page tweaks
+- Fixed bug where clicking the reshare button would scroll to the top of the page
+
+### Show page info
+- New name
+- Now works on mobile! Tap and hold on a link to show the popup
+
 # v1.3.3
 ### **New feature:** Post filtering
 - Control what posts you see on your dashboard

@@ -28,8 +28,8 @@ Changes the default behaviour of the notification page button to instead show a 
 ### Quick rechost
 Reshare posts in a single click, with the ability to add tags and content or share as a page other than the one you're currently active as. Simply hover over the reshare button on a device with mouse input, or tap and hold it on a device with touch input.
 
-### Show page info on hover
-Hovering over a handle or display name will display a popup showing that page's avatar, header image, title, pronouns, url, and optionally, its description.
+### Show page info
+Hovering over or long pressing on a handle or display name will display a popup showing that page's avatar, header image, title, pronouns, url, and optionally, its description.
 
 ### Scrolling avatars
 Makes the floating avatars scroll alongside the posts they're attached to.
@@ -50,7 +50,7 @@ Displays a popover search menu when clicking the navigation search button.
 Formats timestamps with a user-supplied luxon.DateTime preset (e.g. DATETIME_MED) or Intl.DateTimeFormat constructor options. See the [luxon documentation](https://moment.github.io/luxon/api-docs/index.html#datetimetolocalestring) and [Intl.DateTimeFormat documentation](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat#using_options) for more info.
 
 ### Post filtering
-Control what posts you see on your dashboard, filter out your own posts or duplicate posts.
+Control what posts you see on your dashboard. You can filter out your own post, duplicate posts, or posts containing any user-suppied keywords, tags, or CWs.
 
 # Building the extension locally
 - Download and install [Node.js and npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
