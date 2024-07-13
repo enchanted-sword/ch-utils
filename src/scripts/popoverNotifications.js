@@ -526,6 +526,10 @@ export const main = async () => {
 
 export const clean = async () => {
   mutationManager.stop(addPopovers);
-  document.querySelector(buttonSelector).removeEventListener('click', onNotificationButtonClick);
   $(`.${customClass}`).remove();
+
+  const button = document.querySelector(buttonSelector);
+  button.removeEventListener('click', onNotificationButtonClick);
+  button.dataset.notificationPopoverState = '';
+  document.removeEventListener('click', closePopover);
 };
