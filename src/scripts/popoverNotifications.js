@@ -2,7 +2,7 @@ import { noact } from './utils/noact.js';
 import { postBoxTheme, batchTrpc } from './utils/apiFetch.js';
 import { activeProject } from './utils/user.js';
 import { getOptions } from './utils/jsTools.js';
-import { parseMd } from './utils/markdown.js';
+import { parseMd, parseMdNoBr } from './utils/markdown.js';
 import { mutationManager } from './utils/mutation.js';
 
 // eslint-disable-next-line no-undef
@@ -359,13 +359,13 @@ const newBodyPreview = (post, replyTo = null) => {
           alt: extractedImage.alt,
           filename: extractedImage.src.split('/').pop()
         };
-        plainTextBody = parseMd(plainTextBody).replaceAll(imageRegex, '');
+        plainTextBody = plainTextBody.replaceAll(imageRegex, '');
       }
     }
 
     body = headline || plainTextBody;
   }
-  htmlBody = parseMd(body);
+  htmlBody = parseMdNoBr(body);
 
   previewLine = noact({
     className: "co-inline-quote max-h-60 flex-1 truncate before:content-['“'] after:content-['”']",

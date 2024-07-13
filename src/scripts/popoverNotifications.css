@@ -80,7 +80,6 @@
 .flex-0 + .max-23 { max-width: 20.5rem; }
 .gap-space { gap: 0 .3em; }
 .inline-children {
-  max-height: 20rem;
   overflow: hidden;
 
   * {

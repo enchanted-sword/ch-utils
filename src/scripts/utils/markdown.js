@@ -1,12 +1,3 @@
-const renderer = {
-  code: text => `<div style="scrollbar-color:initial" class="co-prose prose overflow-hidden break-words"><pre><code>${text}</code></pre></div>`
-};
-marked.use({
-  renderer,
-  gfm: true,
-  breaks: true
-});
-
 const srcMap = {
   'chunks': 'https://cohost.org/static/f59b84127fa7b6c48b6c.png',
   'eggbug-classic': 'https://cohost.org/static/41454e429d62b5cb7963.png',
@@ -42,9 +33,23 @@ const srcMap = {
 const emojiRegex = new RegExp(`(?:^|[^"'\`]):(${Object.keys(srcMap).join('|')}):(?:$|[^"'\`])`, 'g');
 const emoji = (match, p1) => `<img style="height: var(--emoji-scale, 1em); display: inline-block; vertical-align: middle; object-fit: cover; aspect-ratio: 1 / 1; margin: 0;" alt=":${p1}:" title=":${p1}:" src="${srcMap[p1]}">`;
 
+const preprocess = str => str.trim().replace(emojiRegex, emoji);
+const renderer = {
+  code: text => `<div style="scrollbar-color:initial" class="co-prose prose overflow-hidden break-words"><pre><code>${text}</code></pre></div>`
+};
+const postprocess = html => DOMPurify.sanitize(html.replace(/\s+$/, ''));
+marked.use({
+  renderer,
+  hooks: { preprocess, postprocess },
+  gfm: true,
+  breaks: true
+});
+
 /**
  * parses strings of markdown into sanitized HTML strings with custom emoji support
  * @param {string} str - markdown
  * @returns {string} parsed markdown
  */
-export const parseMd = str => DOMPurify.sanitize(marked.parse(str.trim().replace(emojiRegex, emoji)).replace(/\s+$/, ''));
+export const parseMd = str => marked.parse(str);
+
+export const parseMdNoBr = str => marked.parse(str, { breaks: false });
