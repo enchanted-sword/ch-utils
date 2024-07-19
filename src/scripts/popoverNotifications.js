@@ -48,8 +48,8 @@ const getTransformedNotifications = async () => {
   if (showTags) {
     const newShareNotifications = [];
 
-    notifications.filter(({ type }) => type === 'groupedShare').map(notification => {
-      notification.time = DateTime.fromISO(notification.createdAt).toMillis();
+    notifications = notifications.filter(({ type }) => type === 'groupedShare').map(notification => {
+      const newShareNotificationIds = [];
       notification.sharePostIds.map(shareId => {
         const post = posts[shareId];
 
@@ -65,17 +65,26 @@ const getTransformedNotifications = async () => {
             type: 'groupedShare',
             time: postTime,
             unread: (notification.unread && postTime >= notification.time) ? true : false
-          })
+          });
+          newShareNotificationIds.push(post.postingProject.projectId);
         }
       });
+      if (newShareNotificationIds.length) {
+        if ('fromProjectId' in notification) {
+          notifications.splice(notifications.indexOf(notification), 1);
+        } else {
+          newShareNotificationIds.map(id => notifications[notifications.indexOf(notification)].fromProjectIds.splice(notification.fromProjectIds.indexOf(id), 1));
+        }
+      }
+      if (newShareNotificationIds.length) return notification;
     });
 
     notifications.push(...newShareNotifications)
     notifications.sort((a, b) => b.time - a.time);
   }
 
-  notifications.forEach(originalNotification => {
-    const notification = structuredClone(originalNotification);
+  notifications.forEach(notification => {
+    if (!notification) return;
 
     if (notification.fromProjectIds
       && notification.fromProjectIds.constructor.name === 'Array' 
