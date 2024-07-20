@@ -48,7 +48,7 @@ const getTransformedNotifications = async () => {
   if (showTags) {
     const newShareNotifications = [];
 
-    notifications = notifications.filter(({ type }) => type === 'groupedShare').map(notification => {
+    notifications.filter(({ type }) => type === 'groupedShare').map(notification => {
       const newShareNotificationIds = [];
       notification.sharePostIds.map(shareId => {
         const post = posts[shareId];
@@ -76,7 +76,6 @@ const getTransformedNotifications = async () => {
           newShareNotificationIds.map(id => notifications[notifications.indexOf(notification)].fromProjectIds.splice(notification.fromProjectIds.indexOf(id), 1));
         }
       }
-      if (newShareNotificationIds.length) return notification;
     });
 
     notifications.push(...newShareNotifications)
@@ -482,7 +481,7 @@ const newNotificationPopover = (clientX, clientY, theme) => {
 };
 
 const closePopover = () => {
-  if ($(`${buttonSelector}:hover, ${buttonSelector} + .${customClass}:hover`).length === 0) {
+  if ($(`${buttonSelector}:hover, .${customClass}:hover`).length === 0) {
     document.querySelector(buttonSelector).click();
     document.removeEventListener('click', closePopover);
   }
