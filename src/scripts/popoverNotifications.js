@@ -346,7 +346,7 @@ const newBodyPreview = (post, replyTo = null) => {
   let body, htmlBody, previewImage, previewLine;
   let { headline, plainTextBody } = post;
 
-  if (post.blocks.some(block => block?.attachment?.kind === 'image')) { // preview image from attachment
+  if (post.blocks.some(block => block?.attachment?.kind === 'image')) { // generate preview image from attachment
     const { attachment } = post.blocks.find(block => block?.attachment?.kind === 'image');
     previewImage = {
       className: 'cohost-shadow-light aspect-square h-8 w-8 rounded-lg object-cover',
@@ -358,8 +358,8 @@ const newBodyPreview = (post, replyTo = null) => {
   if (replyTo) ({ body } = replyTo);
   else {
     if (!previewImage && plainTextBody) {
-      const extractedString = imageRegex.exec(parseMd(plainTextBody));
-      if (extractedString && extractedString.length) { // preview image from markdown
+      const extractedString = imageRegex.exec(parseMdNoBr(plainTextBody));
+      if (extractedString && extractedString.length) { // generate preview image from markdown
         const extractedImage = $(extractedString[0])[0];
         previewImage = {
           className: 'cohost-shadow-light aspect-square h-8 w-8 rounded-lg object-cover',
@@ -367,10 +367,10 @@ const newBodyPreview = (post, replyTo = null) => {
           alt: extractedImage.alt,
           filename: extractedImage.src.split('/').pop()
         };
-        plainTextBody = plainTextBody.replaceAll(imageRegex, '');
+        plainTextBody = parseMdNoBr(plainTextBody).replaceAll(imageRegex, '');
       }
     }
-
+    
     body = headline || plainTextBody;
   }
   htmlBody = parseMdNoBr(body);
@@ -392,6 +392,16 @@ const newBodyPreview = (post, replyTo = null) => {
 };
 
 const newNotification = notification => {
+  let body, headline, plainTextBody;
+  if (notification.hasBody) {
+    notification.sharePost && ({ headline, plainTextBody } = notification.sharePost);
+    if (notification.sharePost && (headline || plainTextBody)) {
+      if (headline && plainTextBody) body = `${headline}\n\n${plainTextBody}`;
+      else if (headline) body = headline;
+      else body = plainTextBody;
+    } else if (notification.comment) body = notification.comment.body
+    else body = '[no text]';
+  }
   return [
     {
       className: `${customClass}-notifier flex w-full flex-row flex-nowrap align-center items-center gap-3`,
@@ -421,7 +431,7 @@ const newNotification = notification => {
     } : [
       notification.hasBody ? {
         className: 'co-block-quote block-children ml-20 break-words border-l-2 pl-2 italic',
-        innerHTML: parseMd(notification.sharePost ? ( notification.sharePost.plainTextBody ? notification.sharePost.plainTextBody : notification.sharePost.headline ) : notification.comment.body) || '[no text]'
+        innerHTML: parseMd(body)
       } : '',
       notification.hasTags ? {
         className: 'relative w-full overflow-y-hidden break-words leading-none co-inline-quote',
