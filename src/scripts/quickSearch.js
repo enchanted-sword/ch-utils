@@ -8,7 +8,8 @@ const customClass = 'ch-utils-quickSearch';
 const customAttribute = 'data-quick-search';
 const buttonSelector = '[href="https://cohost.org/rc/search"]';
 
-const onSearch = async ({ target: { value } }) => {
+const onSearch = async ({ target: { value = '' } }) => {
+  value = value.normalize('NFD').replace(/\p{Diacritic}/gu, ''); // NFD separates characters and diacritics, regex with unicode diacritic escape removes diacritics
   const [{ projects }, { result }] = await batchTrpc(
     ['projects.searchByHandle', 'tags.query'],
     { 
