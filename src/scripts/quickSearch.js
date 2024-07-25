@@ -33,11 +33,15 @@ const searchWindow = noact({
   onclick: event => {
     try {
       event.stopPropagation();
-      if (event.target.matches(`dialog, .${customClass}-close`)) searchWindow.removeAttribute('open');
+      if (event.target.matches(`dialog, .${customClass}-close`)) {
+        searchWindow.removeAttribute('open');
+        document.getElementById('ch-utils-quickSearch').value = '';
+      }
     } catch {null}
   },
   children: [{
     className: 'max-w-screen rounded-lg bg-notWhite p-3 text-notBlack',
+    style: 'width: 28rem',
     children: [{
       className: 'flex flex-col gap-4',
       children: [
@@ -67,6 +71,7 @@ const searchWindow = noact({
         },
         {
           tag: 'input',
+          id: 'ch-utils-quickSearch',
           className: 'w-full',
           type: 'text',
           name: 'q1',
@@ -122,7 +127,12 @@ const showDialog = event => {
   event.preventDefault();
   searchWindow.setAttribute('open', '');
 };
-const closeDialog = event => {if (event.key === 'Escape' && searchWindow.hasAttribute('open')) searchWindow.removeAttribute('open');}
+const closeDialog = event => {
+  if (event.key === 'Escape' && searchWindow.hasAttribute('open')) {
+    searchWindow.removeAttribute('open');
+    document.getElementById('ch-utils-quickSearch').value = '';
+  }
+}
 const addPopovers = buttons => {
   for (const button of buttons) {
     button.setAttribute(customAttribute, '');
