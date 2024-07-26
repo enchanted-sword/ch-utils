@@ -1,0 +1,8 @@
+{
+  "name": "shortcuts",
+  "title": "keyboard shortcuts",
+  "description": "enables keyboard shortcuts for navigation and interaction",
+  "preferences": { "enabled": false },
+  "js": true,
+  "css": true
+}
