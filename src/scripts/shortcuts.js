@@ -1,7 +1,7 @@
-const keyHandler = ({ ctrlKey, key }) => {
+const keyHandler = ({ ctrlKey, key, repeat }) => {
   if (!(document.querySelector(':focus') === null)) return;
 
-  if (['j', 'k'].includes(key)) {
+  if (['j', 'k'].includes(key)) { // post scrolling
     const posts = Array.from(document.querySelectorAll('.renderIfVisible:has([data-postid])'));
     if (posts.length === 0) return;
     let scrollTarget;
@@ -12,7 +12,7 @@ const keyHandler = ({ ctrlKey, key }) => {
       else return;
     }
     else scrollTarget.scrollIntoView();
-  } else if (['ArrowLeft', 'ArrowRight'].includes(key) && ctrlKey) {
+  } else if (['ArrowLeft', 'ArrowRight'].includes(key) && ctrlKey) { // pagination
     const scrollButtons = document.querySelectorAll('.renderIfVisible ~ .mb-12 a:has(svg), .renderIfVisible ~ div .mb-12 a:has(svg)');
     if (scrollButtons.length === 0) return;
     console.log(scrollButtons);
@@ -33,6 +33,15 @@ const keyHandler = ({ ctrlKey, key }) => {
         else if (scrollButtons.length === 2) window.location = scrollButtons[0];
       }
     }
+  } else if (['l'].includes(key) && !repeat) { // like, rechost
+    const posts = Array.from(document.querySelectorAll('.renderIfVisible:has([data-postid])'));
+    if (posts.length === 0) return;
+    const targetPost = posts.find(post => {
+      const { y, height } = post.getBoundingClientRect();
+      return y + height - 96 > 0 ? true : false;
+    });
+    if (typeof targetPost === 'undefined') return;
+    if (key === 'l') targetPost.querySelector('footer button[title*="like"]').click();
   }
 }
 
