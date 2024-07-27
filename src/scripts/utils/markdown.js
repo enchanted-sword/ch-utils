@@ -31,11 +31,15 @@ const srcMap = {
   'chutils': 'https://raw.githubusercontent.com/enchanted-sword/ch-utils/ab4a94b12432f028c9b60af3d777cdaa92f69711/src/icons/icon.svg'
 };
 const emojiRegex = new RegExp(`(?:^|[^"'\`]):(${Object.keys(srcMap).join('|')}):(?:$|[^"'\`])`, 'g');
-const emoji = (match, p1) => `<img style="height: var(--emoji-scale, 1em); display: inline-block; vertical-align: middle; object-fit: cover; aspect-ratio: 1 / 1; margin: 0;" alt=":${p1}:" title=":${p1}:" src="${srcMap[p1]}">`;
+const emoji = (_, emoji) => `<img style="height: var(--emoji-scale, 1em); display: inline-block; vertical-align: middle; object-fit: cover; aspect-ratio: 1 / 1; margin: 0;" alt=":${emoji}:" title=":${emoji}:" src="${srcMap[emoji]}">`;
 
-const preprocess = str => str.trim().replace(emojiRegex, emoji);
+const mentionRegex = /((?:^|[^a-zA-Z0-9_!#$%&*@＠\\/]|(?:^|[^a-zA-Z0-9_+~.-\\/])))([@＠])([a-zA-Z0-9-]{3,})((?:^|[^a-zA-Z0-9_!#$%&*@＠\\/]|(?:^|[^a-zA-Z0-9_+~.-\\/])))/g;
+const mention = (_, startChar,symbol, handle, endChar) => `${startChar}<a style="text-decoration:none;font-weight:bold" href="/${handle}" target="_blank">${symbol + handle}</a>${endChar}`;
+
+export const preprocess = str => str.trim().replace(emojiRegex, emoji);
 const renderer = {
-  code: text => `<div style="scrollbar-color:initial" class="co-prose prose overflow-hidden break-words"><pre><code>${text}</code></pre></div>`
+  code: text => `<div style="scrollbar-color:initial" class="co-prose prose overflow-hidden break-words"><pre><code>${text}</code></pre></div>`,
+  text: text => text.replace(mentionRegex, mention)
 };
 const postprocess = html => DOMPurify.sanitize(html.replace(/^\s+|\s+$/g, ''));
 marked.use({
