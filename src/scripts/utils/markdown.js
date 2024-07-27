@@ -36,7 +36,7 @@ const emoji = (_, emoji) => `<img style="height: var(--emoji-scale, 1em); displa
 const mentionRegex = /((?:^|[^a-zA-Z0-9_!#$%&*@＠\\/]|(?:^|[^a-zA-Z0-9_+~.-\\/])))([@＠])([a-zA-Z0-9-]{3,})((?:^|[^a-zA-Z0-9_!#$%&*@＠\\/]|(?:^|[^a-zA-Z0-9_+~.-\\/])))/g;
 const mention = (_, startChar,symbol, handle, endChar) => `${startChar}<a style="text-decoration:none;font-weight:bold" href="/${handle}" target="_blank">${symbol + handle}</a>${endChar}`;
 
-export const preprocess = str => str.trim().replace(emojiRegex, emoji);
+const preprocess = str => str.trim().replace(emojiRegex, emoji);
 const renderer = {
   code: text => `<div style="scrollbar-color:initial" class="co-prose prose overflow-hidden break-words"><pre><code>${text}</code></pre></div>`,
   text: text => text.replace(mentionRegex, mention)
