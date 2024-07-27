@@ -345,6 +345,7 @@ const newAvatar = project => {
 const newBodyPreview = (post, replyTo = null) => {
   let body, htmlBody, previewImage, previewLine;
   let { headline, plainTextBody } = post;
+  headline && (headline = headline.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'));
 
   if (post.blocks.some(block => block?.attachment?.kind === 'image')) { // generate preview image from attachment
     const { attachment } = post.blocks.find(block => block?.attachment?.kind === 'image');
@@ -371,9 +372,9 @@ const newBodyPreview = (post, replyTo = null) => {
       }
     }
     
-    body = headline || plainTextBody;
+    body = plainTextBody;
   }
-  htmlBody = parseMdNoBr(body);
+  htmlBody = headline || parseMdNoBr(body);
 
   previewLine = noact({
     className: "co-inline-quote max-h-60 flex-1 truncate before:content-['“'] after:content-['”']",
