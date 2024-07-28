@@ -1,7 +1,7 @@
 {
   "name": "postPreview",
   "title": "post preview",
-  "description": "displays a preview of the post you're writing alongside the editor",
+  "description": "displays a live preview of the post you're writing alongside the editor",
   "preferences": { "enabled": false },
   "js": true,
   "css": true
