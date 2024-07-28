@@ -11,13 +11,12 @@ export const mutationManager = Object.freeze({
    * start a mutation callback
    * @param {string} selector - css selector for elements to target
    * @param {Function} func - callback for matching elements
-   * @param {boolean} trigger - trigger mode: doesn't pass elements as arguments, fires on addition and removal
    */
   start (selector, func) {
     this.listeners.has(func) && (this.functions.delete(func));
-    this.triggers.has(func) && (this.triggers.delete(func));
-    func.length !== 0 && (this.listeners.set(func, selector));
-    func.length === 0 && (this.triggers.set(func, selector));
+    // this.triggers.has(func) && (this.triggers.delete(func));
+    this.listeners.set(func, selector);
+    // func.length === 0 && (this.triggers.set(func, selector));
     this.trigger(func);
   },
 //
