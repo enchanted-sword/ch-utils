@@ -1,19 +1,23 @@
 const app = document.getElementById('app');
 const postSelector = 'article.co-post-box:not(.co-post-composer)';
 const branchSelector = `${postSelector} > div:not([class]):has(div[id^='post-'])`;
-const addedNodesQueue = [];
+const addedNodesQueue = [], removedNodesQueue = [];
 
 export const mutationManager = Object.freeze({
   listeners: new Map(),
+  triggers: new Map(),
 
   /**
    * start a mutation callback
    * @param {string} selector - css selector for elements to target
    * @param {Function} func - callback for matching elements
+   * @param {boolean} trigger - trigger mode: doesn't pass elements as arguments, fires on addition and removal
    */
   start (selector, func) {
-    if (this.listeners.has(func)) this.listeners.delete(func);
-    this.listeners.set(func, selector);
+    this.listeners.has(func) && (this.functions.delete(func));
+    this.triggers.has(func) && (this.triggers.delete(func));
+    func.length !== 0 && (this.listeners.set(func, selector));
+    func.length === 0 && (this.triggers.set(func, selector));
     this.trigger(func);
   },
 //
@@ -22,7 +26,8 @@ export const mutationManager = Object.freeze({
    * @param {Function} func - function to remove
    */
   stop (func) {
-    if (this.listeners.has(func)) this.listeners.delete(func);
+    this.listeners.has(func) && (this.listeners.delete(func));
+    this.triggers.has(func) && (this.triggers.delete(func));
   },
 
   /**
@@ -66,7 +71,7 @@ export const threadFunction = Object.freeze({
    * @param {Function} func - callback function to remove
    */
   stop (func) {
-    this.functions.delete(func)
+    this.functions.delete(func);
   }
 });
 const onNewThreads = posts => {
@@ -104,16 +109,11 @@ const onNewPosts = branches => {
   }
 };
 
-const nodeManager = () => {
-  const addedNodes = addedNodesQueue
-    .splice(0)
-    .filter(addedNode => addedNode.isConnected);
 
-  if (addedNodes.length === 0) return;
-
-  for (const [func, selector] of mutationManager.listeners) {
+const funcManager = (funcMap, testNodes) => {
+  for (const [func, selector] of funcMap) {
     if (func.length === 0) {
-      const shouldRun = addedNodes.some(addedNode => addedNode.matches(selector) || addedNode.querySelector(selector) !== null);
+      const shouldRun = testNodes.some(testNode => testNode.matches(selector) || testNode.querySelector(selector) !== null);
       if (shouldRun) {
         try {
           func();
@@ -125,8 +125,8 @@ const nodeManager = () => {
     }
 
     const matchingElements = [
-      ...addedNodes.filter(addedNode => addedNode.matches(selector)),
-      ...addedNodes.flatMap(addedNode => [...addedNode.querySelectorAll(selector)])
+      ...testNodes.filter(testNode => testNode.matches(selector)),
+      ...testNodes.flatMap(testNode => [...testNode.querySelectorAll(selector)])
     ].filter((value, index, array) => index === array.indexOf(value));
 
     if (matchingElements.length !== 0) {
@@ -138,13 +138,28 @@ const nodeManager = () => {
     }
   }
 };
+const nodeManager = () => {
+  const addedNodes = addedNodesQueue
+    .splice(0)
+    .filter(addedNode => addedNode.isConnected);
+  const removedNodes = removedNodesQueue.splice(0);
+
+  if (addedNodes.length === 0 && removedNodes.length === 0) return;
+
+  funcManager(mutationManager.listeners, addedNodes);
+  funcManager(mutationManager.triggers, [...addedNodes, ...removedNodes]);
+};
 
 const observer = new MutationObserver(mutations => {
   const addedNodes = mutations
     .flatMap(({ addedNodes }) => [...addedNodes])
     .filter(addedNode => addedNode instanceof Element);
+  const removedNodes = mutations
+  .flatMap(({ removedNodes }) => [...removedNodes])
+  .filter(removedNode => removedNode instanceof Element);
 
   addedNodesQueue.push(...addedNodes);
+  removedNodesQueue.push(...removedNodes);
 
   requestAnimationFrame(nodeManager);
 });

@@ -33,13 +33,32 @@ const srcMap = {
 const emojiRegex = new RegExp(`(?:^|[^"'\`]):(${Object.keys(srcMap).join('|')}):(?:$|[^"'\`])`, 'g');
 const emoji = (_, emoji) => `<img style="height: var(--emoji-scale, 1em); display: inline-block; vertical-align: middle; object-fit: cover; aspect-ratio: 1 / 1; margin: 0;" alt=":${emoji}:" title=":${emoji}:" src="${srcMap[emoji]}">`;
 
-const mentionRegex = /((?:^|[^a-zA-Z0-9_!#$%&*@＠\\/]|(?:^|[^a-zA-Z0-9_+~.-\\/])))([@＠])([a-zA-Z0-9-]{3,})((?:^|[^a-zA-Z0-9_!#$%&*@＠\\/]|(?:^|[^a-zA-Z0-9_+~.-\\/])))/g;
+const mentionRegex = /((?:^|[^\w!#$%&*@＠\\/]|(?:^|[^\w+~.-\\/])))([@＠])([a-zA-Z0-9-]{3,})((?:^|[^\w!#$%&*@＠\\/]|(?:^|[^\w+~.-\\/])))/g;
 const mention = (_, startChar,symbol, handle, endChar) => `${startChar}<a style="text-decoration:none;font-weight:bold" href="/${handle}" target="_blank">${symbol + handle}</a>${endChar}`;
+
+/**
+ * cohost markdown sandboxing
+ * - no position:fixed
+ * - no css variable declarations
+ * - no <style> or <textarea> elements
+ * - form inputs are disabled
+ * - classes are stripped
+ */
+
+const fixedRegex = /style="[^"]*(position:\s*fixed)[^"]*"/g;
+const fixedReplacer = (match, rule) => match.replace(rule, '');
+const varRegex = /style="[^"]*(--[\w-]+:[^;]*)[^"]*"/g;
+const varReplacer = (match, rule) => match.replace(rule, '');
+const classRegex = /class="[^"]*"/g;
+const styleSheetRegex = /<style[^>]*>[^<]*(?:<\/style>|$)/g;
+const inputRegex = /<input[^>]*>[^<]*(?:<\/input>|$)/g;
+const textareaRegex = /<textarea[^>]*>[^<]*(?:<\/textarea>|$)/g;
 
 const preprocess = str => str.trim().replace(emojiRegex, emoji);
 const renderer = {
   code: text => `<div style="scrollbar-color:initial" class="co-prose prose overflow-hidden break-words"><pre><code>${text}</code></pre></div>`,
-  text: text => text.replace(mentionRegex, mention)
+  text: text => text.replace(mentionRegex, mention),
+  html: text => text.replace(styleSheetRegex, '').replace(varRegex, varReplacer).replace(fixedRegex, fixedReplacer).replace(classRegex, '').replace(inputRegex, '<input type="checkbox" disabled="" tabindex="0">').replace(textareaRegex, '')
 };
 const postprocess = html => DOMPurify.sanitize(html.replace(/^\s+|\s+$/g, ''));
 marked.use({

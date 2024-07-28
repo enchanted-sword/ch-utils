@@ -2,6 +2,15 @@ import { noact } from './noact.js';
 import { activeProject } from './user.js';
 import { apiFetch, batchTrpc, followState } from './apiFetch.js';
 
+export const avatar8 = project => noact({
+  className: 'flex-0 mask relative aspect-square h-8 w-8 inline-block',
+  children: [{
+    src: project.avatarURL,
+    className: `mask mask-${project.avatarShape} h-full w-full object-cover`,
+    alt: project.handle
+  }]
+});
+
 const followStates = [
   'follow',
   'cancel follow request',
