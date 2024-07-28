@@ -188,8 +188,6 @@ const updateBody = body => {
 const updateTags = () => document.getElementById('postPreview-tags').replaceChildren(...formatTags(Array.from(document.querySelectorAll('.co-editable-body:has(input[id*="downshift"]) .co-filled-button')).map(mapTags)));
 
 const updateHandler = new MutationObserver(mutations => {
-  console.log(mutations);
-  
   const projectMutation = mutations.find(({ type, target }) => type === 'characterData' && target.parentNode.matches(projectButtonSelector) && managedHandles.includes(target.textContent.trim()));
   const headlineMutation = mutations.find(({ type, target }) => type === 'childList' && target.matches(headlineInputSelector));
   const bodyMutation = mutations.find(({ type, target }) => type === 'childList' && target.closest(bodySelector));
