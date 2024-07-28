@@ -7,11 +7,17 @@ import { parseMd } from './utils/markdown.js';
 
 const customClass = 'ch-utils-postPreview';
 const customAttribute = 'data-smartPostPreview';
+
 const editorSelector = `.flex-row:has(.co-post-composer):not([${customAttribute}])`;
 const projectButtonSelector = '.co-post-composer > .co-thread-header button[data-headlessui-state]';
-const tagSelector = '.group.cursor-pointer.select-none > .co-filled-button > span.block';
+const headlineInputSelector = '.co-editable-body[name="headline"]';
+const bodySelector = '[data-headlessui-state] > div > .flex-col:has([data-drop-target-for-external])';
+const tagInputSelector = '.co-editable-body.text-sm';
+
+const managedHandles = managedProjects.map(({ handle }) => handle);
 
 const previewWindow = (editor, headline, body) => {
+  const blocks = Array.from(body.children);
   const tags = Array.from(editor.querySelectorAll('.co-editable-body:has(input[id*="downshift"]) span.block')).map(e => e.textContent);
   const selectedProjectHandle = editor.querySelector(projectButtonSelector).textContent.trim();
   const selectedProject = managedProjects.find(({ handle }) => handle === selectedProjectHandle);
@@ -49,7 +55,7 @@ const previewWindow = (editor, headline, body) => {
               id: 'postPreview-body',
               className: 'relative overflow-hidden supports-[overflow:clip]:overflow-clip isolate',
               dataset: { postBody: true, testid: 'post-body' },
-              children: [formatMarkdown(body)]
+              children: blocks.map(mapBlocks)
             },
             {
               className: 'w-full max-w-full p-3',
@@ -80,6 +86,7 @@ const previewWindow = (editor, headline, body) => {
                 className: 'flex items-center justify-end gap-3',
                 children: [
                   {
+                    id: 'postPreview-share',
                     className: 'cursor-pointer',
                     title: `share this post as ${selectedProjectHandle}`,
                     children: [{
@@ -97,6 +104,7 @@ const previewWindow = (editor, headline, body) => {
                     }]
                   },
                   {
+                    id: 'postPreview-like',
                     className: 'cursor-pointer',
                     title: `like this post as ${selectedProjectHandle}`,
                     children: [{
@@ -150,27 +158,56 @@ const formatMarkdown = markdown => noact({
   className: 'co-prose prose my-4 overflow-hidden break-words px-3',
   innerHTML: parseMd(markdown)
 });
-const formatTags = tags => tags.map(tag => noact({ tag: 'span', className: 'mr-2 inline-block text-sm', children: [`#${tag}`] }));
+const formatTags = tags => tags.map(({ icon, tag }) => noact({ tag: 'span', className: 'mr-2 inline-block text-sm', children: [icon, tag] }));
 
-const updateHeadline = ({ target }) => document.getElementById('postPreview-headline').innerText = target.value;
-const updateBody = ({ target }) => document.getElementById('postPreview-body').replaceChildren(formatMarkdown(target.value));
-const updateTags = () => document.getElementById('postPreview-tags').replaceChildren(...formatTags(Array.from(document.querySelectorAll('.co-editable-body:has(input[id*="downshift"]) span.block')).map(e => e.textContent)));
-const updateProject = () => {
-  const selectedProjectHandle = document.querySelector(projectButtonSelector).textContent.trim();
+const mapBlocks = block => {
+  const textarea = block.querySelector('textarea');
+  const img = block.querySelector('img');
+
+  if (textarea) return formatMarkdown(textarea.value);
+  else if (img) return img.cloneNode(true);
+  else return null;
+};
+
+const updateProject = selectedProjectHandle => {
   const selectedProject = managedProjects.find(({ handle }) => handle === selectedProjectHandle);
   document.getElementById('postPreview-header').replaceChildren(formatHeader(selectedProject));
+  document.getElementById('postPreview-share').title = `share this post as ${selectedProjectHandle}`;
+  document.getElementById('postPreview-like').title = `like this post as ${selectedProjectHandle}`;
 };
+const updateHeadline = ({ target }) => document.getElementById('postPreview-headline').innerText = target.value;
+const updateBody = body => {
+  const blocks = Array.from(body.children);
+  document.getElementById('postPreview-body').replaceChildren(...blocks.map(mapBlocks));
+}
+const updateTags = () => document.getElementById('postPreview-tags').replaceChildren(...formatTags(Array.from(document.querySelectorAll('.co-editable-body:has(input[id*="downshift"]) .co-filled-button')).map(b => {
+  const icon = b.querySelector('svg.group-hover\\:hidden').cloneNode(true);
+  const tag = b.querySelector('span.block').textContent;
+  return { icon, tag };
+})));
+
+const updateHandler = new MutationObserver(mutations => {
+  console.log(mutations);
+  
+  const projectMutation = mutations.find(({ type, target }) => type === 'characterData' && target.parentNode.matches(projectButtonSelector) && managedHandles.includes(target.textContent.trim()));
+  const headlineMutation = mutations.find(({ type, target }) => type === 'childList' && target.matches(headlineInputSelector));
+  const bodyMutation = mutations.find(({ type, target }) => type === 'childList' && target.closest(bodySelector));
+  const tagMutation = mutations.find(({ type, target }) => type === 'childList' && target.matches(tagInputSelector));
+
+  projectMutation && (updateProject(projectMutation.target.textContent.trim()));
+  headlineMutation && (updateHeadline(headlineMutation));
+  bodyMutation && (updateBody(bodyMutation.target.closest(bodySelector)));
+  tagMutation && (updateTags());
+});
 
 const addPreview = editors => {
   for (const editor of editors) {
     editor.setAttribute(customAttribute, '');
-    const headlineInput = editor.querySelector('.co-editable-body[name="headline"]');
-    const bodyInput = editor.querySelector('[data-drop-target-for-external] .co-editable-body');
-    editor.append(previewWindow(editor, headlineInput.value, bodyInput.value));
-    headlineInput.addEventListener('input', updateHeadline);
-    bodyInput.addEventListener('input', updateBody);
-    mutationManager.start(tagSelector, updateTags);
-    mutationManager.start('ul[data-headlessui-state]', updateProject);
+    const headlineInput = editor.querySelector(headlineInputSelector);
+    const body = editor.querySelector(bodySelector);
+    editor.append(previewWindow(editor, headlineInput.value, body));
+
+    updateHandler.observe(editor.querySelector('article'), { childList: true, subtree: true, characterData: true });
   }
 };
 
@@ -180,6 +217,7 @@ export const main = async () => {
 };
 
 export const clean = async () => {
+  updateHandler.disconnect();
   mutationManager.stop(addPreview);
   $(`[${customAttribute}]`).removeAttr(customAttribute);
   $(`.${customClass}`).remove();
