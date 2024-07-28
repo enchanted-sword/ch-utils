@@ -18,7 +18,7 @@ const managedHandles = managedProjects.map(({ handle }) => handle);
 
 const previewWindow = (editor, headline, body) => {
   const blocks = Array.from(body.children);
-  const tags = Array.from(editor.querySelectorAll('.co-editable-body:has(input[id*="downshift"]) span.block')).map(e => e.textContent);
+  const tags = Array.from(editor.querySelectorAll('.co-editable-body:has(input[id*="downshift"]) span.block')).map(mapTags);
   const selectedProjectHandle = editor.querySelector(projectButtonSelector).textContent.trim();
   const selectedProject = managedProjects.find(({ handle }) => handle === selectedProjectHandle);
   return noact({
@@ -168,6 +168,11 @@ const mapBlocks = block => {
   else if (img) return img.cloneNode(true);
   else return null;
 };
+const mapTags = b => {
+  const icon = b.querySelector('svg.group-hover\\:hidden').cloneNode(true);
+  const tag = b.querySelector('span.block').textContent;
+  return { icon, tag };
+};
 
 const updateProject = selectedProjectHandle => {
   const selectedProject = managedProjects.find(({ handle }) => handle === selectedProjectHandle);
@@ -180,11 +185,7 @@ const updateBody = body => {
   const blocks = Array.from(body.children);
   document.getElementById('postPreview-body').replaceChildren(...blocks.map(mapBlocks));
 }
-const updateTags = () => document.getElementById('postPreview-tags').replaceChildren(...formatTags(Array.from(document.querySelectorAll('.co-editable-body:has(input[id*="downshift"]) .co-filled-button')).map(b => {
-  const icon = b.querySelector('svg.group-hover\\:hidden').cloneNode(true);
-  const tag = b.querySelector('span.block').textContent;
-  return { icon, tag };
-})));
+const updateTags = () => document.getElementById('postPreview-tags').replaceChildren(...formatTags(Array.from(document.querySelectorAll('.co-editable-body:has(input[id*="downshift"]) .co-filled-button')).map(mapTags)));
 
 const updateHandler = new MutationObserver(mutations => {
   console.log(mutations);
