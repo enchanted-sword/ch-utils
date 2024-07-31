@@ -56,7 +56,7 @@ const previewWindow = (editor, headline, body) => {
               id: 'postPreview-body',
               className: 'relative overflow-hidden supports-[overflow:clip]:overflow-clip isolate',
               dataset: { postBody: true, testid: 'post-body' },
-              children: blocks.map(mapBlocks)
+              children: blocks? blocks.map(mapBlocks) : null
             },
             {
               className: 'w-full max-w-full p-3',
