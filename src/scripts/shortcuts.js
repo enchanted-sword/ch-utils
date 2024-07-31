@@ -15,7 +15,6 @@ const keyHandler = ({ ctrlKey, key, repeat }) => {
   } else if (['ArrowLeft', 'ArrowRight'].includes(key) && ctrlKey) { // pagination
     const scrollButtons = document.querySelectorAll('.renderIfVisible ~ .mb-12 a:has(svg), .renderIfVisible ~ div .mb-12 a:has(svg)');
     if (scrollButtons.length === 0) return;
-    console.log(scrollButtons);
     if (key === 'ArrowRight') {
       if (/\?page=[\d]+#*/.test(scrollButtons[0].href)) {
         if ((scrollButtons.length === 1 && window.location.search === '?page=0')
@@ -33,7 +32,7 @@ const keyHandler = ({ ctrlKey, key, repeat }) => {
         else if (scrollButtons.length === 2) window.location = scrollButtons[0];
       }
     }
-  } else if (['l'].includes(key) && !repeat) { // like, rechost
+  } else if (['l'].includes(key) && !repeat) { // like
     const posts = Array.from(document.querySelectorAll('.renderIfVisible:has([data-postid])'));
     if (posts.length === 0) return;
     const targetPost = posts.find(post => {
