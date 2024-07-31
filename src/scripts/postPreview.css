@@ -1,1 +1,1 @@
-.ch-utils-postPreview [data-post-composer-preview] .w-full.p-3:has(.p-3 > :empty) { padding: 0; }
+.ch-utils-postPreview [data-post-composer-preview] .w-full.p-3:has(> :empty) { padding: 0; }
