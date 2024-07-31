@@ -18,7 +18,7 @@ const tagButtonSelector = '.co-editable-body:has(input[id*="downshift"]) .co-fil
 const managedHandles = managedProjects.map(({ handle }) => handle);
 
 const previewWindow = (editor, headline, body) => {
-  const blocks = Array.from(body.children);
+  const blocks = body && (Array.from(body.children));
   const tags = Array.from(editor.querySelectorAll(tagButtonSelector)).map(mapTags);
   const selectedProjectHandle = editor.querySelector(projectButtonSelector).textContent.trim();
   const selectedProject = managedProjects.find(({ handle }) => handle === selectedProjectHandle);
