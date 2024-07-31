@@ -13,7 +13,7 @@
   "license": "GPL-3.0-only",
   "devDependencies": {
     "eslint": "^8.57.0",
-    "web-ext": "^7.11.0"
+    "web-ext": "^7.12.0"
   },
   "dependencies": {
     "dompurify": "^3.0.9",
