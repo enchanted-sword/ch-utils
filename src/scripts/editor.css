@@ -1,8 +1,8 @@
 .ch-utils-editor {
   z-index: 60;
   position: fixed;
-  width: 50vw;
+  width: 70vw;
   height: 70vh;
   top: 8rem;
-  left: calc(50% - 25vw);
+  left: calc(50% - 35vw);
 }

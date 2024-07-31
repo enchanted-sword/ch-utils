@@ -1,4 +1,5 @@
 import { noact } from './utils/noact.js';
+import { batchTrpc } from './utils/apiFetch.js';
 
 // monaco config
 require.config({ paths: { vs: '../lib/vs' } });
@@ -28,6 +29,8 @@ const listener = event => {
     addEditorUtils();
   }
 };
+
+console.log(batchTrpc(['projects.searchByHandle'], { 0: { query: 'dragongirl', skipMinimum: false } }));
 
 window.addEventListener('message', listener);
 window.parent.postMessage('frameInit', uri);
@@ -126,10 +129,6 @@ const addEditorUtils = () => {
         className: 'ch-utils-editorInner-list lg:cohost-shadow-light dark:lg:cohost-shadow-dark left-0 top-8 !overflow-y-auto truncate bg-foreground !outline-none absolute lg:max-h-[calc(100vh_-_100px)] lg:divide-none rounded-lg bg-notWhite text-notBlack',
         'aria-orientation': 'vertical',
         role: 'listbox',
-        onmouseleave: () => {
-          const selector = document.getElementById('projectSelector');
-          window.setTimeout(() => selector.dataset.headlessuiState = '', hideMenuDelay);
-        },
         tabindex: 0,
         children: managedProjects.map(project => selectableProject(project, activeProject.projectId))
       }
@@ -137,5 +136,7 @@ const addEditorUtils = () => {
   });
 
   document.querySelector('header').append(projectSelector);
+  document.addEventListener('click', ({ target }) => {
+    !target.matches('#projectSelector, #projectSelector *') && (document.getElementById('projectSelector').dataset.headlessuiState = '', hideMenuDelay);
+  });
 };
-

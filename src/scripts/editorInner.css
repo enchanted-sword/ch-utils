@@ -1,4 +1,4 @@
-html, body, main {
+html, body, main, aside {
   display: flex;
   flex-flow: column nowrap;
   width: 100%;
@@ -6,6 +6,12 @@ html, body, main {
   margin: 0;
   padding: 0;
 }
+body {
+  flex-direction: row;
+  justify-content: space-between;
+}
+main { max-width: 60%; }
+aside { max-width: calc(40% - 1rem); }
 header, footer {
   width: auto;
   display: flex;
