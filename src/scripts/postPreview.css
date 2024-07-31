@@ -1,1 +1,3 @@
 .ch-utils-postPreview [data-post-composer-preview] .w-full.p-3:has(> :empty) { padding: 0; }
+
+.flex:has(> article.co-post-composer) { height: fit-content; }
