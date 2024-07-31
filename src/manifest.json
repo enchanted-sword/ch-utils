@@ -40,7 +40,7 @@
       "48": "icons/icon.svg",
       "96": "icons/icon.svg"
     },
-    "default_popup": "ui/menu.html"
+    "default_popup": "ui/menu.html?popup=true"
   },
 
   "browser_specific_settings": {
