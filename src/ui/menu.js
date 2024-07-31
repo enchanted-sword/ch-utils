@@ -293,6 +293,11 @@
     };
 
     const init = async () => {
+      if (location.search === '?popup=true') {
+        document.body.style.minHeight = '6000px';
+        document.body.style.overflow = 'hidden';
+      }
+
       browser.browserAction.setBadgeText({ text: '' });
 
       const installedFeatures = await importFeatures(); // "await has no effect on this type of expression"- it does, actually!

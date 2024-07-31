@@ -49,9 +49,8 @@ html {
 body {
   flex: 1;
   min-width: 360px;
-  min-height: 6000px;
+  min-height: fit-content;
   max-width: 720px;
-  overflow: hidden;
   margin: 0;
   padding: 0;
   background: rgb(var(--cherry));
