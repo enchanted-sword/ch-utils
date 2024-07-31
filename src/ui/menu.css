@@ -1,3 +1,8 @@
+html {
+  display: flex;
+  justify-content: center;
+}
+
 @font-face {
   font-family: "Atkinson Hyperlegible";
   src:
@@ -42,8 +47,10 @@
   scrollbar-width: none;
 }
 body {
+  flex: 1;
   min-width: 360px;
   min-height: 6000px;
+  max-width: 720px;
   overflow: hidden;
   margin: 0;
   padding: 0;
@@ -74,6 +81,7 @@ h3 { font-size: 18px; }
 #ui-tabs {
   position: fixed;
   top: 0;
+  left: 0;
   width: 100%;
   display: flex;
   flex-flow: row nowrap;
