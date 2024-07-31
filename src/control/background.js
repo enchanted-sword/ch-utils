@@ -5,4 +5,5 @@ browser.runtime.onInstalled.addListener(async () => {
   browser.browserAction.setBadgeText({ text: '+' });
   browser.browserAction.setBadgeTextColor({ color: '#20163d' });
   browser.browserAction.setBadgeBackgroundColor({ color: '#42b0ff' });
+  browser.tabs.create({ url: 'ui/menu.html' });
 });
