@@ -11,11 +11,13 @@ const customAttribute = 'data-smartPostPreview';
 const editorSelector = `.flex-row:has(.co-post-composer):not([${customAttribute}])`;
 const projectButtonSelector = '.co-post-composer > .co-thread-header button[data-headlessui-state]';
 const headlineInputSelector = '.co-editable-body[name="headline"]';
-const bodySelector = '[data-headlessui-state] > div > .flex-col:has([data-drop-target-for-external])';
+let bodySelector = '[data-headlessui-state] > div > .flex-col:has([data-drop-target-for-external])';
 const tagInputSelector = '.co-editable-body.text-sm';
 const tagButtonSelector = '.co-editable-body:has(input[id*="downshift"]) .co-filled-button';
 
 const managedHandles = managedProjects.map(({ handle }) => handle);
+
+let v1 = false;
 
 const previewWindow = (editor, headline, body) => {
   const blocks = body && (Array.from(body.children));
@@ -56,7 +58,7 @@ const previewWindow = (editor, headline, body) => {
               id: 'postPreview-body',
               className: 'relative overflow-hidden supports-[overflow:clip]:overflow-clip isolate',
               dataset: { postBody: true, testid: 'post-body' },
-              children: blocks? blocks.map(mapBlocks) : null
+              children: blocks? blocks.map(mapBlocks) : []
             },
             {
               className: 'w-full max-w-full p-3',
@@ -161,12 +163,27 @@ const formatMarkdown = markdown => noact({
 });
 const formatTags = tags => tags.map(({ icon, tag }) => noact({ tag: 'span', className: 'mr-2 inline-block text-sm', children: [icon, tag] }));
 
+const wrapImg = img => {return { className: 'group relative w-full flex-initial', children: [img] }};
 const mapBlocks = block => {
-  const textarea = block.querySelector('textarea');
-  const img = block.querySelector('img');
+  const textarea = block.querySelector('textarea:not([placeholder="headline"])');
+  const imgs = Array.from(block.querySelectorAll('img')).map(img => img.cloneNode(true));
 
   if (textarea) return formatMarkdown(textarea.value);
-  else if (img) return img.cloneNode(true);
+  else if (imgs.length) {
+    if (imgs.length === 1) return noact(wrapImg(imgs[0]));
+    else {
+      let rows = [];
+      imgs.map((img, i) => {
+        if (imgs.length === 3 && i === 2) rows[0].children.push(wrapImg(img));
+        else if (i % 2 === 0) rows[i / 2] = {
+          className: 'flex w-full flex-nowrap content-start justify-between',
+          dataset: { testid: `row-${i / 2}` },
+          children: [wrapImg(img)]
+        }; else rows[(i - 1) / 2].children.push(wrapImg(img))
+      });
+      return rows.map(noact);
+    }
+  }
   else return null;
 };
 const mapTags = b => {
@@ -184,11 +201,12 @@ const updateProject = selectedProjectHandle => {
 const updateHeadline = ({ target }) => document.getElementById('postPreview-headline').innerText = target.value;
 const updateBody = body => {
   const blocks = Array.from(body.children);
-  document.getElementById('postPreview-body').replaceChildren(...blocks.map(mapBlocks));
+  document.getElementById('postPreview-body').replaceChildren(...blocks.flatMap(mapBlocks).filter(b => b !== null));
 }
 const updateTags = () => document.getElementById('postPreview-tags').replaceChildren(...formatTags(Array.from(document.querySelectorAll('.co-editable-body:has(input[id*="downshift"]) .co-filled-button')).map(mapTags)));
 
 const updateHandler = new MutationObserver(mutations => {
+  console.log(mutations);
   const projectMutation = mutations.find(({ type, target }) => type === 'characterData' && target.parentNode.matches(projectButtonSelector) && managedHandles.includes(target.textContent.trim()));
   const headlineMutation = mutations.find(({ type, target }) => type === 'childList' && target.matches(headlineInputSelector));
   const bodyMutation = mutations.find(({ type, target }) => type === 'childList' && target.closest(bodySelector));
@@ -202,9 +220,14 @@ const updateHandler = new MutationObserver(mutations => {
 
 const addPreview = editors => {
   for (const editor of editors) {
+    if (!editor.querySelector('[data-drop-target-for-external]')) {
+      v1 = true;
+      bodySelector = '[data-headlessui-state] > div > .flex-col:has(.co-editable-body)';
+    }
+    
     editor.setAttribute(customAttribute, '');
     const headlineInput = editor.querySelector(headlineInputSelector);
-    const body = editor.querySelector(bodySelector);
+    let body = editor.querySelector(bodySelector);
     editor.append(previewWindow(editor, headlineInput.value, body));
 
     updateHandler.observe(editor.querySelector('article'), { childList: true, subtree: true, characterData: true });
