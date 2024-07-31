@@ -1,3 +1,20 @@
+# 1.4.0
+### Open notifications in popover view
+- Fixed new notifications not being spliced from old ones
+- Prevent popup from closing when clicking inside
+- Weekly notification preview line and body updates
+- Fix headlines being parsed as markdown
+
+### Quick search
+- Strip dialetics from search queries
+- Clear query on closing popup
+
+### *New feature:** Keyboard shortcuts
+- Adds keyboard shortcuts for navigation and interaction
+
+### **New feature:** Post previews
+- Displays a live preview of the post you're writing alongside the editor
+
 # v1.3.4
 ### General
 - Fixed newlines harder

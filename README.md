@@ -52,6 +52,12 @@ Formats timestamps with a user-supplied luxon.DateTime preset (e.g. DATETIME_MED
 ### Post filtering
 Control what posts you see on your dashboard. You can filter out your own post, duplicate posts, or posts containing any user-suppied keywords, tags, or CWs.
 
+### Keyboard shortcuts
+Adds keyboard shortcuts for navigation and interaction.
+
+### Post previews
+Display a live preview of the post you're writing alongside the editor.
+
 # Building the extension locally
 - Download and install [Node.js and npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
 - Install the project dependancies using ```npm install```

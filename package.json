@@ -1,12 +1,13 @@
 {
   "name": "ch-utils",
-  "version": "1.3.4",
+  "version": "1.4.0",
   "description": "utilities for cohost",
   "scripts": {
     "test": "web-ext lint",
     "posttest": "eslint ./",
     "build": "web-ext build",
-    "start": "web-ext run"
+    "start:dev": "web-ext run --firefox=deved -t=firefox-desktop",
+    "start:adb": "web-ext run -t=firefox-android --adb-device=[] --firefox-apk=org.mozilla.fenix"
   },
   "author": "April Lunarii",
   "license": "GPL-3.0-only",
