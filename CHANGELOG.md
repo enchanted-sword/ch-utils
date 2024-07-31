@@ -1,3 +1,9 @@
+# 1.4.0.2
+### Post previews
+- Fixed the editor expanding its height to match the preview
+- Fixed an incorrect selector during tag initialisation
+- Fixed an incompatibility with the v1 post composer
+
 # 1.4.0
 ### General
 - Fixed overflow and scrolling issues with the extension menu on mobile
