@@ -1,4 +1,8 @@
 # 1.4.0
+### General
+- Fixed overflow and scrolling issues with the extension menu on mobile
+- Now opens the config menu on install/update so sophonts don't miss it
+
 ### Open notifications in popover view
 - Fixed new notifications not being spliced from old ones
 - Prevent popup from closing when clicking inside
@@ -9,7 +13,7 @@
 - Strip dialetics from search queries
 - Clear query on closing popup
 
-### *New feature:** Keyboard shortcuts
+### **New feature:** Keyboard shortcuts
 - Adds keyboard shortcuts for navigation and interaction
 
 ### **New feature:** Post previews
