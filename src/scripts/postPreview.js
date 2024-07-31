@@ -13,12 +13,13 @@ const projectButtonSelector = '.co-post-composer > .co-thread-header button[data
 const headlineInputSelector = '.co-editable-body[name="headline"]';
 const bodySelector = '[data-headlessui-state] > div > .flex-col:has([data-drop-target-for-external])';
 const tagInputSelector = '.co-editable-body.text-sm';
+const tagButtonSelector = '.co-editable-body:has(input[id*="downshift"]) .co-filled-button';
 
 const managedHandles = managedProjects.map(({ handle }) => handle);
 
 const previewWindow = (editor, headline, body) => {
   const blocks = Array.from(body.children);
-  const tags = Array.from(editor.querySelectorAll('.co-editable-body:has(input[id*="downshift"]) span.block')).map(mapTags);
+  const tags = Array.from(editor.querySelectorAll(tagButtonSelector)).map(mapTags);
   const selectedProjectHandle = editor.querySelector(projectButtonSelector).textContent.trim();
   const selectedProject = managedProjects.find(({ handle }) => handle === selectedProjectHandle);
   return noact({
