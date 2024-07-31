@@ -98,7 +98,8 @@
             {
               className: 'ui-secondaryContent',
               children: [
-                'description' in feature ? { children: [feature.description] } : '',
+                'description' in feature ? { children: [feature.description] } : null,
+                'extendedDescription' in feature ? feature.extendedDescription : null,
                 'links' in feature ? {
                   tag: 'p', 
                   children: [

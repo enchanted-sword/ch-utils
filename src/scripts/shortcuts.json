@@ -1,7 +1,58 @@
 {
   "name": "shortcuts",
   "title": "keyboard shortcuts",
-  "description": "enables keyboard shortcuts for navigation and interaction",
+  "description": "adds keyboard shortcuts for navigation and interaction",
+  "extendedDescription": {
+    "tag": "p",
+    "children": [
+      {
+        "tag": "span",
+        "style": "font-family: monospace;font-weight: bold;font-size: 1rem;border: 2px solid currentColor;border-radius: 3px;padding: 0 .25rem;",
+        "children": ["l"]
+      },
+      " - like the topmost post in view",
+      { "tag": "br" },
+      {
+        "tag": "span",
+        "style": "font-family: monospace;font-weight: bold;font-size: 1rem;border: 2px solid currentColor;border-radius: 3px;padding: 0 .25rem;",
+        "children": ["j"]
+      },
+      " - scroll upwards one post",
+      { "tag": "br" },
+      {
+        "tag": "span",
+        "style": "font-family: monospace;font-weight: bold;font-size: 1rem;border: 2px solid currentColor;border-radius: 3px;padding: 0 .25rem;",
+        "children": ["k"]
+      },
+      " - scroll downwards one post",
+      { "tag": "br" },
+      {
+        "tag": "span",
+        "style": "font-family: monospace;font-weight: bold;font-size: 1rem;border: 2px solid currentColor;border-radius: 3px;padding: 0 .25rem;",
+        "children": ["ctrl"]
+      },
+      " + ",
+      {
+        "tag": "span",
+        "style": "font-family: monospace;font-weight: bold;font-size: 1rem;border: 2px solid currentColor;border-radius: 3px;padding: 0 .25rem;",
+        "children": ["←"]
+      },
+      " - paginate backwards one page",
+      { "tag": "br" },
+      {
+        "tag": "span",
+        "style": "font-family: monospace;font-weight: bold;font-size: 1rem;border: 2px solid currentColor;border-radius: 3px;padding: 0 .25rem;",
+        "children": ["ctrl"]
+      },
+      " + ",
+      {
+        "tag": "span",
+        "style": "font-family: monospace;font-weight: bold;font-size: 1rem;border: 2px solid currentColor;border-radius: 3px;padding: 0 .25rem;",
+        "children": ["→"]
+      },
+      " - paginate forwards one page"
+    ]
+  },
   "preferences": { "enabled": false },
   "js": true,
   "css": true
