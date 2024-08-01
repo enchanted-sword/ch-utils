@@ -31,6 +31,63 @@ export const importFeatures = async () => {
   return features;
 };
 
+const transformPreferences = preferences => {
+  const returnObj = { enabled: preferences.enabled };
+  if ('options' in preferences) {
+    returnObj.options = {};
+    Object.keys(preferences.options).map(option => {
+      returnObj.options[option] = preferences.options[option].value;
+    });
+  }
+  return returnObj;
+};
+export const featureify = (installedFeatures, preferences) => {
+  if (typeof preferences !== 'undefined') {
+    Object.keys(installedFeatures).forEach(feature => { // push new features and options to existing preferences
+      if (typeof preferences[feature] === 'undefined') {
+        preferences[feature] = transformPreferences(installedFeatures[feature].preferences);
+        preferences[feature].new = true;
+      }
+      if ('options' in installedFeatures[feature].preferences) {
+        if (typeof preferences[feature].options === 'undefined') {
+          preferences[feature].options = {};
+          preferences[feature].new = true;
+        }
+        Object.keys(installedFeatures[feature].preferences.options).forEach(option => {
+          if (typeof preferences[feature].options[option] === 'undefined') {
+            if ('inherit' in installedFeatures[feature].preferences.options[option]) {
+              const [inheritFeature, inheritOption] = installedFeatures[feature].preferences.options[option].inherit.inheritFrom.split('.');
+              if (typeof preferences[inheritFeature].options[inheritOption] !== 'undefined') {
+                switch (typeof preferences[inheritFeature].options[inheritOption]) {
+                  case 'boolean':
+                  case 'string':
+                    preferences[feature].options[option] = installedFeatures[feature].preferences.options[option].inherit[String(preferences[inheritFeature].options[inheritOption])];
+                    break;
+                  case 'number':
+                    preferences[feature].options[option] = preferences[inheritFeature].options[inheritOption];
+                    break;
+                }
+              }
+            } else preferences[feature].options[option] = installedFeatures[feature].preferences.options[option].value;
+            preferences[feature].new = true;
+          }
+        });
+      }
+    })
+    Object.keys(preferences).forEach(feature => { // delete removed features and options from existing preferences
+      if (!(feature in installedFeatures)) return delete preferences[feature];
+      if ('options' in preferences[feature]) {
+        if (!('options' in installedFeatures[feature].preferences)) return delete preferences[feature].options;
+        Object.keys(preferences[feature].options).forEach(option => {
+          if (!(option in installedFeatures[feature].preferences.options)) delete preferences[feature].options[option];
+        });
+      }
+    });
+  } else preferences = Object.fromEntries(Object.entries(installedFeatures).map(([name, feature]) => [name, transformPreferences(feature.preferences)]));
+
+  return preferences;
+};
+
 /**
  * Fetches items from the extension's local storage
  * @param {string} keys - Array of strings corresponding to storage keys to fetch
