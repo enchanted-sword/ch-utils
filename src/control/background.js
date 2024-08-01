@@ -1,6 +1,6 @@
 const { getURL } = browser.runtime;
 
-browser.runtime.onInstalled.addListener(async (details) => {
+browser.runtime.onInstalled.addListener(async details => {
   await browser.tabs.query({ url: '*://*.cohost.org/*' }).then(async tabs => {
     tabs.forEach(tab => browser.tabs.reload(tab.id));
   });
