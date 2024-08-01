@@ -7,7 +7,7 @@ browser.runtime.onInstalled.addListener(async (details) => {
     browser.browserAction.setBadgeTextColor({ color: '#20163d' });
     browser.browserAction.setBadgeBackgroundColor({ color: '#42b0ff' });
   }
-  if(details.reason === "installed") {
+  if(details.reason === "install") {
     browser.tabs.create({ url: 'ui/menu.html' });
   }
 });
