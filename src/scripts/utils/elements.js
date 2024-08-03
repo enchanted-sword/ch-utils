@@ -131,7 +131,12 @@ export const followCard = async (customClass, project) => {
 ]});
 };
 
-const bookmarkState = async tagName => batchTrpc(['bookmarks.tags.isBookmarked'], { 0: { tagName }});
+const bookmarkState = async tagName => {
+  let state;
+  try { [state] = await batchTrpc(['bookmarks.tags.isBookmarked'], { 0: { tagName }}); }
+  catch { state = false; }
+  finally { return state; }
+};
 const bookmarkOrUnbookmark = state => state ? 'delete' : 'create';
 const bookmarkOrUnbookmarkRequest = async (state, tagName) => apiFetch(`/v1/trpc/bookmarks.tags.${bookmarkOrUnbookmark(state)}`, {
   method: 'POST',
@@ -142,19 +147,19 @@ const bookmarkOrUnbookmarkRequest = async (state, tagName) => apiFetch(`/v1/trpc
   })
 })
 export const tagCard = async (customClass, tag) => {
-  const [bookmarked] = await bookmarkState(tag);
+  const bookmarked = await bookmarkState(tag);
   return noact({
     className: `${customClass} flex flex-row justify-between gap-3`,
     children: [
       {
         className: "underline before:content-['#']",
-        href: `https://cohost.org/rc/tagged/${tag}`,
+        href: `https://cohost.org/rc/tagged/${encodeURIComponent(tag)}`,
         children: [tag]
       },
       {
         className: 'leading-none align-middle py-2 px-4 no-select body-2 rounded-lg bg-secondary text-notWhite dark:text-notBlack hover:bg-secondary-600',
         onclick: async ({ target }) => {
-          const [state] = await bookmarkState(tag);
+          const state = await bookmarkState(tag);
           
           bookmarkOrUnbookmarkRequest(state, tag).then(() => {
             if (state) {
