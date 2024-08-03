@@ -58,7 +58,8 @@ const preprocess = str => str.trim().replace(emojiRegex, emoji);
 const renderer = {
   code: text => `<div style="scrollbar-color:initial" class="co-prose prose overflow-hidden break-words"><pre><code>${text}</code></pre></div>`,
   text: text => text.replace(mentionRegex, mention),
-  html: text => text.replace(styleSheetRegex, '').replace(varRegex, varReplacer).replace(fixedRegex, fixedReplacer).replace(classRegex, '').replace(inputRegex, '<input type="checkbox" disabled="" tabindex="0">').replace(textareaRegex, '')
+  html: text => text.replace(styleSheetRegex, '').replace(varRegex, varReplacer).replace(fixedRegex, fixedReplacer).replace(classRegex, '').replace(inputRegex, '<input type="checkbox" disabled="" tabindex="0">').replace(textareaRegex, ''),
+  heading: (text, depth) => `<h${depth} class="font-bold">${text}</h${depth}>`
 };
 const postprocess = html => DOMPurify.sanitize(html.replace(/^\s+|\s+$/g, ''));
 marked.use({
