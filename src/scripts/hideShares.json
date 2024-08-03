@@ -1,0 +1,10 @@
+{
+  "name": "hideShares",
+  "title": "hide shares toggle",
+  "description": "adds toggle on home feed to hide shares of accounts you don't follow from your feed. made by @wowperfect",
+  "preferences": {
+    "enabled": false
+  },
+  "js": true,
+  "css": true
+}
