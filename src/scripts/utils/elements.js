@@ -1,6 +1,7 @@
 import { noact } from './noact.js';
 import { activeProject } from './user.js';
 import { apiFetch, batchTrpc, followState } from './apiFetch.js';
+import { parseMd } from './markdown.js';
 
 export const avatar8 = project => noact({
   className: 'flex-0 mask relative aspect-square h-8 w-8 inline-block',
@@ -145,7 +146,7 @@ const bookmarkOrUnbookmarkRequest = async (state, tagName) => apiFetch(`/v1/trpc
   body: JSON.stringify({
     0 : { tagName }
   })
-})
+});
 export const tagCard = async (customClass, tag) => {
   const bookmarked = await bookmarkState(tag);
   return noact({
@@ -171,4 +172,29 @@ export const tagCard = async (customClass, tag) => {
       }
     ]
   });
-}
+};
+
+export const embeddedAsk = ask => noact({
+  className: 'co-embedded-ask m-3 grid grid-cols-[2rem_1fr] grid-rows-[2rem_1fr] gap-x-3 gap-y-2 rounded-lg border p-3',
+  dataset: { askid: ask.askId },
+  children: [
+    avatar8(ask.askingProject),
+    {
+      tag: 'span',
+      className: 'co-attribution col-start-2 row-start-1 align-middle leading-8',
+      children: [
+        {
+          className: 'font-bold hover:underline',
+          href: `/${ask.askingProject.handle}`,
+          tabindex: 0,
+          target: '_blank',
+          children: [`@${ask.askingProject.handle} asked: `]
+        }
+      ]
+    },
+    {
+      className: 'co-prose prose col-start-2 row-start-2',
+      innerHTML: parseMd(ask.content)
+    }
+  ]
+});
