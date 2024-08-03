@@ -45,7 +45,7 @@ const mention = (_, startChar,symbol, handle, endChar) => `${startChar}<a style=
  * - classes are stripped
  */
 
-const fixedRegex = /style="[^"]*(position:\s*fixed)[^"]*"/g;
+const fixedRegex = /style="[^"]*([\\]*p[\\]*o[\\]*s[\\]*i[\\]*t[\\]*i[\\]*o[\\]*n:\s*[\\]*f[\\]*i[\\]*x[\\]*e[\\]*d)[^"]*"/g;
 const fixedReplacer = (match, rule) => match.replace(rule, '');
 const varRegex = /style="[^"]*(--[\w-]+:[^;]*)[^"]*"/g;
 const varReplacer = (match, rule) => match.replace(rule, '');
