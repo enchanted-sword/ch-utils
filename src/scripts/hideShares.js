@@ -1,5 +1,11 @@
 import { mutationManager } from './utils/mutation.js';
 import { getOptions } from './utils/jsTools.js';
+const labelId = '-cohost-remove-shares--label'
+const spacerId = '-cohost-remove-shares--spacer'
+const checkboxId = '-cohost-remove-shares--checkbox-toggle'
+const isShareClass = '-cohost-remove-shares--is-share'
+const hideSharesClass = '-cohost-remove-shares--hide-shares'
+const handleSelector = 'header a.co-project-handle'
 
 const parentSelector = 'main section > div:nth-child(1)'
 const threadSelector = '[data-view="post-preview"]'
@@ -7,12 +13,11 @@ const $parent = () => $(parentSelector).first()
 const $feed = () => $('.renderIfVisible:not(.co-embed)').first().parent()
 
 function markShare(thread) {
-  // console.log('marking share on', thread);
-  const handleQuery = 'header a.co-project-handle'
-  const handles = [...thread.querySelectorAll(handleQuery)].map(x => x.href)
-
+  const $thread = $(thread)
+  // console.log('marking share on', thread, $thread, $thread.find(handleSelector));
+  const handles = $.map($thread.find(handleSelector), x => x.href)
   if (handles.length > 1 && handles[0] !== handles[1]) {
-    thread.parentNode.classList.add('-cohost-remove-shares--is-share')
+    $thread.parent().addClass(isShareClass)
   }
 }
 
@@ -36,12 +41,12 @@ export async function main () {
 
   if (!validLocation(location.href)) return
 
-  const spacer = $('<div class="flex-1">&nbsp;</div>')
+  const spacer = $(`<div class="flex-1" id=${spacerId}>&nbsp;</div>`)
 
   const label = $(`
-    <label class="font-bold pl-4 text-sidebarText">
+    <label class="font-bold pl-4 text-sidebarText" id="${labelId}">
       <span class="pr-2">hide shares</span>
-      <input class="h-6 w-6 rounded-lg border-2 border-foreground bg-notWhite text-foreground focus:ring-foreground pl-4" type="checkbox" id="-cohost-remove-shares--checkbox-toggle">
+      <input class="h-6 w-6 rounded-lg border-2 border-foreground bg-notWhite text-foreground focus:ring-foreground pl-4" type="checkbox" id="${checkboxId}">
     </label>
   `)
 
@@ -50,9 +55,9 @@ export async function main () {
   parent.append(label)
   parent.attr('class', 'mb-2 flex flex-col items-center lg:flex-row')
 
-  $('#-cohost-remove-shares--checkbox-toggle').on("change", () => {
+  $('#'+checkboxId).on("change", () => {
     console.log('TOGGLE HIDING SHARES NOW', $feed());
-    $feed().toggleClass('-cohost-remove-shares--hide-shares')
+    $feed().toggleClass(hideSharesClass)
   })
 
   markShares()
@@ -69,11 +74,13 @@ export async function main () {
   mutationManager.start(threadSelector, mutations => {
     markShares()
   })
-
-  // ({ collapseByDefault } = await getOptions('collapseComments'));
 };
 
 export async function clean () {
-  // mutationManager.stop(addToggles);
-  // $(`.${customClass}`).remove();
+  mutationManager.stop(parentSelector)
+  mutationManager.stop(threadSelector)
+  $(spacerId).remove()
+  $(labelId).remove()
+  $feed().removeClass(hideSharesClass)
+  $(isShareClass).removeClass(isShareClass)
 };
