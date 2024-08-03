@@ -1,5 +1,5 @@
 const app = document.getElementById('app');
-const postSelector = 'article.co-post-box:not(.co-post-composer)';
+const postSelector = 'article.co-post-box:not([data-testid="composer-context"] article,.co-post-composer)';
 const branchSelector = `${postSelector} > div:not([class]):has(div[id^='post-'])`;
 const addedNodesQueue = [], removedNodesQueue = [];
 
