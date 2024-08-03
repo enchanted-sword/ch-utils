@@ -1,3 +1,12 @@
+const { Marked } = marked;
+
+let IFRAMELY_KEY;
+let keyStore = document.getElementById('site-config');
+if (keyStore) {
+  keyStore = JSON.parse(keyStore.textContent);
+  ({ IFRAMELY_KEY } = keyStore);
+}
+
 const srcMap = {
   'chunks': 'https://cohost.org/static/f59b84127fa7b6c48b6c.png',
   'eggbug-classic': 'https://cohost.org/static/41454e429d62b5cb7963.png',
@@ -61,8 +70,27 @@ const renderer = {
   html: text => text.replace(styleSheetRegex, '').replace(varRegex, varReplacer).replace(fixedRegex, fixedReplacer).replace(classRegex, '').replace(inputRegex, '<input type="checkbox" disabled="" tabindex="0">').replace(textareaRegex, ''),
   heading: (text, depth) => `<h${depth} class="font-bold">${text}</h${depth}>`
 };
+const link = (text, _, href) => text === href ? `
+  <div class="co-embed">
+    <div class="renderIfVisible">
+      <div>
+        <div>
+          <div
+            style="left: 0px; width: 100%; height: 160px; position: relative; border-radius: 3px; box-shadow: rgba(0, 0, 0, 0.06) 0px 8px 18px; overflow: hidden; padding-bottom: 0px;">
+            <iframe
+              src="https://iframely.net/api/iframe?app=1&amp;url=${encodeURIComponent(href)}&amp;key=${IFRAMELY_KEY}"
+              style="top: 0; left: 0; width: 100%; height: 100%; position: absolute; border: 0;" allowfullscreen=""
+              tabindex="0"></iframe></div>
+        </div>
+      </div>
+    </div>
+    <div class="co-ui-text mt-0 p-3 text-right"><a href="${href}" target="_blank" rel="noopener nofollow" tabindex="0">${text}</a></div>
+  </div>
+` : `<a href="${href}">${href}</a>`;
 const postprocess = html => DOMPurify.sanitize(html.replace(/^\s+|\s+$/g, ''));
-marked.use({
+
+const standard = new Marked();
+standard.use({
   renderer,
   hooks: { preprocess, postprocess },
   gfm: true,
@@ -74,6 +102,32 @@ marked.use({
  * @param {string} str - markdown
  * @returns {string} parsed markdown
  */
-export const parseMd = str => marked.parse(str);
+export const parseMd = str => standard.parse(str);
 
-export const parseMdNoBr = str => marked.parse(str, { breaks: false });
+/**
+ * standard parser sans gfm breaks
+ * @param {string} str - markdown
+ * @returns {string} parsed markdown, sans breaks
+ */
+const breakless = new Marked();
+breakless.use({
+  renderer,
+  hooks: { preprocess, postprocess },
+  gfm: true,
+  breaks: false
+});
+
+export const parseMdNoBr = str => breakless.parse(str);
+
+const embedful = new Marked();
+embedful.use({
+  renderer: Object.assign(renderer, { link }),
+  hooks: {
+    preprocess,
+    postprocess: html => DOMPurify.sanitize(html.replace(/^\s+|\s+$/g, ''), { ADD_TAGS: ['iframe'], ADD_ATTR: ['allow', 'allowfullscreen', 'frameborder', 'scrolling'] }),
+  },
+  gfm: true,
+  breaks: true
+});
+
+export const parseMdEmbed = str => embedful.parse(str);

@@ -1,9 +1,9 @@
 import { mutationManager } from './utils/mutation.js';
 import { noact } from './utils/noact.js';
-import { postBoxTheme } from './utils/apiFetch.js';
+import { postBoxTheme, displayPrefs } from './utils/apiFetch.js';
 import { managedProjects } from './utils/user.js';
 import { avatar8, embeddedAsk } from './utils/elements.js';
-import { parseMd } from './utils/markdown.js';
+import { parseMd, parseMdEmbed } from './utils/markdown.js';
 import { getAsk } from './utils/react.js';
 
 const customClass = 'ch-utils-postPreview';
@@ -162,7 +162,7 @@ const formatHeader = project => noact({
 });
 const formatMarkdown = markdown => noact({
   className: 'co-prose prose my-4 overflow-hidden break-words px-3',
-  innerHTML: parseMd(markdown)
+  innerHTML: displayPrefs.disableEmbeds ? parseMd(markdown) : parseMdEmbed(markdown)
 });
 const formatTags = tags => tags.map(({ icon, tag }) => noact({ tag: 'span', className: 'mr-2 inline-block text-sm', children: [icon, tag] }));
 
