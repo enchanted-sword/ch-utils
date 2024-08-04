@@ -56,7 +56,7 @@ export const noact = obj => {
         else if (typeof child === 'object') el.append(noact(child));
         else el.append(document.createTextNode(child));
       });
-    }
+    } else if ('children' in obj && typeof obj.children === 'string') el.append(document.createTextNode(obj.children)); // why did it take so long for us to add this. this is a livesaver
   } catch (e) {console.error('noact:', e, obj)}
 
   return el;
