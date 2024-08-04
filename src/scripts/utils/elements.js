@@ -234,11 +234,51 @@ const pauseIcon = () => noact({
     }
   ]
 });
-export const audioPlayer = (src, track = '', artist = 'unknown artist') => {
+const volumeIcon = id => noact({
+  id,
+  className: 'h-6 w-6 volume-icon',
+  viewBox: '0 0 24 24',
+  fill: 'none',
+  'stroke-width': 1.5,
+  stroke: 'currentColor',
+  dataset: { muted: '', volume: 3 },
+  children: [
+    {
+      'stroke-linecap': 'round',
+      'stroke-linejoin': 'round',
+      d: 'm 8.01296,8.89281 c 0,0 -1.21949,2.90009 0,6.21439 M 12.1382,4.74989 8.01558,8.89281 H 4.2434 c -0.55164,0 -0.9934,0.4345 -0.9934,0.9737 v 4.26699 c 0,0.5392 0.44176,0.9737 0.9934,0.9737 h 3.77218 l 4.12262,4.1429 z'
+    },
+    {
+      className: 'volume-1',
+      'stroke-linecap': 'round',
+      'stroke-linejoin': 'round',
+      d: 'm 14.096542,10.165673 c 0.826195,0.221388 1.400713,0.970094 1.400665,1.825377 3.4e-5,0.855341 -0.57447,1.604011 -1.400642,1.825384'
+    },
+    {
+      className: 'volume-2',
+      'stroke-linecap': 'round',
+      'stroke-linejoin': 'round',
+      d: 'm 15.350183,8.3377038 c 1.652392,0.4427716 2.801345,1.9401262 2.801331,3.6507512 -1.8e-5,1.710632 -1.148936,3.208015 -2.80128,3.65076'
+    },
+    {
+      className: 'volume-3',
+      'stroke-linecap': 'round',
+      'stroke-linejoin': 'round',
+      d: 'm 16.739362,6.5123739 c 2.478504,0.6641052 4.201889,2.9101157 4.20191,5.4760801 2e-5,2.565964 -1.723406,4.812026 -4.201923,5.476143'
+    },
+    {
+      className: 'volume-mute',
+      'stroke-linecap': 'round',
+      'stroke-linejoin': 'round',
+      d: 'm 17.6196,10.25 c -3.5169,3.5169 -3.5,3.5 -3.5,3.5 m 0,-3.5 c 3.5169,3.5169 3.5,3.5 3.5,3.5'
+    },
+  ]
+});
+export const audioPlayer = (src, preloadDuration = false, track = '', artist = 'unknown artist') => {
   let playstate;
   let frameId;
 
-  const identifier = src.split('/').pop()
+  const identifier = src.split('/').pop();
   !track && (track = identifier);
   const audio = noact({
     tag: 'audio',
@@ -290,20 +330,23 @@ export const audioPlayer = (src, track = '', artist = 'unknown artist') => {
   const playback = () => {
     document.getElementById(`${identifier}-start`).innerText = formatDuration(Math.floor(audio.currentTime));
     document.getElementById(`${identifier}-range`).value = audio.currentTime;
-    if ((audio.duration - audio.currentTime) === 0) {
+    if (audio.ended) {
       togglePlayState();
       return;
     } else frameId = requestAnimationFrame(playback);
-  }
+  };
 
-  if (audio.readyState > 0) showDuration();
-  else audio.addEventListener('loadedmetadata', showDuration);
+  if (!preloadDuration) {
+    if (audio.readyState > 0) showDuration();
+    else audio.addEventListener('loadedmetadata', showDuration);
+  };
 
   return noact({
     tag: 'figure',
     className: 'group relative w-full flex-initial',
     children: [
       {
+        id: `${identifier}-caption`,
         tag: 'figcaption',
         className: 'sr-only',
         children: [`${artist} - ${track}`]
@@ -325,11 +368,75 @@ export const audioPlayer = (src, track = '', artist = 'unknown artist') => {
             className: 'flex w-full flex-col bg-notBlack p-2',
             children: [
               {
-                className: 'flex flex-row',
+                className: 'flex flex-row gap-4',
                 children: [
                   {
+                    id: `${identifier}-track`,
                     className: 'flex-1',
                     children: [track]
+                  },
+                  {
+                    className: 'relative',
+                    children: [
+                      {
+                        id: `${identifier}-volState`,
+                        className: 'volume-state cursor-pointer',
+                        dataset: { state: '' },
+                        onclick: function () {
+                          this.dataset.state ? this.dataset.state = '' : this.dataset.state = 'open';
+                        },
+                        children: volumeIcon(`${identifier}-volDisplay`)
+                      },
+                      {
+                        className: 'volume-controls absolute top-0 bg-cherry rounded-lg right-0 h-10 w-52 p-1 justify-between items-center',
+                        onmouseout: function () {
+                          setTimeout(() => {
+                            !(this.matches(':hover')) && (document.getElementById(`${identifier}-volState`).dataset.state = "");
+                          }, 150)
+                        },
+                        children: [
+                          {
+                            className: 'cursor-pointer',
+                            onclick: () => {
+                              if (audio.muted) {
+                                document.getElementById(`${identifier}-volDisplay`).dataset.muted = '';
+                                document.getElementById(`${identifier}-volControl`).dataset.muted = '';
+                                audio.muted = false;
+                              } else {
+                                document.getElementById(`${identifier}-volDisplay`).dataset.muted = 'muted';
+                                document.getElementById(`${identifier}-volControl`).dataset.muted = 'muted';
+                                audio.muted = true;
+                              }
+                            },
+                            children: volumeIcon(`${identifier}-volControl`),
+                          },
+                          {
+                            id: `${identifier}-volInput`,
+                            className: 'audio-controls mx-1 flex-1 accent-mango w-36',
+                            tag: 'input',
+                            type: 'range',
+                            min: 0,
+                            max: 1,
+                            step: 'any',
+                            value: audio.volume,
+                            oninput: ({ target: { value } }) => {
+                              audio.volume = value;
+                              document.getElementById(`${identifier}-volOutput`).innerText = String(Math.floor(value * 100)).padStart(2, '0');
+                              const level = Math.min(Math.floor(value * 4), 3);
+                              document.getElementById(`${identifier}-volDisplay`).dataset.volume = level;
+                              document.getElementById(`${identifier}-volControl`).dataset.volume = level;
+                            }
+                          },
+                          {
+                            id: `${identifier}-volOutput`,
+                            className: 'text-xs tabular-nums w-6',
+                            style: 'text-align:end',
+                            tag: 'output',
+                            children: String(Math.floor(audio.volume * 100)).padStart(2, '0')
+                          }
+                        ]
+                      }
+                    ]
                   },
                   {
                     href: src,
@@ -355,6 +462,7 @@ export const audioPlayer = (src, track = '', artist = 'unknown artist') => {
                 ]
               },
               {
+                id: `${identifier}-artist`,
                 className: 'text-xs',
                 children: [artist]
               },
@@ -373,7 +481,7 @@ export const audioPlayer = (src, track = '', artist = 'unknown artist') => {
                     type: 'range',
                     className: 'audio-controls mx-1 flex-1 accent-mango',
                     min: 0,
-                    max: 1,
+                    max: preloadDuration ? preloadDuration : 1,
                     step: 'any',
                     value: 0,
                     oninput: seekInput,
@@ -384,7 +492,7 @@ export const audioPlayer = (src, track = '', artist = 'unknown artist') => {
                     tag: 'div',
                     id: `${identifier}-end`,
                     className: 'text-xs tabular-nums',
-                    children: ['00:00']
+                    children: [preloadDuration ? formatDuration(Math.floor(preloadDuration)) : '00:00']
                   }
                 ]
               }

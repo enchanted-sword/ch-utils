@@ -1,0 +1,14 @@
+.volume-mute { display: none; }
+.volume-icon{
+  &[data-muted="muted"] {
+    .volume-1, .volume-2, .volume-3 { display: none; }
+    .volume-mute { display: block; }
+
+    & ~ output { opacity: .5; }
+  }
+  &[data-volume="0"]:not([data-muted="muted"]) { .volume-1, .volume-2, .volume-3 { display: none; } }
+  &[data-volume="1"]:not([data-muted="muted"]) { .volume-2, .volume-3 { display: none; } }
+  &[data-volume="2"]:not([data-muted="muted"]) { .volume-3 { display: none; } }
+}
+.volume-controls { display: none; }
+.volume-state[data-state="open"] + .volume-controls { display: flex; }

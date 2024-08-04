@@ -166,9 +166,30 @@ const formatMarkdown = markdown => noact({
 });
 const formatTags = tags => tags.map(({ icon, tag }) => noact({ tag: 'span', className: 'mr-2 inline-block text-sm', children: [icon, tag] }));
 const formatAudio = figure => {
-  const src = figure.querySelector('audio').src;
+  const audio = figure.querySelector('audio');
+  const src = audio.src;
+  const identifier = src.split('/').pop();
+  const duration = audio.duration;
+  const artistInput = figure.querySelector('input[name="artist"]');
+  const trackInput = figure.querySelector('input:not([name="artist"])');
+  artistInput.addEventListener('input', ({ target: { value } }) => {
+    const field = document.getElementById(`${identifier}-artist`);
+    const caption = document.getElementById(`${identifier}-caption`);
+    if (field && caption) {
+      field.innerText = value;
+      caption.innerText = `${value} - ${trackInput.value}`;
+    }
+  });
+  trackInput.addEventListener('input', ({ target: { value } }) => {
+    const field = document.getElementById(`${identifier}-track`);
+    const caption = document.getElementById(`${identifier}-caption`);
+    if (field && caption) {
+      field.innerText = value;
+      caption.innerText = `${artistInput.value} - ${value}`;
+    }
+  });
   
-  return audioPlayer(src);
+  return audioPlayer(src, duration, trackInput.value, artistInput.value);
 }
 
 const wrapImg = img => {return { className: 'group relative w-full flex-initial', children: [img] }};
@@ -176,7 +197,8 @@ const mapBlocks = block => {
   console.log(block)
   const textarea = block.querySelector('textarea:not([placeholder="headline"])');
   const imgs = Array.from(block.querySelectorAll('img')).map(img => img.cloneNode(true));
-  const audio = block.matches('figure:has(audio)') ? formatAudio(block) : null;
+  const audioV1 = Array.from(block.querySelectorAll('figure:has(audio)')).map(audio => formatAudio(audio));
+  const audioV2 = block.matches('figure:has(audio)') ? formatAudio(block) : null;
 
   if (textarea) return formatMarkdown(textarea.value);
   else if (imgs.length) {
@@ -193,7 +215,8 @@ const mapBlocks = block => {
       });
       return rows.map(noact);
     }
-  } else if (audio) return audio;
+  } else if (audioV1.length) return audioV1;
+  else if (audioV2) return audioV2;
   else return null;
 };
 const mapTags = b => {

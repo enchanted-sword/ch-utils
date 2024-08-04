@@ -28,7 +28,8 @@
         "lib/purify.min.js",
         "lib/luxon.min.js",
         "lib/prism.js"
-      ]
+      ],
+      "css": ["scripts/utils/elements.css"]
     }
   ],
   "background": {
