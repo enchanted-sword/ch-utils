@@ -198,3 +198,200 @@ export const embeddedAsk = ask => noact({
     }
   ]
 });
+
+const playIcon = () => noact({
+  fill: 'none',
+  viewBox: '0 0 24 24',
+  'stroke-width': 1.5,
+  stroke: 'currentColor',
+  'aria-hidden': true,
+  className: 'm-auto h-9 w-9',
+  children: [
+    {
+      'stroke-linecap': 'round',
+      'stroke-linejoin': 'round',
+      d: 'M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
+    },
+    {
+      'stroke-linecap': 'round',
+      'stroke-linejoin': 'round',
+      d: 'M15.91 11.672a.375.375 0 010 .656l-5.603 3.113a.375.375 0 01-.557-.328V8.887c0-.286.307-.466.557-.327l5.603 3.112z'
+    }
+  ]
+});
+const pauseIcon = () => noact({
+  fill: 'none',
+  viewBox: '0 0 24 24',
+  'stroke-width': 1.5,
+  stroke: 'currentColor',
+  'aria-hidden': true,
+  className: 'm-auto h-9 w-9',
+  children: [
+    {
+      'stroke-linecap': 'round',
+      'stroke-linejoin': 'round',
+      d: 'M14.25 9v6m-4.5 0V9M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
+    }
+  ]
+});
+export const audioPlayer = (src, track = '', artist = 'unknown artist') => {
+  let playstate;
+  let frameId;
+
+  const identifier = src.split('/').pop()
+  !track && (track = identifier);
+  const audio = noact({
+    tag: 'audio',
+    src,
+    preload: 'metadata',
+    className: 'w-full p-2',
+    dataset: { testid: 'audio' },
+    tabindex: -1,
+    children: [{
+      href: src,
+      tabindex: -1,
+      children: ['download audio']
+    }],
+  });
+  const formatDuration = duration => {
+    const ss = String(duration % 60).padStart(2, '0');
+    const mm = String(Math.floor(duration / 60)).padStart(2, '0');
+    const hh = duration >= 3600 ? String(Math.floor(duration / 3600)).padStart(2, '0') : null;
+    return [hh, mm, ss].filter(t => t !== null).join(':');
+  };
+  const showDuration = () => {
+    const { duration } = audio;
+    const durationString = formatDuration(Math.floor(duration));
+  
+    document.getElementById(`${identifier}-range`).max = duration;
+    document.getElementById(`${identifier}-end`).innerText = durationString;
+  };
+  const togglePlayState = () => {
+    if (playstate) {
+      audio.pause();
+      playstate = 0;
+      document.getElementById(`${identifier}-playbutton`).replaceChildren(playIcon());
+      cancelAnimationFrame(frameId);
+    } else {
+      audio.play();
+      playstate = 1;
+      document.getElementById(`${identifier}-playbutton`).replaceChildren(pauseIcon());
+      frameId = requestAnimationFrame(playback);
+    }
+  };
+  const seekInput = ({ target: { value } }) => {
+    document.getElementById(`${identifier}-start`).innerText = formatDuration(Math.floor(value));
+    !audio.paused && (cancelAnimationFrame(frameId));
+  };
+  const seekChange = ({ target: { value } }) => {
+    audio.currentTime = value;
+    !audio.paused && (requestAnimationFrame(playback));
+  };
+  const playback = () => {
+    document.getElementById(`${identifier}-start`).innerText = formatDuration(Math.floor(audio.currentTime));
+    document.getElementById(`${identifier}-range`).value = audio.currentTime;
+    if ((audio.duration - audio.currentTime) === 0) {
+      togglePlayState();
+      return;
+    } else frameId = requestAnimationFrame(playback);
+  }
+
+  if (audio.readyState > 0) showDuration();
+  else audio.addEventListener('loadedmetadata', showDuration);
+
+  return noact({
+    tag: 'figure',
+    className: 'group relative w-full flex-initial',
+    children: [
+      {
+        tag: 'figcaption',
+        className: 'sr-only',
+        children: [`${artist} - ${track}`]
+      },
+      audio,
+      {
+        className: 'flex flex-row',
+        children: [
+          {
+            id: `${identifier}-playbutton`,
+            type: 'button',
+            onclick: togglePlayState,
+            className: 'w-[76px] bg-cherry flex-shrink-0 flex-grow',
+            title: 'play',
+            tabindex: 0,
+            children: [playIcon()]
+          },
+          {
+            className: 'flex w-full flex-col bg-notBlack p-2',
+            children: [
+              {
+                className: 'flex flex-row',
+                children: [
+                  {
+                    className: 'flex-1',
+                    children: [track]
+                  },
+                  {
+                    href: src,
+                    download: '',
+                    title: 'download',
+                    tabindex: 0,
+                    children: [{
+                      fill: 'none',
+                      viewBox: '0 0 24 24',
+                      'stroke-width': 1.5,
+                      stroke: 'currentColor',
+                      'aria-hidden': true,
+                      className: 'm-auto h-6 w-6',
+                      children: [
+                        {
+                          'stroke-linecap': 'round',
+                          'stroke-linejoin': 'round',
+                          d: 'M12 9.75v6.75m0 0l-3-3m3 3l3-3m-8.25 6a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z'
+                        }
+                      ]
+                    }]
+                  }
+                ]
+              },
+              {
+                className: 'text-xs',
+                children: [artist]
+              },
+              {
+                className: 'flex flex-row items-center',
+                children: [
+                  {
+                    tag: 'div',
+                    id: `${identifier}-start`,
+                    className: 'text-xs tabular-nums',
+                    children: ['00:00']
+                  },
+                  {
+                    id: `${identifier}-range`,
+                    tag: 'input',
+                    type: 'range',
+                    className: 'audio-controls mx-1 flex-1 accent-mango',
+                    min: 0,
+                    max: 1,
+                    step: 'any',
+                    value: 0,
+                    oninput: seekInput,
+                    onchange: seekChange,
+                    tabindex: 0
+                  },
+                  {
+                    tag: 'div',
+                    id: `${identifier}-end`,
+                    className: 'text-xs tabular-nums',
+                    children: ['00:00']
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  });
+}

@@ -2,7 +2,7 @@ import { mutationManager } from './utils/mutation.js';
 import { noact } from './utils/noact.js';
 import { postBoxTheme, displayPrefs } from './utils/apiFetch.js';
 import { managedProjects } from './utils/user.js';
-import { avatar8, embeddedAsk } from './utils/elements.js';
+import { avatar8, embeddedAsk, audioPlayer } from './utils/elements.js';
 import { parseMd, parseMdEmbed } from './utils/markdown.js';
 import { getAsk } from './utils/react.js';
 
@@ -165,11 +165,18 @@ const formatMarkdown = markdown => noact({
   innerHTML: displayPrefs.disableEmbeds ? parseMd(markdown) : parseMdEmbed(markdown)
 });
 const formatTags = tags => tags.map(({ icon, tag }) => noact({ tag: 'span', className: 'mr-2 inline-block text-sm', children: [icon, tag] }));
+const formatAudio = figure => {
+  const src = figure.querySelector('audio').src;
+  
+  return audioPlayer(src);
+}
 
 const wrapImg = img => {return { className: 'group relative w-full flex-initial', children: [img] }};
 const mapBlocks = block => {
+  console.log(block)
   const textarea = block.querySelector('textarea:not([placeholder="headline"])');
   const imgs = Array.from(block.querySelectorAll('img')).map(img => img.cloneNode(true));
+  const audio = block.matches('figure:has(audio)') ? formatAudio(block) : null;
 
   if (textarea) return formatMarkdown(textarea.value);
   else if (imgs.length) {
@@ -186,7 +193,7 @@ const mapBlocks = block => {
       });
       return rows.map(noact);
     }
-  }
+  } else if (audio) return audio;
   else return null;
 };
 const mapTags = b => {
