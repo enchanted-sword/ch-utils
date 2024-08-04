@@ -195,7 +195,7 @@ const pathMap = {
     d: 'M4.804 21.644A6.707 6.707 0 006 21.75a6.721 6.721 0 003.583-1.029c.774.182 1.584.279 2.417.279 5.322 0 9.75-3.97 9.75-9 0-5.03-4.428-9-9.75-9s-9.75 3.97-9.75 9c0 2.409 1.025 4.587 2.674 6.192.232.226.277.428.254.543a3.73 3.73 0 01-.814 1.686.75.75 0 00.44 1.223zM8.25 10.875a1.125 1.125 0 100 2.25 1.125 1.125 0 000-2.25zM10.875 12a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0zm4.875-1.125a1.125 1.125 0 100 2.25 1.125 1.125 0 000-2.25z'
   }
 };
-const interactionMap = notification => {
+const interactionMap = notification => { // VERBS
   let reshare = false;
   let replyToOwnComment = false;
   let yourPost = notification.targetPost;
@@ -302,7 +302,7 @@ const interactionMap = notification => {
             {
               href: notification.targetPost ? `${targetUrl}#comment-${notification.replyTo.commentId}` : '',
               className: 'font-bold hover:underline',
-              children: 'your post'
+              children: ['your post']
             }
           ],
         ];
@@ -342,7 +342,7 @@ const newAvatar = project => {
     ]
   };
 };
-const newBodyPreview = (post, replyTo = null) => {
+const newBodyPreview = (post, replyTo = null) => { // PREVIEW LINE
   let body, htmlBody, previewImage, previewLine;
   let { headline, plainTextBody } = post;
   headline && (headline = headline.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'));
