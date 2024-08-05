@@ -69,7 +69,7 @@ export const main = async () => {
   }
 
   doHideShares = hideShares && validHideSharesLocation(location.href)
-  if (hideShares) {
+  if (doHideShares) {
 
     const spacer = $(`<div class="flex-1" id=${spacerId}>&nbsp;</div>`)
 
