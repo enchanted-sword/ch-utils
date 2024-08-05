@@ -1,6 +1,5 @@
 [
   "horizontal",
-  "showNsfw",
   "followers",
   "fixComments",
   "popoverComments",
@@ -15,6 +14,7 @@
   "quickSearch",
   "timestamps",
   "filtering",
+  "showNsfw",
   "shortcuts",
   "postPreview"
 ]
