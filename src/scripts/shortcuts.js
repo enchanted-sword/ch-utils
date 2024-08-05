@@ -18,7 +18,7 @@ const keyHandler = ({ ctrlKey, key, repeat }) => {
     if (key === 'ArrowRight') {
       if (/\?page=[\d]+#*/.test(scrollButtons[0].href)) {
         if ((scrollButtons.length === 1 && window.location.search === '?page=0')
-          || scrollButtons.length === 2) window.location = window.location.href.replace(/\?page=(\d)+#*/, (_,a) => `?page=${+a + 1}`);
+          || scrollButtons.length === 2) window.location = window.location.href.replace(/\?page=(\d+)#*/, (_,a) => `?page=${+a + 1}`);
       } else {
         if (scrollButtons.length === 1 && /skipPosts=0|skipPosts=20|'page=1#'/.test(scrollButtons[0].href)) window.location = scrollButtons[0].href;
         else if (scrollButtons.length === 2) window.location = scrollButtons[1];
@@ -26,7 +26,7 @@ const keyHandler = ({ ctrlKey, key, repeat }) => {
     } else {
       if (/\?page=[\d]+#*/.test(scrollButtons[0].href)) {
         if ((scrollButtons.length === 1 && window.location.search !== '?page=0')
-          || scrollButtons.length === 2) window.location = window.location.href.replace(/\?page=(\d)+#*/, (_,a) => `?page=${+a - 1}`);
+          || scrollButtons.length === 2) window.location = window.location.href.replace(/\?page=(\d+)#*/, (_,a) => `?page=${+a - 1}`);
       } else {
         if (scrollButtons.length === 1 && !/skipPosts=0|skipPosts=20|'page=1#'/.test(scrollButtons[0].href)) window.location =  scrollButtons[0];
         else if (scrollButtons.length === 2) window.location = scrollButtons[0];
