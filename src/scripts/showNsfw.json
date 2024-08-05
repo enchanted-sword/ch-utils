@@ -1,0 +1,20 @@
+{
+  "name": "showNsfw",
+  "title": "conditionally show 18+",
+  "description": "when logged in as certain pages, automatically display 18+ content",
+  "preferences": {
+    "enabled": true,
+    "options": {
+      "handles": {
+        "value": "",
+        "type": "text",
+        "name": "nsfw pages",
+        "tooltip": "automatically show 18+ content when logged into these pages. does not click-through posts with content warnings.",
+        "placeholder": "comma-separated list of your account handles. case-insensitive.",
+        "textarea": true
+      }
+    }
+  },
+  "js": true,
+  "css": false
+}
