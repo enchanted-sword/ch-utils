@@ -1,9 +1,11 @@
-import { getOptions } from "./utils/jsTools";
+import { getOptions } from './utils/jsTools.js';
+
+let intervalId;
 
 function showPosts(handles) {
   for (let handle of handles) {
-    if (document.querySelector('header span').textContent === '@' + handle) {
-      for (let elem of document.querySelectorAll('article .co-18-plus + div button')) {
+    if ($('header .aspect-square + span').text() === '@' + handle) {
+      for (let elem of $('article .co-18-plus + div button')) {
         if (elem.textContent === 'show post') {
           elem.click()
         }
@@ -12,12 +14,9 @@ function showPosts(handles) {
   }
 }
 
-let intervalId;
-
 export async function main () {
-  let handles = await getOptions('handles')
+  let {handles} = await getOptions('showNsfw')
   handles = handles.split(',').map(h => h.replaceAll(/[@ \n]/g, ''))
-  console.log(handles);
   intervalId = setInterval(() => showPosts(handles), 500);
 };
 
