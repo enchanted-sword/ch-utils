@@ -29,6 +29,24 @@
         "name": "space efficiency",
         "tooltip": "Better Layout - For vertical displays or half-monitor windows"
       },
+      "lowercaseTags": {
+        "value": false,
+        "type": "toggle",
+        "name": "lowercase tags",
+        "tooltip": "Force hashtags to be lowercase"
+      },
+      "betterProfiles": {
+        "value": false,
+        "type": "toggle",
+        "name": "profiles tweaks",
+        "tooltip": "Profile page bio tweaks"
+      },
+      "commentInputResize": {
+        "value": false,
+        "type": "toggle",
+        "name": "comment input resize",
+        "tooltip": "Enable resizing on comment text editor"
+      },
       "hideChorner": {
         "value": false,
         "type": "toggle",
@@ -58,24 +76,6 @@
         "type": "toggle",
         "name": "hide timestamp",
         "tooltip": "Turn timestamps into a permalink icon (🔗)"
-      },
-      "lowercaseTags": {
-        "value": false,
-        "type": "toggle",
-        "name": "lowercase tags",
-        "tooltip": "Force hashtags to be lowercase"
-      },
-      "betterProfiles": {
-        "value": false,
-        "type": "toggle",
-        "name": "profiles tweaks",
-        "tooltip": "Profile page bio tweaks"
-      },
-      "commentInputResize": {
-        "value": false,
-        "type": "toggle",
-        "name": "comment input resize",
-        "tooltip": "Enable resizing on comment text editor"
       },
       "squareAvatars": {
         "value": false,
