@@ -58,6 +58,8 @@ const filterPosts = async posts => {
   }
 };
 
+let putLabelInParent
+
 export const main = async () => {
   ({ ownPosts, hideShares, duplicatePosts, filterText, filterTags, filterCws } = await getOptions('filtering'));
   [filterText, filterTags, filterCws] = [filterText, filterTags, filterCws].map(list => list.trim() === '' ? false : list.split(',').map(str => str.trim().toLowerCase()));
@@ -73,11 +75,11 @@ export const main = async () => {
     const spacer = $(`<div class="flex-1" id=${spacerId}>&nbsp;</div>`)
 
     const label = $(`
-    <label class="font-bold pl-4 text-sidebarText" id="${labelId}">
-      <span class="pr-2">hide shares</span>
-      <input class="h-6 w-6 rounded-lg border-2 border-foreground bg-notWhite text-foreground focus:ring-foreground pl-4" type="checkbox" id="${checkboxId}">
-    </label>
-  `)
+      <label class="font-bold pl-4 text-sidebarText" id="${labelId}">
+        <span class="pr-2">hide shares</span>
+        <input class="h-6 w-6 rounded-lg border-2 border-foreground bg-notWhite text-foreground focus:ring-foreground pl-4" type="checkbox" id="${checkboxId}">
+      </label>
+    `)
 
     const parent = $parent()
     parent.append(spacer)
@@ -87,21 +89,23 @@ export const main = async () => {
     $('#' + checkboxId).on("change", () => {
       $('main').toggleClass(hideSharesClass)
     })
-  }
 
-  mutationManager.start(parentSelector, () => {
-    const parent = $parent()
-    if (!parent.children('label')[0]) {
-      parent.append(label)
+    putLabelInParent = function () {
+      const parent = $parent()
+      if (!parent.children('label')[0]) {
+        parent.append(label)
+      }
     }
-  })
+
+    mutationManager.start('#' + labelId, putLabelInParent)
+  }
 
   threadFunction.start(filterPosts, `:not([${customAttribute}])`);
 };
 
 export const clean = async () => {
   threadFunction.stop(filterPosts);
-  mutationManager.stop(parentSelector)
+  mutationManager.stop(putLabelInParent)
   $(`[${customAttribute}]`).removeAttr(customAttribute);
   $(spacerId).remove()
   $(labelId).remove()
