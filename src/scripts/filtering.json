@@ -15,7 +15,7 @@
         "value": false,
         "type": "toggle",
         "name": "hide shares toggle",
-        "tooltip": "adds a toggle on home feed to hide shares of accounts you don't follow. by @wowperfect"
+        "tooltip": "adds a toggle on home feed to hide shares. by @wowperfect"
       },
       "duplicatePosts": {
         "value": "disabled",

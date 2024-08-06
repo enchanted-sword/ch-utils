@@ -42,9 +42,8 @@ const filterPosts = async posts => {
 
     if (doHideShares) {
       const poster = model.postingProject.handle
-      const sharedFrom = model?.shareTree[model?.shareTree.length - 1]?.postingProject?.handle
-      if (!!sharedFrom && poster !== sharedFrom) {
-        $(post).parent().parent().addClass(isShareClass)
+      if (model.shareTree.some(post => post.postingProject.handle !== poster)) {
+        $(post).parent().parent().addClass(isShareClass);
       }
     }
 
