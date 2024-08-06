@@ -1,26 +1,27 @@
 import { getOptions } from './utils/jsTools.js';
+import { activeProject } from './utils/user.js';
+import { mutationManager } from './utils/mutation.js';
 
-let intervalId;
-
-function showPosts(handles) {
-  for (let handle of handles) {
-    if ($('header .aspect-square + span').text() === '@' + handle) {
-      for (let elem of $('article .co-18-plus + div button')) {
-        if (elem.textContent === 'show post') {
-          elem.click()
-        }
-      }
-    }
-  }
-}
+let nsfwButtonQuery = 'article .co-18-plus + div button'
 
 export async function main () {
   let {handles} = await getOptions('showNsfw')
   handles = handles.split(',').map(h => h.replaceAll(/[@ \n]/g, ''))
-  intervalId = setInterval(() => showPosts(handles), 500);
+
+  const currentHandle = activeProject.handle
+
+  if (handles.includes(currentHandle)) {
+    mutationManager.start(nsfwButtonQuery, elems => {
+      for (let elem of elems) {
+        if (elem.textContent === 'show post') {
+          elem.click()
+        }
+      }
+    })
+  }
 };
 
 export async function clean () {
-  clearInterval(intervalId)
+  mutationManager.stop(nsfwButtonQuery)
 };
 
