@@ -4,10 +4,10 @@ import { mutationManager } from './utils/mutation.js';
 
 let nsfwButtonQuery = 'article .co-18-plus + div button'
 
-function clickShowPost() {
+function clickShowPost(elems) {
   for (let elem of elems) {
     if (elem.textContent === 'show post') {
-      elem.click()
+      elem.click();
     }
   }
 }
