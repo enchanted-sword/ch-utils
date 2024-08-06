@@ -3,7 +3,7 @@
   "title": "conditionally show 18+",
   "description": "when logged in as certain pages, automatically display 18+ content. by @wowperfect",
   "preferences": {
-    "enabled": true,
+    "enabled": false,
     "options": {
       "handles": {
         "value": "",
@@ -15,6 +15,5 @@
       }
     }
   },
-  "js": true,
-  "css": false
+  "js": true
 }
