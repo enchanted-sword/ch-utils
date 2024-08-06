@@ -83,12 +83,6 @@
         "name": "square avatars",
         "tooltip": "become square: everyone"
       },
-      "squareCorners": {
-        "value": false,
-        "type": "toggle",
-        "name": "square corners",
-        "tooltip": "become square: everything"
-      },
       "commentColor": {
         "value": "#888888",
         "type": "text",

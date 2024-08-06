@@ -252,11 +252,3 @@ Cohost Tweaks v1.1.2 by cohost.org/kiophen released under MIT license
     border-radius: 0;
   }
 }
-
-.-chutils-tweaks--square-corners {
-  /* disables square */
-  .rounded-lg,
-  [class*="rounded"] {
-    border-radius: 0 !important;
-  }
-}
