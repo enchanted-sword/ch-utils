@@ -11,6 +11,12 @@
         "name": "hide your own posts",
         "tooltip": "hide your own posts on the dashboard"
       },
+      "hideShares": {
+        "value": false,
+        "type": "toggle",
+        "name": "hide shares toggle",
+        "tooltip": "adds a toggle on home feed to hide shares. by @wowperfect"
+      },
       "duplicatePosts": {
         "value": "disabled",
         "type": "select",

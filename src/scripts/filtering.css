@@ -1,1 +1,5 @@
 .renderIfVisible:has([data-filtering="hidden"]) { display: none; }
+
+.-chutils-remove-shares--hide-shares .-chutils-remove-shares--is-share {
+  display: none;
+}
