@@ -1,25 +1,36 @@
-const commentInputResizeClass = '-chutils-tweaks--comment-input-resize'
-const hideChornerClass = '-chutils-tweaks--hide-chorner'
-const compactTlClass = '-chutils-tweaks--compact-tl'
-const betterProfilesClass = '-chutils-tweaks--better-profiles'
-const timestampClass = '-chutils-tweaks--timestamp'
-const hideNamesClass = '-chutils-tweaks--hide-names'
-const hideHandlesClass = '-chutils-tweaks--hide-handles'
-const stickySbClass = '-chutils-tweaks--sticky-sb'
-const hideHideClass = '-chutils-tweaks--hide-hide'
-const compactCommentClass = '-chutils-tweaks--compact-comment'
-const rainbowCommentClass = '-chutils-tweaks--rainbow-comment'
-const spaceEfficiencyClass = '-chutils-tweaks--space-efficiency'
-const lowercaseTagsClass = '-chutils-tweaks--lowercase-tags'
-const squareAvatarsClass = '-chutils-tweaks--square-avatars'
-const squareCornersClass = '-chutils-tweaks--square-corners'
+import {getOptions} from './utils/jsTools.js'
+
+const classes = {
+  commentInputResize: '-chutils-tweaks--comment-input-resize',
+  hideChorner: '-chutils-tweaks--hide-chorner',
+  compactTimeline: '-chutils-tweaks--compact-tl',
+  betterProfiles: '-chutils-tweaks--better-profiles',
+  timestamp: '-chutils-tweaks--timestamp',
+  hideNames: '-chutils-tweaks--hide-names',
+  hideHandles: '-chutils-tweaks--hide-handles',
+  stickySidebar: '-chutils-tweaks--sticky-sb',
+  hideHide: '-chutils-tweaks--hide-hide',
+  compactComment: '-chutils-tweaks--compact-comment',
+  rainbowComment: '-chutils-tweaks--rainbow-comment',
+  spaceEfficiency: '-chutils-tweaks--space-efficiency',
+  lowercaseTags: '-chutils-tweaks--lowercase-tags',
+  squareAvatars: '-chutils-tweaks--square-avatars',
+  squareCorners: '-chutils-tweaks--square-corners',
+}
 
 export async function main() {
+  const options = await getOptions("cssTweaks")
 
-  $('#app').addClass('.......')
+  const toAdd = Object.entries(options)
+    .filter(([_,b]) => typeof b === 'boolean')
+    .filter(([_,b]) => b)
+    .map(([x,_]) => classes[x])
 
+  $('#app').addClass(toAdd.join(' '))
 }
 
 export async function clean() {
-
+  for (let c of Object.values(classes)) {
+    $('.' + c).removeClass(c)
+  }
 }
