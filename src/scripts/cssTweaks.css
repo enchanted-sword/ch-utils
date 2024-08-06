@@ -1,38 +1,7 @@
-/* ==UserStyle==
-@name         Cohost Tweaks
-@namespace    cohost.org/kiophen
-@description  Togglable tweaks to make cohost better
-@author       kiophen
-@version      1.1.2
-@license      MIT
-@preprocessor stylus
-
-@var checkbox compact_comment  'Space-efficient comments' 1
-@var checkbox compact_tl       'Less Padding -- Trim down padding on the timeline' 1
-@var checkbox sticky_sb        'Make sidebar stick to screen' 1
-@var checkbox space_efficiency 'Better Layout - For vertical displays or half-monitor windows' 1
-
-@var checkbox hide_chorner     'Hide "The Cohost Corner"' 0
-@var checkbox hide_hide        'Hide the "hide x posts" button on long reblog chains' 0
-@var checkbox hide_names       'Hide display names in posts' 0
-@var checkbox hide_handles     'Hide @username handles in posts' 0
-@var checkbox timestamp        'Turn timestamps into a permalink icon (🔗)' 0
-
-@var checkbox lowercase_tags   'Force hashtags to be lowercase' 1
-@var checkbox better_profiles  'Profile page bio tweaks' 1
-@var checkbox comment_input_resize  'Enable resizing on comment text editor' 1
-
-@var checkbox square_avatars   'Square avatars' 0
-@var checkbox square_corners   'Unround corners' 0
-
-@var checkbox rainbow_comment  'Rainbow comment bars' 1
-@var color    comment_color    'Nested comment bars color' #888
-
-==/UserStyle== */
-
-:root {
-  --comment-color: #888
-}
+/*
+CODE BASED ON:
+Cohost Tweaks v1.1.2 by cohost.org/kiophen released under MIT license
+*/
 
 .-chutils-tweaks--comment-input-resize {
 
@@ -210,7 +179,7 @@
 
   /* border to indicate where the reply is to */
   article[data-comment-id*="-"]~div {
-    border-left: 3px solid var(--comment-color);
+    border-left: 3px solid var(--chutils-tweaks--comment-color);
     margin: 0;
     padding-left: 1rem;
     margin-top: -1rem;
@@ -232,30 +201,6 @@
   article[data-comment-id*="-"] div.prose~div.items-center {
     margin-left: -3rem;
     margin-top: -0.75rem;
-  }
-}
-
-.-chutils-tweaks--rainbow-comment {
-
-  /* rainbow lines next to nested comments */
-  article[data-comment-id]~div {
-    border-color: #f396;
-  }
-
-  article[data-comment-id]~div>div>div {
-    border-color: #b0f6
-  }
-
-  article[data-comment-id]~div>div>div>div>div {
-    border-color: #0040ff66
-  }
-
-  article[data-comment-id]~div>div>div>div>div>div>div {
-    border-color: #00bbd066
-  }
-
-  article[data-comment-id]~div>div>div>div>div>div>div>div>div {
-    border-color: #00d22366
   }
 }
 

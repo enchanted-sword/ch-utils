@@ -11,7 +11,6 @@ const classes = {
   stickySidebar: '-chutils-tweaks--sticky-sb',
   hideHide: '-chutils-tweaks--hide-hide',
   compactComment: '-chutils-tweaks--compact-comment',
-  rainbowComment: '-chutils-tweaks--rainbow-comment',
   spaceEfficiency: '-chutils-tweaks--space-efficiency',
   lowercaseTags: '-chutils-tweaks--lowercase-tags',
   squareAvatars: '-chutils-tweaks--square-avatars',
@@ -27,6 +26,7 @@ export async function main() {
     .map(([x,_]) => classes[x])
 
   $('#app').addClass(toAdd.join(' '))
+  document.body.style.setProperty('--chutils-tweaks--comment-color', options.commentColor)
 }
 
 export async function clean() {

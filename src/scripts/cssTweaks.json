@@ -89,17 +89,11 @@
         "name": "square corners",
         "tooltip": "become square: everything"
       },
-      "rainbowComment": {
-        "value": false,
-        "type": "toggle",
-        "name": "rainbow comments bars",
-        "tooltip": "makes nested comment bars rainbow colors"
-      },
       "commentColor": {
         "value": "#888888",
         "type": "text",
         "name": "comment color",
-        "tooltip": "sets uniform comment bar color"
+        "tooltip": "if 'compact comments' is enabled: sets color of comment bar"
       }
     }
   },
