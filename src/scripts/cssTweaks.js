@@ -16,7 +16,7 @@ const squareCornersClass = '-chutils-tweaks--square-corners'
 
 export async function main() {
 
-  $('main').addClass('.......')
+  $('#app').addClass('.......')
 
 }
 
