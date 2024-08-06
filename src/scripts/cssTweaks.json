@@ -1,0 +1,12 @@
+{
+  "name": "cssTweaks",
+  "title": "css tweaks",
+  "description": "a collection of css tweaks by @kiophen",
+  "preferences": {
+    "enabled": true,
+    "options": {
+    }
+  },
+  "js": true,
+  "css": true
+}

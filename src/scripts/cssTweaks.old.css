@@ -1,0 +1,317 @@
+/* ==UserStyle==
+@name         Cohost Tweaks
+@namespace    cohost.org/kiophen
+@description  Togglable tweaks to make cohost better
+@author       kiophen
+@version      1.1.2
+@license      MIT
+@preprocessor stylus
+
+@var checkbox compact_comment  'Space-efficient comments' 1
+@var checkbox compact_tl       'Less Padding -- Trim down padding on the timeline' 1
+@var checkbox sticky_sb        'Make sidebar stick to screen' 1
+@var checkbox space_efficiency 'Better Layout - For vertical displays or half-monitor windows' 1
+
+@var checkbox hide_chorner     'Hide "The Cohost Corner"' 0
+@var checkbox hide_hide        'Hide the "hide x posts" button on long reblog chains' 0
+@var checkbox hide_names       'Hide display names in posts' 0
+@var checkbox hide_handles     'Hide @username handles in posts' 0
+@var checkbox timestamp        'Turn timestamps into a permalink icon (🔗)' 0
+
+@var checkbox lowercase_tags   'Force hashtags to be lowercase' 1
+@var checkbox better_profiles  'Profile page bio tweaks' 1
+@var checkbox comment_input_resize  'Enable resizing on comment text editor' 1
+
+@var checkbox square_avatars   'Square avatars' 0
+@var checkbox square_corners   'Unround corners' 0
+
+@var checkbox rainbow_comment  'Rainbow comment bars' 1
+@var color    comment_color    'Nested comment bars color' #888
+
+
+==/UserStyle== */
+@-moz-document domain("cohost.org") {
+
+  if (comment_input_resize) {
+
+    /* Enable resizing on comment text editor */
+    textarea[name="body"] {
+      resize: vertical !important;
+      overflow: auto !important;
+    }
+  }
+
+  if (hide_chorner) {
+
+    /* hide cohost corner */
+    section.bg-sidebarBg {
+      display: none;
+    }
+  }
+
+  if (compact_tl) {
+    /* getting rid of random padding at top of page, in posts, etc*/
+
+    article.cohost-shadow-light .prose p {
+      line-height: 1.25em;
+      margin-top: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    article.cohost-shadow-light .prose li {
+      margin-top: 0.25rem;
+      margin-bottom: 0.25rem;
+    }
+
+    article.cohost-shadow-light .prose h1,
+    article.cohost-shadow-light .prose h2,
+    article.cohost-shadow-light .prose h3 {
+      margin-top: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    main section div.gap-12 {
+      gap: 2em;
+    }
+
+    article>header.p-3 {
+      padding-top: 0.2rem;
+      padding-bottom: 0.2rem;
+    }
+
+    article>footer.p-3 {
+      padding-top: 0.3rem;
+      padding-bottom: 0.3rem;
+    }
+
+
+    article>div>div.m-3 {
+      margin-top: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    article>div>div div.p-3 {
+      padding-top: 0.2rem;
+      padding-bottom: 0.2rem;
+    }
+
+    main.w-full {
+      padding-top: 1rem;
+      padding-bottom: 1rem;
+    }
+
+    ul.bg-sidebarBg li {
+      padding-top: 0.2rem;
+      padding-bottom: 0.2rem;
+    }
+
+    .amgg__viewsource__view-source-button span {
+      /* for the view-source script compatibility */
+      padding: 0;
+    }
+  }
+
+  if (better_profiles) {
+    /** Profile Pages **/
+    /* profile bios are probably the least css-selectable part of this website so this will probably break */
+
+    /* I really do not like the big maroon profile bio bar going down infinitely */
+    .relative.col-span-1.flex.min-w-0.flex-col.break-words.bg-foreground.p-3.pt-0 {
+      height: max-content;
+    }
+
+    /* text in bios */
+    .relative.col-span-1.flex.min-w-0.flex-col.break-words.bg-foreground.p-3.pt-0>div.prose-invert>p {
+      text-align: left !important;
+      margin: 0.75em 0;
+    }
+
+    /* pronouns/website */
+    .relative.col-span-1.flex.min-w-0.flex-col.break-words.bg-foreground.p-3.pt-0 ul {
+      flex-direction: column;
+      gap: 0;
+    }
+  }
+
+  if (timestamp) {
+
+    /* replace timestamp with link emoji */
+    article time {
+      width: 1em;
+    }
+
+    article time>a {
+      visibility: hidden;
+      position: relative;
+      overflow: hidden;
+      text-overflow: clip;
+      white-space: nowrap;
+    }
+
+    article time>a::after {
+      visibility: visible;
+      position: absolute;
+      top: 0;
+      left: 0;
+      content: "🔗";
+    }
+  }
+
+  if (hide_names) {
+
+    /* hide display names in posts/comments */
+    div.h-8.w-8~a[rel="author"] {
+      display: none;
+    }
+  }
+
+  if (hide_handles) {
+
+    /* hide @handles in posts/comments */
+    div.h-8.w-8~a.text-gray-600 {
+      display: none;
+    }
+  }
+
+  if (sticky_sb) {
+
+    /* makes the sidebar fixed to screen even when u scroll */
+    ul.bg-sidebarBg {
+      position: sticky;
+      top: 5rem;
+    }
+  }
+
+  if (hide_hide) {
+
+    /* hide the 'hide x posts' thing */
+    div[data-testid^="post-"]>article>div.prose.cursor-pointer.text-center,
+    div[data-testid^="post-"]>article>div.prose.cursor-pointer.text-center+hr {
+      display: none;
+    }
+  }
+
+
+  /** Comments section  **/
+  if (compact_comment) {
+
+    /* gap to left of avatar */
+    article[data-comment-id*="-"] {
+      gap: 0;
+    }
+
+    /* shrink the huge gap left of nested comments */
+    article[data-comment-id*="-"]>div[style*="width"] {
+      width: 0 !important;
+      margin: 0 0.2rem;
+    }
+
+    /* border to indicate where the reply is to */
+    article[data-comment-id*="-"]~div {
+      border-left: 3px solid comment_color;
+      margin: 0;
+      padding-left: 1rem;
+      margin-top: -1rem;
+      padding-top: 1rem;
+    }
+
+    /* shrink avatar */
+    article[data-comment-id*="-"] a[title^="@"] {
+      height: 2rem;
+      width: 2rem;
+    }
+
+    /* let comment body use space below avatar */
+    article[data-comment-id*="-"] div.prose {
+      margin-left: -3rem;
+    }
+
+    /* let reply button use space below avatar too */
+    article[data-comment-id*="-"] div.prose~div.items-center {
+      margin-left: -3rem;
+      margin-top: -0.75rem;
+    }
+  }
+
+  if (rainbow_comment) {
+
+    /* rainbow lines next to nested comments */
+    article[data-comment-id]~div {
+      border-color: #f396;
+    }
+
+    article[data-comment-id]~div>div>div {
+      border-color: #b0f6
+    }
+
+    article[data-comment-id]~div>div>div>div>div {
+      border-color: #0040ff66
+    }
+
+    article[data-comment-id]~div>div>div>div>div>div>div {
+      border-color: #00bbd066
+    }
+
+    article[data-comment-id]~div>div>div>div>div>div>div>div>div {
+      border-color: #00d22366
+    }
+  }
+
+
+  if (space_efficiency) {
+
+    /* makes layout better for half-monitor windows or vertical monitors */
+    .prose {
+      font-size: 1rem;
+      line-height: 1.35;
+    }
+
+    hr {
+      margin-left: 0 !important;
+      margin-right: 0 !important;
+    }
+
+    @media(min-width:1024px) {
+      .container {
+        max-width: 2024px;
+        grid-column-gap: 2vw;
+        padding: 0 20px;
+      }
+    }
+  }
+
+
+  if (lowercase_tags) {
+
+    /* prevent tags from looking like tHiS */
+    div[data-testid^="post"]>article>div:last-of-type>div:last-of-type>div:last-of-type>div:last-of-type a {
+      text-transform: lowercase;
+    }
+
+    a[href^="https://cohost.org/rc/tagged/"] {
+      text-transform: lowercase;
+    }
+  }
+
+  if (square_avatars) {
+
+    /* disables custom round masks on avatars */
+    .mask-circle,
+    .mask-roundrect,
+    .mask-squircle,
+    .mask-egg,
+    .mask-capsule {
+      mask-image: none;
+      border-radius: 0;
+    }
+  }
+
+  if (square_corners) {
+
+    /* disables square */
+    .rounded-lg,
+    [class*="rounded"] {
+      border-radius: 0 !important;
+    }
+  }
+}
