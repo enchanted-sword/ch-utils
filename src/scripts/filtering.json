@@ -12,7 +12,7 @@
         "tooltip": "hide your own posts on the dashboard"
       },
       "hideShares": {
-        "value": true,
+        "value": false,
         "type": "toggle",
         "name": "hide shares toggle",
         "tooltip": "adds a toggle on home feed to hide shares of accounts you don't follow. by @wowperfect"
