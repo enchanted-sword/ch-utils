@@ -3,8 +3,8 @@ import { postFunction } from './utils/mutation.js';
 
 const customAttribute = 'ch-utils-yinglation';
 let reverseMode
-let phoneme = 'zh';
-let regex = /(\w*(?:zh)\w*)/gi;
+let phoneme = 'z';
+let regex = /(\w*(?:zh?)\w*)/gi;
 let map = {
   'zhe': 'the',
   'zhat': 'that',
