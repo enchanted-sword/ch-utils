@@ -8,20 +8,38 @@
       "ownPosts": {
         "value": false,
         "type": "toggle",
-        "name": "hide your own posts",
-        "tooltip": "hide your own posts on the dashboard"
+        "name": "enable hiding your own posts",
+        "tooltip": "adds a toggle to hide your own posts on the dashboard"
+      },
+      "ownPostsToggle": {
+        "value": false,
+        "type": "hidden",
+        "inherit": {
+          "inheritFrom": "filtering.ownPosts",
+          "false": false,
+          "true": true
+        }
       },
       "hideShares": {
         "value": false,
         "type": "toggle",
-        "name": "hide shares toggle",
-        "tooltip": "adds a toggle on home feed to hide shares. by @wowperfect"
+        "name": "enable hiding shares",
+        "tooltip": "adds a toggle to hide shares on the dashboard. by @wowperfect"
+      },
+      "hideSharesToggle": {
+        "value": false,
+        "type": "hidden",
+        "inherit": {
+          "inheritFrom": "filtering.hideShares",
+          "false": false,
+          "true": true
+        }
       },
       "duplicatePosts": {
         "value": "disabled",
         "type": "select",
-        "name": "hide duplicate posts",
-        "tooltip": "hide duplicate posts on the dashboard",
+        "name": "enable hiding duplicate posts",
+        "tooltip": "adds a toggle to hide duplicate posts on the dashboard",
         "options": [
           {
             "value": "disabled",
@@ -40,6 +58,16 @@
           "inheritFrom": "filtering.duplicates",
           "false": "disabled",
           "true": "normal"
+        }
+      },
+      "duplicatePostsToggle": {
+        "value": false,
+        "type": "hidden",
+        "inherit": {
+          "inheritFrom": "filtering.duplicatePosts",
+          "disabled": false,
+          "normal": true,
+          "strict": true
         }
       },
       "filterText": {

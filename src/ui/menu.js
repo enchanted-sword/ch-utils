@@ -126,18 +126,18 @@
 
           Object.keys(feature.preferences.options).forEach(key => {
             const option = feature.preferences.options[key];
-            const tooltip = $(`<div class="ui-tooltipAnchor"><div class="ui-tooltip">${option.tooltip}</div></div>`);
+            let wrapper, tooltip, credit; 
+            option.tooltip && (tooltip = $(`<div class="ui-tooltipAnchor"><div class="ui-tooltip">${option.tooltip}</div></div>`));
+            option.credit && ('');
 
             switch (option.type) {
               case 'toggle': {
-                const toggleWrapper = $(`<div class="ui-inputWrapper ui-checkboxWrapper"></div>`);
+                wrapper = $(`<div class="ui-inputWrapper ui-checkboxWrapper"></div>`);
                 const input = $('<input>', { class: 'ui-checkbox', type: 'checkbox', id: `ui-feature-${name}-${key}`, name: `${name}-${key}` });
                 const label = $(`<label for="ui-feature-${name}-${key}" name="${name}-${key}">${option.name}</label>`);
 
-                toggleWrapper.append(label);
-                toggleWrapper.append(input);
-                toggleWrapper.append(tooltip);
-                optionsWrapper.append(toggleWrapper);
+                wrapper.append(label);
+                wrapper.append(input);
 
                 if (preference.options[key]) input.attr('checked', '');
 
@@ -152,7 +152,7 @@
                 });
                 break;
               } case 'select': {
-                const selectInputWrapper = $(`<div class="ui-inputWrapper "><label for="ui-feature-${name}-${key}">${option.name}</label></div>`);
+                wrapper = $(`<div class="ui-inputWrapper "><label for="ui-feature-${name}-${key}">${option.name}</label></div>`);
                 const selectInput = $(`<select class="ui-select" id="ui-feature-${name}-${key}" name="${name}-${key}"></select>`);
 
                 Object.keys(option.options).forEach(subKey => {
@@ -164,9 +164,7 @@
                   if (preference.options[key] === subOption.value) value.attr('selected', '');
                 });
 
-                selectInputWrapper.append(selectInput);
-                selectInputWrapper.append(tooltip);
-                optionsWrapper.append(selectInputWrapper);
+                wrapper.append(selectInput);
 
                 selectInput.on('change', async function () {
                   const { value } = this;
@@ -178,7 +176,7 @@
                 });
                 break;
               } case 'number': {
-                const numInputWrapper = $(`<div class="ui-inputWrapper ui-numInputWrapper"></div>`);
+                wrapper = $(`<div class="ui-inputWrapper ui-numInputWrapper"></div>`);
                 const label = $(`<label for="ui-feature-${name}-${key}" name="${name}-${key}">${option.name}</label>`);
                 const numInput = $('<input>', {
                   type: 'number',
@@ -193,10 +191,8 @@
                   name: `${name}-${key}`
                 });
 
-                numInputWrapper.append(label);
-                numInputWrapper.append(numInput);
-                numInputWrapper.append(tooltip);
-                optionsWrapper.append(numInputWrapper);
+                wrapper.append(label);
+                wrapper.append(numInput);
 
                 numInput.on('change', async function () {
                   const value = this.value;
@@ -207,7 +203,7 @@
                 break;
               } case 'text': {
                 const type = option.textarea ? '<textarea>' : '<input>'
-                const textInputWrapper = $(`<div class="ui-inputWrapper"></div>`);
+                wrapper = $(`<div class="ui-inputWrapper"></div>`);
                 const label = $(`<label for="ui-feature-${name}-${key}" name="${name}-${key}">${option.name}</label>`);
                 const textInput = $(type, {
                   class: 'ui-textInput',
@@ -223,18 +219,23 @@
                 if (option.textarea) textInput.text(preference.options[key]);
                 if ('list' in option) {
                   const list = $(`<datalist id="${name}-${key}-list">${option.list.map(item => `<option value="${item}"></option>`).join('')}</datalist>`);
-                  textInputWrapper.append(list);
+                  wrapper.append(list);
                 }
 
-                textInputWrapper.append(label);
-                textInputWrapper.append(textInput);
-                textInputWrapper.append(tooltip);
-                optionsWrapper.append(textInputWrapper);
+                wrapper.append(label);
+                wrapper.append(textInput);
 
                 textInput.on('change', debounce(onTextInput));
                 break;
+              } default: {
+                console.info(`${key} [${option.type}]`);
+                break;
               }
             }
+
+            tooltip && (wrapper.append(tooltip));
+            credit && (wrapper.append(credit));
+            wrapper && optionsWrapper.append(wrapper);
           });
 
           featureItem.querySelector('.ui-secondaryContent').append(optionsWrapper[0]); // jquery to html conversion

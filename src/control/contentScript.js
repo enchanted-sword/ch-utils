@@ -45,11 +45,16 @@
             preferenceListeners[name] = (changes, areaName) => {
               const { preferences } = changes;
               if (areaName !== 'local' || typeof preferences === 'undefined') return;
+              const newPref = preferences.newValue[name];
+              const oldPref = preferences.oldValue[name];
         
               const changed = Object.keys(preferences.newValue).filter(key => !deepEquals(preferences?.newValue[key], preferences?.oldValue[key]));
-              if ((changed.includes(name) && preferences?.newValue[name].enabled === true) 
+              if ((changed.includes(name) && newPref.enabled === true) 
                 || feature.recieveUpdates?.some(key => changed.includes(key))) {
-                if (update instanceof Function) update(preferences.newValue[name]);
+                if (update instanceof Function && 'options' in newPref) {
+                  const diff = Object.entries(newPref.options).filter(([key, val]) => val !== oldPref.options[key]);
+                  update(newPref.options, Object.fromEntries(diff));
+                }
                 else clean().then(main);
               }
             };
