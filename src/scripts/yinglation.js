@@ -536,7 +536,7 @@ const caseMatch = (str0, str1) => {
 };
 const replacer = word => {
   if (word.toLowerCase() in map) return caseMatch(word, map[word.toLowerCase()]);
-  else if (word.toLowerCase() in zMap) return caseMatch(word, zMap[word.toLowerCase()]);
+  else if (!reverseMode && word.toLowerCase() in zMap) return caseMatch(word, zMap[word.toLowerCase()]);
   else return word;
 };
 
