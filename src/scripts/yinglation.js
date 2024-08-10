@@ -269,6 +269,7 @@ let map = {
   'pazhways' : 'pathways',
 };
 let zMap = {
+    'za': 'the',
     'ze': 'the',
     'zat': 'that',
     'zis': 'this',
