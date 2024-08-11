@@ -1,3 +1,33 @@
+# 1.4.1
+### **New feature:** Conditionally show 18+ {[@wowperfect](https://cohost.org/wowperfect)}
+- When logged in as certain pages, automatically displays 18+ content
+
+### General
+- Extension preference menu now only opens on install {[@consoleskunk](https://cohost.org/consoleskunk)}
+- Preferences are now also initialised in the menu
+- Markdown parsing now bolds inline headings
+
+### Quick search
+- Fixed some tag names not being URL-safe
+
+### Post previews
+- Added asks to the preview
+- Added audio to the preview
+- Added link embeds to the preview
+
+### Keyboard shortcuts
+- Fixed pagination
+
+### Open notifications in popover view
+- Fixed un-owned reply line of action missing a word
+
+### Yinglet translation
+- Added support for the "th" -> "z" pronounciation {[@8akesale](https://cohost.org/bakesale)}
+
+### Post filtering
+- New preference: Hide shares {[@wowperfect](https://cohost.org/wowperfect)}
+- Filters now add a toggle to the feed, allowing them to be switched on and off without exiting the app on mobile
+
 # 1.4.0.2
 ### Post previews
 - Fixed the editor expanding its height to match the preview
