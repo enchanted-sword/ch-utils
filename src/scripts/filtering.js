@@ -40,12 +40,12 @@ async function feedToggleState () {
     this.dataset.state = '';
     app.removeAttribute(`ch-utils-filter-${this.dataset.target}`);
   } else {
-    this.dataset.state = 'hidden'
-    app.setAttribute(`ch-utils-filter-${this.dataset.target}`, 'hidden');
+    this.dataset.state = 'hidden';
+    app.setAttribute(`ch-utils-filter-${this.dataset.target}`, this.dataset.target === 'duplicatePosts' ? duplicatePosts : 'hidden');
   }
 
   if (target in preferences.filtering.options) {
-    preferences.filtering.options[`${target}Toggle`] = state;
+    preferences.filtering.options[`${target}Toggle`] = !state; // because we're reading the existing state and updating it
     browser.storage.local.set({ preferences });
   }
 };
@@ -172,7 +172,7 @@ export const main = async () => {
 
   ownPostsToggle && (app.setAttribute('ch-utils-filter-ownPosts', 'true'));
   hideSharesToggle && (app.setAttribute('ch-utils-filter-hideShares', 'true'));
-  duplicatePostsToggle && (app.setAttribute('ch-utils-filter-duplicatePosts', 'true'));
+  duplicatePostsToggle && (app.setAttribute(`ch-utils-filter-duplicatePosts`, duplicatePosts));
   if (ownPosts || hideShares || duplicatePosts !== 'disabled') mutationManager.start(sectionSelector, addFeedControls);
 
   threadFunction.start(filterPosts, `:not([${generalAttribute}])`);
@@ -194,6 +194,7 @@ export const update = async (options, diff) => {
   }
   if (['ownPosts', 'hideShares', 'duplicatePosts'].some(key => key in diff)) {
     $(`.${customClass}`).remove();
+    if ('duplicatePosts' in diff && duplicatePosts !== 'disabled')
     if (ownPosts || hideShares || duplicatePosts !== 'disable') mutationManager.listeners.has(addFeedControls) ? mutationManager.trigger(addFeedControls) : mutationManager.start(sectionSelector, addFeedControls);
     else mutationManager.stop(addFeedControls);
   } 
