@@ -4,15 +4,15 @@ import { mutationManager } from './utils/mutation.js';
 
 let nsfwButtonQuery = 'article .co-18-plus + div button'
 
-function clickShowPost(elems) {
-  for (let elem of elems) {
+const clickShowPost = elems => {
+  for (const elem of elems) {
     if (elem.textContent === 'show post') {
       elem.click();
     }
   }
-}
+};
 
-export async function main () {
+export const main = async () => {
   let {handles} = await getOptions('showNsfw')
   handles = handles.split(',').map(h => h.replaceAll(/[@ \n]/g, ''))
 
@@ -23,7 +23,5 @@ export async function main () {
   }
 };
 
-export async function clean () {
-  mutationManager.stop(clickShowPost)
-};
+export const clean = async () => mutationManager.stop(clickShowPost);
 

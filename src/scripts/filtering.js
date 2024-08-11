@@ -28,7 +28,7 @@ const extractText = post => Array.from(post.querySelectorAll('.co-prose'))
 
 const feedToggleOnClassName = 'rounded-lg bg-cherry-500 py-2 px-2 text-notWhite md:px-3 font-bold text-center';
 const feedToggleOffClassName = 'py-2 px-2 text-cherry-700 md:px-3 text-center';
-async function feedToggleState () {
+const feedToggleState = async function () {
   const { preferences } = await getStorage(['preferences']);
   const { state, target } = this.dataset;
   const on = this.querySelector(`[class="${feedToggleOnClassName}"]`);

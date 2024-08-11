@@ -136,7 +136,7 @@ const bookmarkState = async tagName => {
   let state;
   try { [state] = await batchTrpc(['bookmarks.tags.isBookmarked'], { 0: { tagName }}); }
   catch { state = false; }
-  finally { return state; }
+  return state;
 };
 const bookmarkOrUnbookmark = state => state ? 'delete' : 'create';
 const bookmarkOrUnbookmarkRequest = async (state, tagName) => apiFetch(`/v1/trpc/bookmarks.tags.${bookmarkOrUnbookmark(state)}`, {
@@ -339,7 +339,7 @@ export const audioPlayer = (src, preloadDuration = false, track = '', artist = '
   if (!preloadDuration) {
     if (audio.readyState > 0) showDuration();
     else audio.addEventListener('loadedmetadata', showDuration);
-  };
+  }
 
   return noact({
     tag: 'figure',
