@@ -138,8 +138,8 @@ const applyFilters = async post => {
 
   if (model.postingProject.projectId === activeProject.projectId) post.dataset.filtering += 'ownPosts'
   if (model.shareTree.some(share => share.postingProject.handle !== poster)) post.dataset.filtering += ' hideShares';
-  if ((transparentId in postList) && postList[transparentId] !== model.postId) post.dataset.filtering += ' duplicates';
-  if ((rootId in strictPostList) && strictPostList[rootId] !== model.postId) post.dataset.filtering += ' duplicatesStrict';
+  if ((transparentId in postList) && postList[transparentId] !== model.postId && rootId !== model.postId) post.dataset.filtering += ' duplicates';
+  if ((rootId in strictPostList) && strictPostList[rootId] !== model.postId && rootId !== model.postId) post.dataset.filtering += ' duplicatesStrict';
   else {
     postList[transparentId] = model.postId;
     strictPostList[rootId] = model.postId;
