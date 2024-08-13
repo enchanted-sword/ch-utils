@@ -41,7 +41,7 @@ const feedToggleState = async function () {
     app.removeAttribute(`ch-utils-filter-${this.dataset.target}`);
   } else {
     this.dataset.state = 'hidden';
-    app.setAttribute(`ch-utils-filter-${this.dataset.target}`, this.dataset.target === 'duplicatePosts' ? duplicatePosts : 'hidden');
+    app.setAttribute(`ch-utils-filter-${this.dataset.target}`, this.dataset.target === 'duplicatePosts' ? duplicatePosts : 'true');
   }
 
   if (target in preferences.filtering.options) {
@@ -155,24 +155,31 @@ const filterPosts = posts => {
     applyFilters(post);
   }
 };
-const addFeedControls = row => row.map(r => r.insertAdjacentElement('afterend', feedToggles()));
+const addFeedControls = row => {
+  $(`.${customClass}`).remove();
+  row.map(r => r.insertAdjacentElement('afterend', feedToggles()));
+}
 
 
 const transformList = list => list.trim() === '' ? false : list.split(',').map(str => str.trim().toLowerCase());
+const syncToggles = () => {
+  ownPosts && (ownPostsToggle = false);
+  !hideShares && (hideSharesToggle = false);
+  duplicatePosts === 'disabled' && (duplicatePostsToggle = false);
+  app.setAttribute('ch-utils-filter-ownPosts', ownPostsToggle);
+  app.setAttribute('ch-utils-filter-hideShares', hideSharesToggle);
+  app.setAttribute(`ch-utils-filter-duplicatePosts`, duplicatePosts);
+};
 
 export const main = async () => {
   ({ ownPosts, ownPostsToggle, hideShares, hideSharesToggle, duplicatePosts, duplicatePostsToggle, filterText, filterTags, filterCws } = await getOptions('filtering'));
   [filterText, filterTags, filterCws] = [filterText, filterTags, filterCws].map(transformList);
   if (!ownPosts && !hideShares && duplicatePosts === 'disabled' && !filterText && !filterTags && !filterCws) return;
   if (location.pathname.includes(`/${activeProject.handle}`)) {
-    ownPosts = false;
-    duplicatePosts = false;
+    ownPosts = ownPostsToggle = duplicatePosts = duplicatePostsToggle = false;
   }
-  if (location.href !== 'https://cohost.org/' && !(location.href.startsWith('https://cohost.org/rc/dashboard'))) hideShares = false;
-
-  ownPostsToggle && (app.setAttribute('ch-utils-filter-ownPosts', 'true'));
-  hideSharesToggle && (app.setAttribute('ch-utils-filter-hideShares', 'true'));
-  duplicatePostsToggle && (app.setAttribute(`ch-utils-filter-duplicatePosts`, duplicatePosts));
+  if (location.href !== 'https://cohost.org/' && !(location.href.startsWith('https://cohost.org/rc/dashboard'))) hideShares = hideSharesToggle = false;
+  syncToggles();
   if (ownPosts || hideShares || duplicatePosts !== 'disabled') mutationManager.start(sectionSelector, addFeedControls);
 
   threadFunction.start(filterPosts, `:not([${generalAttribute}])`);
@@ -189,13 +196,11 @@ export const update = async (options, diff) => {
   ({ ownPosts, ownPostsToggle, hideShares, hideSharesToggle, duplicatePosts, duplicatePostsToggle, filterText, filterTags, filterCws } = options);
   [filterText, filterTags, filterCws] = [filterText, filterTags, filterCws].map(transformList);
 
-  if (['filterText', 'filterTags', 'filterCws'].some(key => key in diff)) {
-    postCache.map(applyFilters);
-  }
+  if (['filterText', 'filterTags', 'filterCws'].some(key => key in diff)) postCache.map(applyFilters);
   if (['ownPosts', 'hideShares', 'duplicatePosts'].some(key => key in diff)) {
     $(`.${customClass}`).remove();
-    if ('duplicatePosts' in diff && duplicatePosts !== 'disabled')
-    if (ownPosts || hideShares || duplicatePosts !== 'disable') mutationManager.listeners.has(addFeedControls) ? mutationManager.trigger(addFeedControls) : mutationManager.start(sectionSelector, addFeedControls);
+    syncToggles();
+    if (ownPosts || hideShares || duplicatePosts !== 'disabled') mutationManager.listeners.has(addFeedControls) ? mutationManager.trigger(addFeedControls) : mutationManager.start(sectionSelector, addFeedControls);
     else mutationManager.stop(addFeedControls);
   } 
 };

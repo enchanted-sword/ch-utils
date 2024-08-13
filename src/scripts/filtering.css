@@ -1,6 +1,6 @@
 .renderIfVisible:has([data-filtering-hidden="hidden"]),
-[ch-utils-filter-ownPosts] .renderIfVisible:has([data-filtering~="ownPosts"]),
-[ch-utils-filter-hideShares] .renderIfVisible:has([data-filtering~="hideShares"]),
+[ch-utils-filter-ownPosts="true"] .renderIfVisible:has([data-filtering~="ownPosts"]),
+[ch-utils-filter-hideShares="true"] .renderIfVisible:has([data-filtering~="hideShares"]),
 [ch-utils-filter-duplicatePosts="normal"] .renderIfVisible:has([data-filtering~="duplicates"]),
 [ch-utils-filter-duplicatePosts="strict"] .renderIfVisible:has([data-filtering~="duplicatesStrict"]) { display: none; }
 
