@@ -7,6 +7,21 @@ if (keyStore) {
   ({ IFRAMELY_KEY } = keyStore);
 }
 
+const illegalHandles = [
+  'rc',
+  'api',
+  'www',
+  'help',
+  'admin',
+  'support',
+  'internal',
+  'status',
+  'mail',
+  'mobile',
+  'search',
+  'static',
+];
+
 const srcMap = {
   'chunks': 'https://cohost.org/static/f59b84127fa7b6c48b6c.png',
   'eggbug-classic': 'https://cohost.org/static/41454e429d62b5cb7963.png',
@@ -39,11 +54,11 @@ const srcMap = {
   'host-stare.png': 'https://cohost.org/static/a09d966cd188c9ebaa4c.png',
   'chutils': 'https://raw.githubusercontent.com/enchanted-sword/ch-utils/ab4a94b12432f028c9b60af3d777cdaa92f69711/src/icons/icon.svg'
 };
-const emojiRegex = new RegExp(`(?:^|[^"'\`]):(${Object.keys(srcMap).join('|')}):(?:$|[^"'\`])`, 'g');
+const emojiRegex = new RegExp(`(?:^|[^"'\`]):(${Object.keys(srcMap).join('|')}):(?:$|[^"'\`])`, 'gi');
 const emoji = (_, emoji) => `<img style="height: var(--emoji-scale, 1em); display: inline-block; vertical-align: middle; object-fit: cover; aspect-ratio: 1 / 1; margin: 0;" alt=":${emoji}:" title=":${emoji}:" src="${srcMap[emoji]}">`;
 
-const mentionRegex = /((?:^|[^\w!#$%&*@＠\\/]|(?:^|[^\w+~.-\\/])))([@＠])([a-zA-Z0-9-]{3,})((?:^|[^\w!#$%&*@＠\\/]|(?:^|[^\w+~.-\\/])))/g;
-const mention = (_, startChar,symbol, handle, endChar) => `${startChar}<a style="text-decoration:none;font-weight:bold" href="/${handle}" target="_blank">${symbol + handle}</a>${endChar}`;
+const mentionRegex = /(?:^|\s)([@＠])([a-zA-Z0-9-]{3,})/gi
+const mention = (match, symbol, handle) => match.replace(symbol + handle, illegalHandles.includes(handle) ?  symbol + handle : `<a style="text-decoration:none;font-weight:bold" href="/${handle}" target="_blank">${symbol + handle}</a>`);
 
 /**
  * cohost markdown sandboxing
@@ -54,23 +69,26 @@ const mention = (_, startChar,symbol, handle, endChar) => `${startChar}<a style=
  * - classes are stripped
  */
 
-const fixedRegex = /style="[^"]*([\\]*p[\\]*o[\\]*s[\\]*i[\\]*t[\\]*i[\\]*o[\\]*n:\s*[\\]*f[\\]*i[\\]*x[\\]*e[\\]*d)[^"]*"/g;
+const fixedRegex = /style="[^"]*([\\]*p[\\]*o[\\]*s[\\]*i[\\]*t[\\]*i[\\]*o[\\]*n:\s*[\\]*f[\\]*i[\\]*x[\\]*e[\\]*d;?)[^"]*"/gi;
 const fixedReplacer = (match, rule) => match.replace(rule, '');
-const varRegex = /style="[^"]*(--[\w-]+:[^;]*)[^"]*"/g;
+const varRegex = /style="[^"]*(--[\w-]+:[^;]*)[^"]*"/gi;
 const varReplacer = (match, rule) => match.replace(rule, '');
 const classRegex = /class="[^"]*"/g;
-const styleSheetRegex = /<style[^>]*>[^<]*(?:<\/style>|$)/g;
-const inputRegex = /<input[^>]*>[^<]*(?:<\/input>|$)/g;
-const textareaRegex = /<textarea[^>]*>[^<]*(?:<\/textarea>|$)/g;
+const styleSheetRegex = /<style[^>]*>[^<]*(?:<\/style>)?/gi;
+const inputRegex = /<input[^>]*>[^<]*(?:<\/input>)?/gi;
+const buttonRegex = /<button[^>]*>([^<]*)(?:<\/button>)?/gi;
+const textareaRegex = /<textarea[^>]*>[^<]*(?:<\/textarea>)?/gi;
 
 const preprocess = str => str.trim().replace(emojiRegex, emoji);
-const renderer = {
-  code: text => `<div style="scrollbar-color:initial" class="co-prose prose overflow-hidden break-words"><pre><code>${text}</code></pre></div>`,
-  text: text => text.replace(mentionRegex, mention),
-  html: text => text.replace(styleSheetRegex, '').replace(varRegex, varReplacer).replace(fixedRegex, fixedReplacer).replace(classRegex, '').replace(inputRegex, '<input type="checkbox" disabled="" tabindex="0">').replace(textareaRegex, ''),
-  heading: (text, depth) => `<h${depth} class="font-bold">${text}</h${depth}>`
+const tokenizer = {
+  html: src => false,
 };
-const link = (text, _, href) => text === href ? `
+const renderer = {
+  code: ({ text }) => `<div style="scrollbar-color:initial" class="co-prose prose overflow-hidden break-words"><pre><code>${text}</code></pre></div>`,
+  text: ({ text }) => text.replace(mentionRegex, mention),
+  heading: ({ text, depth }) => `<h${depth} class="font-bold">${text}</h${depth}>`
+};
+const link = ({ text, href }) => text === href ? `
   <div class="co-embed">
     <div class="renderIfVisible">
       <div>
@@ -87,11 +105,19 @@ const link = (text, _, href) => text === href ? `
     <div class="co-ui-text mt-0 p-3 text-right"><a href="${href}" target="_blank" rel="noopener nofollow" tabindex="0">${text}</a></div>
   </div>
 ` : `<a href="${href}">${href}</a>`;
-const postprocess = html => DOMPurify.sanitize(html.replace(/^\s+|\s+$/g, ''));
+const prepostprocess = html => html.replace(/^\s+|\s+$/g, '')
+  .replace(styleSheetRegex, '')
+  .replace(varRegex, varReplacer)
+  .replace(fixedRegex, fixedReplacer).replace(classRegex, '')
+  .replace(inputRegex, '<input type="checkbox" disabled="" tabindex="0">')
+  .replace(buttonRegex, '<p>$1</p>')
+  .replace(textareaRegex, '');
+const postprocess = html => DOMPurify.sanitize(prepostprocess(html));
 
 const standard = new Marked();
 standard.use({
   renderer,
+  tokenizer,
   hooks: { preprocess, postprocess },
   gfm: true,
   breaks: true
@@ -102,7 +128,7 @@ standard.use({
  * @param {string} str - markdown
  * @returns {string} parsed markdown
  */
-export const parseMd = str => standard.parse(str);
+export const parseMd = str => standard.parseInline(str);
 
 /**
  * standard parser sans gfm breaks
@@ -112,12 +138,13 @@ export const parseMd = str => standard.parse(str);
 const breakless = new Marked();
 breakless.use({
   renderer,
+  tokenizer,
   hooks: { preprocess, postprocess },
   gfm: true,
   breaks: false
 });
 
-export const parseMdNoBr = str => breakless.parse(str);
+export const parseMdNoBr = str => breakless.parseInline(str);
 
 /**
  * parses markdown and turns links into iframely embeds
@@ -127,12 +154,13 @@ export const parseMdNoBr = str => breakless.parse(str);
 const embedful = new Marked();
 embedful.use({
   renderer: Object.assign(renderer, { link }),
+  tokenizer,
   hooks: {
     preprocess,
-    postprocess: html => DOMPurify.sanitize(html.replace(/^\s+|\s+$/g, ''), { ADD_TAGS: ['iframe'], ADD_ATTR: ['allow', 'allowfullscreen', 'frameborder', 'scrolling'] }),
+    postprocess: html => DOMPurify.sanitize(prepostprocess(html), { ADD_TAGS: ['iframe'], ADD_ATTR: ['allow', 'allowfullscreen', 'frameborder', 'scrolling'] }),
   },
   gfm: true,
   breaks: true
 });
 
-export const parseMdEmbed = str => embedful.parse(str);
+export const parseMdEmbed = str => embedful.parseInline(str);
