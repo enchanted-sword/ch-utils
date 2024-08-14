@@ -194,7 +194,6 @@ const formatAudio = figure => {
 
 const wrapImg = img => {return { className: 'group relative w-full flex-initial', children: [img] }};
 const mapBlocks = block => {
-  console.log(block)
   const textarea = block.querySelector('textarea:not([placeholder="headline"])');
   const imgs = Array.from(block.querySelectorAll('img')).map(img => img.cloneNode(true));
   const audioV1 = Array.from(block.querySelectorAll('figure:has(audio)')).map(audio => formatAudio(audio));
