@@ -119,6 +119,11 @@ breakless.use({
 
 export const parseMdNoBr = str => breakless.parse(str);
 
+/**
+ * parses markdown and turns links into iframely embeds
+ * @param {string} str - markdown
+ * @returns {string} parsed markdown, with embeds
+ */
 const embedful = new Marked();
 embedful.use({
   renderer: Object.assign(renderer, { link }),
