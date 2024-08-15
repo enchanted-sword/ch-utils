@@ -78,8 +78,11 @@ const getTransformedNotifications = async () => {
       }
     });
 
-    notifications.push(...newShareNotifications)
-    notifications.sort((a, b) => b.time - a.time);
+    notifications.push(...newShareNotifications);
+    notifications.filter(({ fromProjectIds }) => {
+      if (fromProjectIds) return !!fromProjectIds.length;
+      else return true;
+    }).sort((a, b) => b.time - a.time);
   }
 
   notifications.forEach(notification => {
