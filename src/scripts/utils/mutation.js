@@ -73,9 +73,9 @@ export const threadFunction = Object.freeze({
     this.functions.delete(func);
   }
 });
-const onNewThreads = posts => {
+const onNewThreads = threads => {
   for (const [func, filter] of threadFunction.functions) {
-    filter ? func(posts.filter(post => post.matches(filter))) : func(posts);
+    filter ? func(threads.filter(post => post.matches(filter))) : func(threads);
   }
 };
 
@@ -102,9 +102,9 @@ export const postFunction = Object.freeze({
     this.functions.delete(func)
   }
 });
-const onNewPosts = branches => {
+const onNewPosts = posts => {
   for (const [func, filter] of postFunction.functions) {
-    filter ? func(branches.filter(post => post.matches(filter))) : func(branches);
+    filter ? func(posts.filter(post => post.matches(filter))) : func(posts);
   }
 };
 
