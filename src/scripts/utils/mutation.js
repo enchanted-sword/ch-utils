@@ -55,8 +55,8 @@ export const threadFunction = Object.freeze({
 
   /**
    * start a mutation callback on new threads
-   * @param {string} selector - css selector for elements to target
-   * @param {Function} func - callback function for matching elements
+   * @param {Function} func - callback function for threads
+   * @param {string} filter - optional filter
    */
   start (func, filter = false) {
     if (this.functions.has(func)) this.functions.delete(func);
@@ -84,8 +84,8 @@ export const postFunction = Object.freeze({
 
   /**
    * start a mutation callback on new posts
-   * @param {string} selector - css selector for elements to target
-   * @param {Function} func - callback function for matching elements
+   * @param {Function} func - callback function for posts
+   * @param {string} filter - optional filter
    */
   start (func, filter = false) {
     if (this.functions.has(func)) this.functions.delete(func);
