@@ -1,0 +1,4 @@
+.ch-utils-headerControls[data-state="liked"] .co-action-button {
+  color: rgb(var(--color-cherry)) !important;
+  fill: currentColor;
+}

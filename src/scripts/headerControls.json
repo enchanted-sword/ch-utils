@@ -1,0 +1,24 @@
+{
+  "name": "headerControls",
+  "title": "like and share from post headers",
+  "description": "adds like and/or share buttons to every post in a thread",
+  "preferences": {
+    "enabled": false,
+    "options": {
+      "like": {
+        "value": false,
+        "type": "toggle",
+        "name": "show like buttons",
+        "tooltip": "show like buttons on every post in a thread"
+      },
+      "share": {
+        "value": true,
+        "type": "toggle",
+        "name": "show share buttons",
+        "tooltip": "show share buttons on every post in a thread"
+      }
+    }
+  },
+  "js": true,
+  "css": true
+}

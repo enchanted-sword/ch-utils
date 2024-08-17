@@ -1,10 +1,8 @@
 import { noact } from './utils/noact.js';
 import { postFunction } from './utils/mutation.js';
 import { getViewModel } from './utils/react.js';
-import { displayPrefs } from './utils/apiFetch.js';
 import { getOptions } from './utils/jsTools.js';
-
-const { collapseLongThreads } = await displayPrefs();
+import { headerIconContainer } from './utils/elements.js';
 
 let theme, showBoth;
 
@@ -13,7 +11,7 @@ const customAttribute = 'data-display-source';
 
 const newIcon = () => noact({
   className: customClass,
-  type: 'button',
+  style: 'order:3',
   dataset: { active: false },
   onclick: function () { this.dataset.active === 'true' ? this.dataset.active = false : this.dataset.active = true; },
   children: [
@@ -84,16 +82,17 @@ const newSourceDisplay = blocks => noact({
   })
 });
 
-const addButtons = async branches => {
-  for (const branch of branches) {
-    branch.setAttribute(customAttribute, showBoth ? 'showBoth' : 'switch');
-    let { blocks } = await getViewModel(branch);
+const addButtons = async posts => {
+  for (const post of posts) {
+    post.setAttribute(customAttribute, showBoth ? 'showBoth' : 'switch');
+    let { blocks } = await getViewModel(post);
 
-    let header = branch.querySelector('.co-post-header');
-    if (!header) header = branch.parentElement.querySelector('.co-thread-header');
-    header.append(newIcon());
+    let header = post.querySelector('.co-post-header') || post.parentElement.querySelector('.co-thread-header');
+    let container = header.querySelector('.ch-utils-headerIconContainer');
+    container ?? (container = headerIconContainer(), header.append(container));
+    container.append(newIcon());
 
-    branch.parentElement.insertBefore(newSourceDisplay(blocks), branch.nextElementSibling); // why isn't insertAfter a thing?
+    post.parentElement.insertBefore(newSourceDisplay(blocks), post.nextElementSibling); // why isn't insertAfter a thing?
   }
 }
 

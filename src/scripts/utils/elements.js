@@ -502,4 +502,8 @@ export const audioPlayer = (src, preloadDuration = false, track = '', artist = '
       }
     ]
   });
-}
+};
+
+export const headerIconContainer = () => noact({
+  className: 'ch-utils-headerIconContainer flex-1 flex items-center justify-end gap-3'
+});

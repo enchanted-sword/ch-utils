@@ -12,3 +12,5 @@
 }
 .volume-controls { display: none; }
 .volume-state[data-state="open"] + .volume-controls { display: flex; }
+
+.co-thread-header .ch-utils-headerIconContainer { flex: 0; }
