@@ -1,4 +1,5 @@
 import { getProjectSlow } from './darkWorld.js';
+import { cacheData, getIndexedProjects } from './database.js';
 
 const stringifyParams = obj => {
   if (typeof obj === 'undefined') return '';
@@ -75,13 +76,17 @@ const projectMap = new Map();
  */
 export const getProject = async handle => {
   if (!projectMap.has(handle)) {
-    try {
+    let project = await getIndexedProjects(handle);
+    if (typeof project === 'object' && !project.expired) projectMap.set(handle, project);
+    else {
       const [{ projects }] = await batchTrpc(['projects.searchByHandle'], { 0: { query: handle, skipMinimum: false } }); // the search function is currently the fastest way to get info from a handle. it's stupid, i know
-      const project = projects.find(p => p.handle === handle);
-      projectMap.set(handle, project);
-    } catch (e) {
-      console.warn('search method failed, attempting slow method', e);
-      projectMap.set(handle, await getProjectSlow(handle));
+      cacheData({ projectStore: projects });
+      project = projects.find(p => p.handle === handle);
+      if (typeof project === 'object') projectMap.set(handle, project);
+      else {
+        console.warn('search method failed, attempting slow method');
+        projectMap.set(handle, await getProjectSlow(handle));
+      }
     }
   }
 
