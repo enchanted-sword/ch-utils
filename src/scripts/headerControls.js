@@ -82,7 +82,7 @@ const addControls = posts => posts.map(async post => {
       const t = tree[i];
       like && container.append(likeIcon(t.postId, t.isLiked ));
       share && t.canShare && container.append(shareIcon(t.postId));
-    } catch (e) { console.error(t, i, e); }
+    } catch (e) { console.error(tree, i, e); }
     
   });
 });
