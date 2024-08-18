@@ -73,16 +73,16 @@ const clearData = dataObj => { // delete data from database
 
 const requestMap = new Map();
 
-const getData = dataObj => new Promise(async resolve => { // get data from database
+const getData = dataObj => new Promise(resolve => { // get data from database
   const stores = Object.keys(dataObj);
   const transaction = db.transaction(stores, 'readonly');
   transaction.onabort = event => console.error(event.target);
   const returnData = {};
 
   // we have to await Promise.all() each query we make so that getData doesn't resolve until we know returnData is fully populated
-  await Promise.all(stores.map(key => new Promise(async resolve => {
+  Promise.all(stores.map(key => {
     const objectStore = transaction.objectStore(key);
-    await Promise.all([dataObj[key]].flat().map(index => new Promise(async resolve => {
+    return Promise.all([dataObj[key]].flat().map(index => new Promise(resolve => {
       const dataRequest = objectStore.get(index);
       dataRequest.onsuccess = () => {
         returnData[key] ??= []; // FINALLY! a use for the nullish coalescing assignment operator
@@ -99,9 +99,7 @@ const getData = dataObj => new Promise(async resolve => { // get data from datab
         }
       }
     })));
-    resolve();
-  })));
-  resolve(returnData);
+  })).then(() => resolve(returnData));
 });
 
 let connectionPort;
