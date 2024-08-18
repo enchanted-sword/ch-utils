@@ -39,13 +39,14 @@ export const clearData = data => postData({ action: 'clear', data });
  */
 export const getData = data => new Promise(resolve => {
   const uuid = window.crypto.randomUUID();
-  postData({ action: 'get', data, uuid });
   dataCallbacks.set(uuid, resolve);
+  postData({ action: 'get', data, uuid });
 });
 
 const getIndexedResources = async (store, indices) => {
   const isArray = indices.constructor.name === 'Array';
   indices = [indices].flat();
+  console.log(indices);
   const indexedResources = await getData(Object.fromEntries([[store, indices]]));
   return isArray ? indexedResources[store] : indexedResources[store][0];
 }

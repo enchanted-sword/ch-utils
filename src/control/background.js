@@ -56,6 +56,7 @@ const cacheData = dataObj => { // store data in database
     [dataObj[key]].flat().map(data => {
       data.storedAt = Date.now();
       objectStore.put(data);
+      console.log(`sucessfully stored ${data[objectStore.keyPath]} to ${key}`);
     });
   });
 };
@@ -69,10 +70,13 @@ const clearData = dataObj => { // delete data from database
     });
   });
 };
+
+const requestMap = new Map();
+
 const getData = dataObj => new Promise(async resolve => { // get data from database
-  console.log(dataObj);
   const stores = Object.keys(dataObj);
   const transaction = db.transaction(stores, 'readonly');
+  transaction.onabort = event => console.error(event.target);
   const returnData = {};
 
   // we have to await Promise.all() each query we make so that getData doesn't resolve until we know returnData is fully populated
@@ -81,11 +85,18 @@ const getData = dataObj => new Promise(async resolve => { // get data from datab
     await Promise.all([dataObj[key]].flat().map(index => new Promise(async resolve => {
       const dataRequest = objectStore.get(index);
       dataRequest.onsuccess = () => {
-        const { result } = dataRequest;
-        result.expired = updateNeeded(result);
         returnData[key] ??= []; // FINALLY! a use for the nullish coalescing assignment operator
-        returnData[key].push(result);
-        resolve();
+        try {
+          const { result } = dataRequest;
+          result.expired = updateNeeded(result);
+          console.log(`successfully retrieved ${index}`);
+          returnData[key].push(result);
+        } catch {
+          console.log(`index ${index} not found in ${key}`);
+          returnData[key].push(undefined);
+        } finally {
+          resolve();
+        }
       }
     })));
     resolve();
@@ -97,14 +108,13 @@ let connectionPort;
 
 const connected = port => {
   connectionPort = port;
-  connectionPort.onMessage.addListener(msg => {
-    if (msg.action === 'cache') cacheData(msg.data);
-    else if (msg.action === 'clear') clearData(msg.data);
-    else if (msg.action === 'get') {
-      getData(msg.data).then(result => {
-        console.log(result);
-        connectionPort.postMessage({ action: 'response', uuid: msg.uuid, data: result }); // sending the result back to database.js
-      });
+  connectionPort.onMessage.addListener(async ({ action, data, uuid }) => {
+    if (action === 'cache') cacheData(data);
+    else if (action === 'clear') clearData(data);
+    else if (action === 'get') {
+      if (!requestMap.has(data)) requestMap.set(data, getData(data));
+      const result = await requestMap.get(data);
+      connectionPort.postMessage({ action: 'response', uuid, data: result }); // sending the result back to database.js
     }
   });
 }

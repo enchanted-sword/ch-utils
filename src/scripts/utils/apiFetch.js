@@ -68,6 +68,7 @@ export const followState = async handle => {
 export const singlePost = async (handle, postId, silent = false) => await apiFetch('/v1/trpc/posts.singlePost', { method: 'GET', queryParams: { input: { handle, postId } } }, silent);
 
 const projectMap = new Map();
+const pendingProjectMap = new Map();
 
 /**
  * fetches info for a project
@@ -75,8 +76,15 @@ const projectMap = new Map();
  * @returns {Promise <object>} project info for the given handle 
  */
 export const getProject = async handle => {
-  if (!projectMap.has(handle)) {
-    let project = await getIndexedProjects(handle);
+  let project;
+
+  if (projectMap.has(handle)) project = projectMap.get(handle);
+  else {
+    if (pendingProjectMap.has(handle)) project = await pendingProjectMap.get(handle);
+    else {
+      pendingProjectMap.set(handle, getIndexedProjects(handle));
+      project = await pendingProjectMap.get(handle);
+    }
     if (typeof project === 'object' && !project.expired) projectMap.set(handle, project);
     else {
       const [{ projects }] = await batchTrpc(['projects.searchByHandle'], { 0: { query: handle, skipMinimum: false } }); // the search function is currently the fastest way to get info from a handle. it's stupid, i know
@@ -90,7 +98,7 @@ export const getProject = async handle => {
     }
   }
 
-  return projectMap.get(handle);
+  return project;
 };
 
 /**
