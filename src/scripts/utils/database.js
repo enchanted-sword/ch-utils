@@ -35,7 +35,7 @@ export const clearData = data => postData({ action: 'clear', data });
 
 /**
  * @param {object} data - object containing key-value pairs of object stores and indices to retrieve from those stores
- * @returns {void}
+ * @returns {Promise <object>}
  */
 export const getData = data => new Promise(resolve => {
   const uuid = window.crypto.randomUUID();
@@ -46,7 +46,6 @@ export const getData = data => new Promise(resolve => {
 const getIndexedResources = async (store, indices) => {
   const isArray = indices.constructor.name === 'Array';
   indices = [indices].flat();
-  console.log(indices);
   const indexedResources = await getData(Object.fromEntries([[store, indices]]));
   return isArray ? indexedResources[store] : indexedResources[store][0];
 }
