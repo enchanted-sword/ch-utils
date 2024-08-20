@@ -18,7 +18,7 @@ const homeIcon = noact({
   tag: 'a',
   className: customClass,
   href: '/',
-  onclick: function (event) {
+  onclick: function(event) {
     if ($(buttonSelector).length) {
       event.preventDefault();
       event.stopImmediatePropagation();
@@ -77,7 +77,7 @@ const closeTagMenu = () => {
     document.removeEventListener('click', closeTagMenu);
   }
 };
-const onTagButtonClick = event => {
+const onTagButtonClick = function(event) {
   const link = event.target.closest(linkSelector);
   const state = link.matches('[href="#"]:has(svg.rotate-180)');
   if (!state) window.setTimeout(() => document.addEventListener('click', closeTagMenu), 200);

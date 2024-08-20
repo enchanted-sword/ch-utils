@@ -31,7 +31,7 @@
     const title = featureTitle => {
       return {
         className: 'ui-featureTitle',
-        onclick: function () {
+        onclick: function() {
           this.closest('li').dataset.new = false;
           const secondaryContent = this.closest('li').querySelector('.ui-secondaryContent');
           const caret = this.querySelector('svg');
@@ -310,7 +310,7 @@
       setupButtons('ui-featureTab');
       document.getElementById('ui-preferenceText').value = JSON.stringify(preferences, null, 2);
 
-      document.getElementById('ui-export').addEventListener('click', async () => {
+      document.getElementById('ui-export').addEventListener('click', async function() {
         const { preferences } = await browser.storage.local.get('preferences');
         const preferenceExport = new Blob([JSON.stringify(preferences, null, 2)], { type: 'application/json' });
         const url = URL.createObjectURL(preferenceExport);
@@ -327,7 +327,7 @@
         exportLink.remove();
         URL.revokeObjectURL(url);
       });
-      document.getElementById('ui-import').addEventListener('click', () => {
+      document.getElementById('ui-import').addEventListener('click', function() {
         let preferences;
         const input = document.getElementById('ui-preferenceText');
         if (!input.value) return;
@@ -348,7 +348,7 @@
 
         createFeatures(installedFeatures, preferences);
       });
-      document.getElementById('ui-reset').addEventListener('click', () => {
+      document.getElementById('ui-reset').addEventListener('click', function() {
         const preferences = {};
         Object.keys(installedFeatures).map(feature => preferences[feature] = transformPreferences(installedFeatures[feature].preferences));
 

@@ -17,7 +17,7 @@ const submitComment = obj => apiFetch('/v1/comments', {
   headers: { 'content-type': 'application/json' },
   body: JSON.stringify(obj)
 });
-const ctrlEnter = event => {
+const ctrlEnter = function(event) {
   if (event.ctrlKey && event.key === 'Enter') {
     document.getElementById(`${event.target.id}-button`).click();
   }
@@ -175,7 +175,7 @@ const newComment = (comment, poster, canInteract, extLink) => { return {
                       children: [ canInteract && !comment.deleted ? {
                         className: 'co-link-button flex cursor-pointer flex-row items-center gap-1 text-sm font-bold hover:underline',
                         dataset: { replyBox: false },
-                        onclick: function () {
+                        onclick: function() {
                           const { shareId } = this.closest('[data-share-id]').dataset;
                           if (this.dataset.replyBox === 'true') {
                             $(`#ch-utils-replyBox-${shareId}${comment.commentId ? `-${comment.commentId}` : ''}`).remove();
@@ -250,7 +250,7 @@ const newReplyBox = (id, inReplyToCommentId = false) => {
             id: `ch-utils-commentArea-${postId}${inReplyToCommentId ? `-${inReplyToCommentId}` : ''}`,
             rows: 1,
             placeholder: 'leave a comment...',
-            oninput: function () {
+            oninput: function() {
               this.style.height = "";
               this.style.height = `${Math.min(this.scrollHeight, 320)}px`;
               if (this.value) $(`#ch-utils-replyBox-${postId}${inReplyToCommentId ? `-${inReplyToCommentId}` : ''} button`).removeAttr('disabled');
@@ -267,7 +267,7 @@ const newReplyBox = (id, inReplyToCommentId = false) => {
         children: [
           {
             className: 'co-outline-button flex items-center justify-center rounded-lg border-2 px-[14px] py-[6px] text-sm font-bold',
-            onclick: () => {
+            onclick: function() {
               $(`#ch-utils-commentArea-${postId}${inReplyToCommentId ? `-${inReplyToCommentId}` : ''}`).val('');
               $(`#ch-utils-replyBox-${postId}${inReplyToCommentId ? `-${inReplyToCommentId}` : ''} button`).attr('disabled', '');
             },
@@ -277,7 +277,7 @@ const newReplyBox = (id, inReplyToCommentId = false) => {
           {
             id: `ch-utils-commentArea-${postId}${inReplyToCommentId ? `-${inReplyToCommentId}` : ''}-button`,
             className: 'co-filled-button flex items-center justify-center rounded-lg px-4 py-2 text-sm font-bold',
-            onclick: async () => {
+            onclick: async function() {
               const textarea = $(`#ch-utils-commentArea-${postId}${inReplyToCommentId ? `-${inReplyToCommentId}` : ''}`);
               const value = textarea.val();
               if (!value.length) return;
@@ -331,7 +331,7 @@ const addStatusMessage = success => {
   document.body.append(message);
   window.setTimeout(() => message.remove(), 5000);
 };
-const onButtonClick = event => {
+const onButtonClick = function(event) {
   event.preventDefault();
   
   const target = event.target.closest(`button.${customClass}`);
@@ -339,7 +339,7 @@ const onButtonClick = event => {
   if (dataset.headlessuiState === 'open') dataset.headlessuiState = '';
   else dataset.headlessuiState = 'open';
 };
-const onHiddenButtonClick = ({ target }) => {
+const onHiddenButtonClick = function({ target }) {
   const info = target.parentElement.querySelector('.ch-utils-popoverComments-hiddenInfo');
   const comment = target.closest('.min-w-0').querySelector('[data-popover-comments-hidden]');
   const { dataset } = target;

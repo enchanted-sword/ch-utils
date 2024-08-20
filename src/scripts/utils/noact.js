@@ -12,14 +12,9 @@ const validTags = [
 const svgNs = [
   'circle','clipPath','defs','ellipse','g','line','linearGradient','marker','mask','mpath','path','pattern',
   'polygon','polyline','radialGradient','rect','set','stop','svg','symbol','text','textPath','use','view'
-]
+];
 
-const childHandler = function(child) {
-  if (!child) return;
-  if (typeof child === 'object' && 'nodeType' in child) this.append(child);
-  else if (typeof child === 'object') this.append(noact(child));
-  else this.append(document.createTextNode(child));
-}
+const isArrow = fn => !fn.toString().replace('async', '').trim().startsWith('function');
 
 /**
  * simultaneously the best and worst replacement for react, jquery, innerHTML, you name it
@@ -52,7 +47,13 @@ export const noact = obj => {
     } else {
       el = document.createElement(tag);
       Object.keys(obj).filter(key => !['tag', 'dataset', 'children'].includes(key))
-        .forEach(key => el[key] = obj[key]);
+        .forEach(key => {
+          const prop = obj[key];
+          if (typeof prop === 'function' && isArrow(prop)) {
+            console.error(`noact: illegal arrow function on property ${key}`, el, prop);
+            return;
+          } else el[key] = prop;
+        });
     }
 
     if ('dataset' in obj) Object.keys(obj.dataset).forEach(key => el.dataset[key] = obj.dataset[key]);

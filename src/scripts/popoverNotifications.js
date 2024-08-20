@@ -500,7 +500,7 @@ const closePopover = () => {
     document.removeEventListener('click', closePopover);
   }
 };
-const onNotificationButtonClick = async event => {
+const onNotificationButtonClick = async function(event) {
   event.preventDefault();
   event.stopImmediatePropagation();
 

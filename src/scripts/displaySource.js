@@ -13,7 +13,7 @@ const newIcon = () => noact({
   className: customClass,
   style: 'order:3',
   dataset: { active: false },
-  onclick: function () { this.dataset.active === 'true' ? this.dataset.active = false : this.dataset.active = true; },
+  onclick: function() { this.dataset.active === 'true' ? this.dataset.active = false : this.dataset.active = true; },
   children: [
     {
       className: 'h-6 w-6 co-action-button',

@@ -113,7 +113,7 @@ export const followCard = async (customClass, project) => {
   },
   {
     className: 'leading-none align-middle py-2 px-4 no-select font-atkinson font-bold rounded-full border-2 border-cherry hover:bg-cherry text-cherry active:bg-cherry-600 active:border-cherry-600 disabled:text-cherry-300 disabled:border-cherry-300 focus:outline-cherry focus:ring-cherry bg-notWhite hover:text-notWhite',
-    onclick: async ({ target }) => {
+    onclick: async function({ target }) {
       const state = await followState(project.handle);
       
       followCancelOrUnfollowRequest(state, project.projectId).then(([{ followingState }]) => {
@@ -159,7 +159,7 @@ export const tagCard = async (customClass, tag) => {
       },
       {
         className: 'leading-none align-middle py-2 px-4 no-select body-2 rounded-lg bg-secondary text-notWhite dark:text-notBlack hover:bg-secondary-600',
-        onclick: async ({ target }) => {
+        onclick: async function({ target }) {
           const state = await bookmarkState(tag);
           
           bookmarkOrUnbookmarkRequest(state, tag).then(() => {
@@ -306,7 +306,7 @@ export const audioPlayer = (src, preloadDuration = false, track = '', artist = '
     document.getElementById(`${identifier}-range`).max = duration;
     document.getElementById(`${identifier}-end`).innerText = durationString;
   };
-  const togglePlayState = () => {
+  const togglePlayState = function() {
     if (playstate) {
       audio.pause();
       playstate = 0;
@@ -319,11 +319,11 @@ export const audioPlayer = (src, preloadDuration = false, track = '', artist = '
       frameId = requestAnimationFrame(playback);
     }
   };
-  const seekInput = ({ target: { value } }) => {
+  const seekInput = function({ target: { value } }) {
     document.getElementById(`${identifier}-start`).innerText = formatDuration(Math.floor(value));
     !audio.paused && (cancelAnimationFrame(frameId));
   };
-  const seekChange = ({ target: { value } }) => {
+  const seekChange = function({ target: { value } }) {
     audio.currentTime = value;
     !audio.paused && (requestAnimationFrame(playback));
   };
@@ -382,14 +382,14 @@ export const audioPlayer = (src, preloadDuration = false, track = '', artist = '
                         id: `${identifier}-volState`,
                         className: 'volume-state cursor-pointer',
                         dataset: { state: '' },
-                        onclick: function () {
+                        onclick: function() {
                           this.dataset.state ? this.dataset.state = '' : this.dataset.state = 'open';
                         },
                         children: volumeIcon(`${identifier}-volDisplay`)
                       },
                       {
                         className: 'volume-controls absolute top-0 bg-cherry rounded-lg right-0 h-10 w-52 p-1 justify-between items-center',
-                        onmouseout: function () {
+                        onmouseout: function() {
                           setTimeout(() => {
                             !(this.matches(':hover')) && (document.getElementById(`${identifier}-volState`).dataset.state = "");
                           }, 150)
@@ -397,7 +397,7 @@ export const audioPlayer = (src, preloadDuration = false, track = '', artist = '
                         children: [
                           {
                             className: 'cursor-pointer',
-                            onclick: () => {
+                            onclick: function() {
                               if (audio.muted) {
                                 document.getElementById(`${identifier}-volDisplay`).dataset.muted = '';
                                 document.getElementById(`${identifier}-volControl`).dataset.muted = '';
@@ -419,7 +419,7 @@ export const audioPlayer = (src, preloadDuration = false, track = '', artist = '
                             max: 1,
                             step: 'any',
                             value: audio.volume,
-                            oninput: ({ target: { value } }) => {
+                            oninput: function({ target: { value } }) {
                               audio.volume = value;
                               document.getElementById(`${identifier}-volOutput`).innerText = String(Math.floor(value * 100)).padStart(2, '0');
                               const level = Math.min(Math.floor(value * 4), 3);

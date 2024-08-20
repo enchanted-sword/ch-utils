@@ -57,7 +57,7 @@ const displayPopover = async event => {
     document.body.append(popover);
   }, addPopoverDelay);
 };
-const removePopover = event => {
+const removePopover = function(event) {
   setTimeout(() => {
     const popover = document.getElementById('urlPopover');
     if (popover) {
@@ -103,7 +103,7 @@ const urlPopover = async (project, xPos, yPos, targetLink) => {
               },
               activeProject.projectId !== project.projectId ? {
                 className: 'leading-none align-middle py-2 px-4 no-select font-atkinson font-bold rounded-full border-2 border-cherry hover:bg-cherry text-cherry active:bg-cherry-600 active:border-cherry-600 disabled:text-cherry-300 disabled:border-cherry-300 focus:outline-cherry focus:ring-cherry bg-notWhite hover:text-notWhite text-sm hover:border-accent',
-                onclick: async ({ target }) => {
+                onclick: async function({ target }) {
                   const state = await followState(project.handle);
                   
                   followCancelOrUnfollowRequest(state, project.projectId).then(([followingState]) => {

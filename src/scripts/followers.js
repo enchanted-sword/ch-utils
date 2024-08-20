@@ -18,7 +18,7 @@ const loaderButtonPlaceholder = $(`
 `);
 const loaderButton = followers => noact({
   className: `${customClass} load-all ml-auto flex h-12 max-w-xs items-center justify-center rounded-lg bg-foreground px-6 text-lg text-text hover:bg-foreground-600 active:bg-foreground-700 disabled:bg-foreground-200`,
-  onclick: async ({ target }) => {
+  onclick: async function({ target }) {
     target.innerHTML = '<span class="spinner"></span>';
     await Promise.all(followers.map(async project => {
       const card = await followCard(customClass, project);

@@ -88,7 +88,7 @@ const selectableProject = (project, index, activeProjectId, postId) => {
     tabindex: -1,
     'aria-selected': selected,
     dataset: { headlessuiSelected: selected },
-    onclick: () => {
+    onclick: function() {
       const selector = document.getElementById(`qrc-selector-${postId}`);
       const avatar = selector.querySelector('img');
       selector.activeProject = project;
@@ -168,7 +168,7 @@ const newMenu = async postId => {
               className: 'ch-utils-quickRechost-list lg:cohost-shadow-light dark:lg:cohost-shadow-dark left-0 top-8 !overflow-y-auto truncate bg-foreground !outline-none absolute lg:max-h-[calc(100vh_-_100px)] lg:divide-none rounded-lg bg-notWhite text-notBlack',
               'aria-orientation': 'vertical',
               role: 'listbox',
-              onmouseleave: () => {
+              onmouseleave: function() {
                 const selector = document.getElementById(`qrc-selector-${postId}`);
                 window.setTimeout(() => selector.dataset.headlessuiState = '', hideMenuDelay);
               },
@@ -189,7 +189,7 @@ const newMenu = async postId => {
   });
 };
 
-const toggleState = event => {
+const toggleState = function(event) {
   const target = event.target.closest('[data-headlessui-state]');
   const state = target.dataset.headlessuiState;
 
@@ -201,7 +201,7 @@ const toggleState = event => {
     target['aria-expanded'] = true;
   }
 };
-const quickRechost = event => {
+const quickRechost = function(event) {
   const target = event.target.closest('button');
   const id = target.id.split('-')[1];
   const contentInput = document.getElementById(`qrc-content-${id}`);
@@ -253,7 +253,7 @@ const addStatusMessage = (success, handle) => {
   document.body.append(message);
   window.setTimeout(() => message.remove(), 5000);
 };
-const ctrlEnter = event => {
+const ctrlEnter = function(event) {
   if (event.ctrlKey && event.key === 'Enter') {
     document.getElementById(`qrc-${event.target.id.split('-')[2]}`).click();
   }
@@ -282,7 +282,7 @@ const hideMenuOnTouch = event => {
     if (!event.originalTarget.matches(`.${customClass},.${customClass} *,${linkSelector},${linkSelector} svg`)) document.querySelectorAll(`.${customClass}`).forEach(function (menu) { menu.style = null });
   } catch {null} // can't check .matches() on some inputs so this keeps the console free of extra errors
 };
-const menuSelfHide = event => {
+const menuSelfHide = function(event) {
   event.stopPropagation();
   const menu = event.target.closest('.co-themed-box');
   if (!menu.matches(':hover')) {
