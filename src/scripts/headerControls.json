@@ -12,7 +12,7 @@
         "tooltip": "show like buttons on every post in a thread"
       },
       "share": {
-        "value": true,
+        "value": false,
         "type": "toggle",
         "name": "show share buttons",
         "tooltip": "show share buttons on every post in a thread"
