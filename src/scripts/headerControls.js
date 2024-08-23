@@ -14,7 +14,7 @@ const { projectId, handle } = activeProject;
 
 const likeIcon = (toPostId, isLiked) => noact({
   className: `${customClass} w-6 h-6 pointer relative`,
-  onclick() {
+  onclick: function() {
     if (this.dataset.state) {
       apiFetch('/v1/trpc/relationships.unlike', {
         method: 'POST',
