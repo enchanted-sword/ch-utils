@@ -1,0 +1,4 @@
+.ch-utils-bookmarks[data-state="bookmarked"] .co-action-button {
+  color: rgb(var(--color-mango)) !important;
+  fill: currentColor;
+}

@@ -1,0 +1,8 @@
+{
+  "name": "bookmarks",
+  "title": "post bookmarks",
+  "description": "adds a bookmark feature to save posts",
+  "preferences": { "enabled": false },
+  "js": true,
+  "css": true
+}

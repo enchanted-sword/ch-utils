@@ -119,7 +119,6 @@ const getData = async (dataObj, options) => { // get data from database
       if (storeOptions && 'index' in storeOptions) {
         const index = objectStore.index(storeOptions.index);
         dataRequest = index.get(key);
-        console.log(storeOptions.index);
       }
       else dataRequest = objectStore.get(key);
       dataRequest.onsuccess = () => {
