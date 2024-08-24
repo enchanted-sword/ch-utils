@@ -28,6 +28,12 @@ const postData = ({ action, data, uuid = 0 }) => {
 export const cacheData = data => postData({ action: 'cache', data });
 
 /**
+ * @param {object} data - object containing key-value pairs of object stores and data to update those stores with
+ * @returns {void}
+ */
+export const updateData = data => postData({ action: 'update', data });
+
+/**
  * @param {object} data - object containing key-value pairs of object stores and indices to delete from those stores
  * @returns {void}
  */
@@ -44,7 +50,7 @@ export const getData = data => new Promise(resolve => {
 });
 
 const getIndexedResources = async (store, indices) => {
-  const isArray = indices.constructor.name === 'Array';
+  const isArray = Array.isArray(indices);
   indices = [indices].flat();
   const indexedResources = await getData(Object.fromEntries([[store, indices]]));
   return isArray ? indexedResources[store] : indexedResources[store][0];
@@ -52,12 +58,12 @@ const getIndexedResources = async (store, indices) => {
 
 /**
  * @param {Number|Number[]} indices - single postId or array of postIds to fetch from the database
- * @returns {object|object[]} post(s) - type of return matches type of input
+ * @returns {<object|object[]>} post(s) - type of return matches type of input
  */
 export const getIndexedPosts = indices => getIndexedResources('postStore', indices);
 
 /**
  * @param {Number|Number[]} indices - single index (handle or projectId) or array of indices to fetch from the database
- * @returns {object|object[]} project(s) - type of return matches type of input
+ * @returns {Promise <object|object[]>} project(s) - type of return matches type of input
  */
 export const getIndexedProjects = indices => getIndexedResources('projectStore', indices);

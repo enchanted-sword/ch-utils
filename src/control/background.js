@@ -36,10 +36,12 @@ request.onupgradeneeded = event => { // initialise database
   db.onerror = event => console.error('database error: ', event.target.errorCode);
 
   const postStore = db.createObjectStore('postStore', { keyPath: 'postId' }); // post store
+  postStore.createIndex('postId', 'postId', { unique: true });
   postStore.createIndex('publishedAt', 'publishedAt', { unique: false });
   postStore.createIndex('storedAt', 'storedAt', { unique: false });
 
   const projectStore = db.createObjectStore('projectStore', { keyPath: 'handle' }); // project store
+  projectStore.createIndex('handle', 'handle', { unique: true });
   projectStore.createIndex('displayName', 'displayName', { unique: false });
   projectStore.createIndex('storedAt', 'storedAt', { unique: false });
   projectStore.createIndex('projectId', 'projectId', { unique: true });
@@ -60,6 +62,27 @@ const cacheData = dataObj => { // store data in database
     });
   });
 };
+const updateData = dataObj => { // merge data into database
+  const stores = Object.keys(dataObj);
+  const transaction = db.transaction(stores, 'readwrite');
+  stores.map(key => {
+    const objectStore = transaction.objectStore(key);
+    [dataObj[key]].flat().map(data => {
+      const dataRequest = objectStore.get(key);
+      dataRequest.onsuccess = () => {
+        const result = dataRequest.result;
+        data.storedAt = Date.now();
+        if (typeof result === 'object') {
+          objectStore.put(Object.assign(result, data));
+          console.log(`sucessfully updated ${data[objectStore.keyPath]} in ${key}`);
+        } else {
+          objectStore.put(data);
+          console.log(`sucessfully stored ${data[objectStore.keyPath]} to ${key}`);
+        }
+      };
+    });
+  });
+};
 const clearData = dataObj => { // delete data from database
   const stores = Object.keys(dataObj);
   const transaction = db.transaction(stores, 'readwrite');
@@ -73,34 +96,34 @@ const clearData = dataObj => { // delete data from database
 
 const requestMap = new Map();
 
-const getData = dataObj => new Promise(resolve => { // get data from database
+const getData = async dataObj => { // get data from database
   const stores = Object.keys(dataObj);
   const transaction = db.transaction(stores, 'readonly');
   transaction.onabort = event => console.error(event.target);
   const returnData = {};
 
   // we have to await Promise.all() each query we make so that getData doesn't resolve until we know returnData is fully populated
-  Promise.all(stores.map(key => {
+  await Promise.all(stores.map(key => {
     const objectStore = transaction.objectStore(key);
     return Promise.all([dataObj[key]].flat().map(index => new Promise(resolve => {
       const dataRequest = objectStore.get(index);
       dataRequest.onsuccess = () => {
+        const result = dataRequest.result;
         returnData[key] ??= []; // FINALLY! a use for the nullish coalescing assignment operator
-        try {
-          const { result } = dataRequest;
+        
+        if (typeof result !== 'undefined') {
           result.expired = updateNeeded(result);
           console.log(`successfully retrieved ${index}`);
-          returnData[key].push(result);
-        } catch {
-          console.log(`index ${index} not found in ${key}`);
-          returnData[key].push(undefined);
-        } finally {
-          resolve();
-        }
-      }
+        } else console.log(`index ${index} not found in ${key}`);
+
+        returnData[key].push(result);
+        resolve();
+      };
     })));
-  })).then(() => resolve(returnData));
-});
+  }));
+
+  return returnData;
+};
 
 let connectionPort;
 
@@ -108,6 +131,7 @@ const connected = port => {
   connectionPort = port;
   connectionPort.onMessage.addListener(async ({ action, data, uuid }) => {
     if (action === 'cache') cacheData(data);
+    else if (action === 'update') updateData(data);
     else if (action === 'clear') clearData(data);
     else if (action === 'get') {
       if (!requestMap.has(data)) requestMap.set(data, getData(data));

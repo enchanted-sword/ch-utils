@@ -1,5 +1,5 @@
 import { getProjectSlow } from './darkWorld.js';
-import { cacheData, getIndexedProjects } from './database.js';
+import { cacheData, updateData, getIndexedProjects } from './database.js';
 
 const stringifyParams = obj => {
   if (typeof obj === 'undefined') return '';
@@ -70,6 +70,18 @@ export const singlePost = async (handle, postId, silent = false) => await apiFet
 const projectMap = new Map();
 const pendingProjectMap = new Map();
 
+const apiFetchProject = async handle => {
+  const [{ projects }] = await batchTrpc(['projects.searchByHandle'], { 0: { query: handle, skipMinimum: false } }); // the search function is currently the fastest way to get info from a handle. it's stupid, i know
+  cacheData({ projectStore: projects });
+  const project = projects.find(p => p.handle === handle);
+  if (typeof project === 'object') projectMap.set(handle, project);
+  else {
+    console.warn('search method failed, attempting slow method');
+    projectMap.set(handle, await getProjectSlow(handle));
+  }
+  return project;
+};
+
 /**
  * fetches info for a project
  * @param {string} handle 
@@ -86,16 +98,7 @@ export const getProject = async handle => {
       project = await pendingProjectMap.get(handle);
     }
     if (typeof project === 'object' && !project.expired) projectMap.set(handle, project);
-    else {
-      const [{ projects }] = await batchTrpc(['projects.searchByHandle'], { 0: { query: handle, skipMinimum: false } }); // the search function is currently the fastest way to get info from a handle. it's stupid, i know
-      cacheData({ projectStore: projects });
-      project = projects.find(p => p.handle === handle);
-      if (typeof project === 'object') projectMap.set(handle, project);
-      else {
-        console.warn('search method failed, attempting slow method');
-        projectMap.set(handle, await getProjectSlow(handle));
-      }
-    }
+    else project = await apiFetchProject(handle);
   }
 
   return project;
@@ -130,9 +133,10 @@ const removeEmptyArrays = obj => {
  * get comments for a post
  * @param {string} handle 
  * @param {Number} postId 
- * @returns {Promise <object>}
+ * @returns {Promise <object>} comments
  */
-export const getComments = async (handle, postId) => {
+export const getComments = async (handle, postId, post = null) => {
   const { comments } = await singlePost(handle, postId);
+  post && (post.comments = comments, updateData(post));
   return removeEmptyArrays(comments);
 };
