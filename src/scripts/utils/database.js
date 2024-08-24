@@ -10,7 +10,7 @@ const recieveData = msg => {
     callback(msg.data);
   }
 };
-const postData = ({ action, data, uuid = 0 }) => {
+const postData = msg => {
   if (!connected) {
     connectionPort = browser.runtime.connect({ name: "databasePort" });
     connected = true;
@@ -18,7 +18,7 @@ const postData = ({ action, data, uuid = 0 }) => {
     connectionPort.onDisconnect.addListener(() => connected = false);
     connectionPort.onMessage.addListener(recieveData);
   }
-  connectionPort.postMessage({ action, data, uuid });
+  connectionPort.postMessage(msg);
 };
 
 /**
@@ -34,38 +34,47 @@ export const cacheData = data => postData({ action: 'cache', data });
 export const updateData = data => postData({ action: 'update', data });
 
 /**
- * @param {object} data - object containing key-value pairs of object stores and indices to delete from those stores
+ * @param {object} data - object containing key-value pairs of object stores and keys to delete from those stores
  * @returns {void}
  */
 export const clearData = data => postData({ action: 'clear', data });
 
 /**
- * @param {object} data - object containing key-value pairs of object stores and indices to retrieve from those stores
+ * @param {object} data - object containing key-value pairs of object stores and keys to retrieve from those stores
+ * @param {object} [options] - object containing key-value pairs of object stores and options objects to use for those stores;
+ * @param {string} [options.STORE_NAME.index] - the index to use when retrieving data
  * @returns {Promise <object>}
  */
-export const getData = data => new Promise(resolve => {
+export const getData = (data, options = null) => new Promise(resolve => {
   const uuid = window.crypto.randomUUID();
   dataCallbacks.set(uuid, resolve);
-  postData({ action: 'get', data, uuid });
+  postData({ action: 'get', data, options, uuid });
 });
 
 export const getCursor = (store, range) => postData({ action: 'cursor', data: { store, range } });
 
-const getIndexedResources = async (store, indices) => {
-  const isArray = Array.isArray(indices);
-  indices = [indices].flat();
-  const indexedResources = await getData(Object.fromEntries([[store, indices]]));
+/**
+ * @param {string} store - single object store to access 
+ * @param {Number|string|Array} keys - keys to retrieve from that store
+ * @param {object} [options] - options to  use when retrieving keys
+ * @param {string} [options.index] - the index to use when retrieving data
+ * @returns {Promise <object>}
+ */
+export const getIndexedResources = async (store, keys, options = null) => {
+  const isArray = Array.isArray(keys);
+  keys = [keys].flat();
+  const indexedResources = await getData(Object.fromEntries([[store, keys]]), Object.fromEntries([[store, options]]));
   return isArray ? indexedResources[store] : indexedResources[store][0];
 }
 
 /**
- * @param {Number|Number[]} indices - single postId or array of postIds to fetch from the database
+ * @param {Number|Number[]} keys - single postId or array of postIds to fetch from the database
  * @returns {<object|object[]>} post(s) - type of return matches type of input
  */
-export const getIndexedPosts = indices => getIndexedResources('postStore', indices);
+export const getIndexedPosts = keys => getIndexedResources('postStore', keys);
 
 /**
- * @param {Number|Number[]} indices - single index (handle or projectId) or array of indices to fetch from the database
+ * @param {Number|Number[]} keys - single key (handle or projectId) or array of indices to fetch from the database
  * @returns {Promise <object|object[]>} project(s) - type of return matches type of input
  */
-export const getIndexedProjects = indices => getIndexedResources('projectStore', indices);
+export const getIndexedProjects = keys => getIndexedResources('projectStore', keys);
