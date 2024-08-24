@@ -10,13 +10,13 @@ const customClass = 'ch-utils-displaySource';
 const customAttribute = 'data-display-source';
 
 const newIcon = () => noact({
-  className: customClass,
-  style: 'order:3',
+  className: `${customClass} w-10 flex justify-center`,
+  style: 'order:4',
   dataset: { active: false },
   onclick: function() { this.dataset.active === 'true' ? this.dataset.active = false : this.dataset.active = true; },
   children: [
     {
-      className: 'h-6 w-6 co-action-button',
+      className: 'h-6 w-10 co-action-button',
       stroke: 'currentColor',
       viewBox: '0 0 18 18',
       children: [

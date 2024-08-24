@@ -1,13 +1,5 @@
 button.ch-utils-displaySource {
-  width: 2.5rem;
-  display: flex;
-  justify-content: center;
-
-  svg {
-    height: 1.5rem;
-    width: 2.5rem;
-    transition: .3s;
-  }
+  svg { transition: .3s; }
   path { transition: .3s; }
 
   &[data-active="true"] {
