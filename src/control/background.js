@@ -45,6 +45,11 @@ request.onupgradeneeded = event => { // initialise database
   projectStore.createIndex('displayName', 'displayName', { unique: false });
   projectStore.createIndex('storedAt', 'storedAt', { unique: false });
   projectStore.createIndex('projectId', 'projectId', { unique: true });
+
+  const bookmarkStore = db.createObjectStore('bookmarkStore', { autoIncrement: true });
+  bookmarkStore.createIndex('postId', 'postId', { unique: true });
+  bookmarkStore.createIndex('publishedAt', 'publishedAt', { unique: false });
+  bookmarkStore.createIndex('storedAt', 'storedAt', { unique: false });
 };
 request.onsuccess = event => db = event.target.result;
 
@@ -125,6 +130,20 @@ const getData = async dataObj => { // get data from database
   return returnData;
 };
 
+const getCursor = async ({ store, range }) => {
+  const transaction = db.transaction([store], 'readonly');
+  transaction.onabort = event => console.error(event.target);
+  const objectStore = transaction.objectStore(store);
+  objectStore.openCursor().onsuccess = event => {
+    const cursor = event.target.result;
+    if (cursor) {
+      console.info(cursor.value);
+      cursor.continue();
+    }
+    else console.info('end');
+  }
+};
+
 let connectionPort;
 
 const connected = port => {
@@ -137,7 +156,7 @@ const connected = port => {
       if (!requestMap.has(data)) requestMap.set(data, getData(data));
       const result = await requestMap.get(data);
       connectionPort.postMessage({ action: 'response', uuid, data: result }); // sending the result back to database.js
-    }
+    } else if (action === 'cursor') getCursor(data);
   });
 }
 

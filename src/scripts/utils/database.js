@@ -49,6 +49,8 @@ export const getData = data => new Promise(resolve => {
   postData({ action: 'get', data, uuid });
 });
 
+export const getCursor = (store, range) => postData({ action: 'cursor', data: { store, range } });
+
 const getIndexedResources = async (store, indices) => {
   const isArray = Array.isArray(indices);
   indices = [indices].flat();
