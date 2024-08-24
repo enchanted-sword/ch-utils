@@ -1,5 +1,5 @@
 import { inject } from './inject.js';
-import { cacheData } from './database.js';
+import { cacheData, getIndexedPosts } from './database.js';
 
 const viewModelCache = new WeakMap();
 const askCache = new WeakMap();
@@ -10,9 +10,10 @@ const askCache = new WeakMap();
  */
 export const getViewModel = async post => {
   if (!viewModelCache.has(post)) {
-    const model = inject('getReactProp', ['viewModel'], post)
+    let model = await inject('getReactProp', ['viewModel'], post);
+    if (model) {cacheData({ postStore: model });}
+    else model = getIndexedPosts(+post.closest('[data-postid]').getAttribute('data-postid'));
     viewModelCache.set(post, model);
-    cacheData({ postStore: await model });
   }
 
   return viewModelCache.get(post);

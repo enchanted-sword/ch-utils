@@ -6,6 +6,7 @@
  */
 export async function getReactProp (prop, elem) {
   const fiberKey = Object.keys(elem).find(key => key.startsWith('__reactFiber'));
+  if (typeof fiberKey === 'undefined') return null;
   let fiber = elem[fiberKey];
 
   while (fiber !== null) {
