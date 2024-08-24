@@ -79,6 +79,15 @@ const onNewThreads = threads => {
   }
 };
 
+/* IMPORTANT: 
+  cohost's react structure is currently bugged such that when reading the viewModel property of an individual post WITHIN a thread (which this observer supplies),
+  that post's shareTree will be EMPTY, regardless of its opacity, where it was shared from, and how many posts precede it in the thread.
+  as such, postFunction currently can *NOT* be used for callbacks that require access to previous posts within a thread.
+
+  proper use cases: modules that operate independantly within a thread and do not require outside context; displaySource, yinglation
+  example improper use case: bookmarks, as the bookmarked posts would be then be broken models containing only that specific tree item.
+*/
+
 export const postFunction = Object.freeze({
   functions: new Map(),
 
