@@ -83,7 +83,6 @@ const addControls = posts => posts.map(async post => {
       like && container.append(likeIcon(t.postId, t.isLiked ));
       share && t.canShare && container.append(shareIcon(t.postId));
     } catch (e) { console.error(tree, i, e); }
-    
   });
 });
 
