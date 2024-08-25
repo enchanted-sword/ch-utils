@@ -35,9 +35,11 @@ export const updateData = data => postData({ action: 'update', data });
 
 /**
  * @param {object} data - object containing key-value pairs of object stores and keys to delete from those stores
+ * @param {object} [options] - object containing key-value pairs of object stores and options objects to use for those stores;
+ * @param {string} [options.STORE_NAME.index] - the index to use when deleting data
  * @returns {void}
  */
-export const clearData = data => postData({ action: 'clear', data });
+export const clearData = (data, options = null) => postData({ action: 'clear', data, options });
 
 /**
  * @param {object} data - object containing key-value pairs of object stores and keys to retrieve from those stores
@@ -51,7 +53,11 @@ export const getData = (data, options = null) => new Promise(resolve => {
   postData({ action: 'get', data, options, uuid });
 });
 
-export const getCursor = (store, range) => postData({ action: 'cursor', data: { store, range } });
+export const getCursor = (store, range) => new Promise(resolve =>{
+  const uuid = window.crypto.randomUUID();
+  dataCallbacks.set(uuid, resolve);
+  postData({ action: 'cursor', data: { store, range }, uuid });
+});
 
 /**
  * @param {string} store - single object store to access 

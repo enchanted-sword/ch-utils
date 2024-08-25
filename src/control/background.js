@@ -62,8 +62,9 @@ const cacheData = dataObj => { // store data in database
     const objectStore = transaction.objectStore(store);
     [dataObj[store]].flat().map(data => {
       data.storedAt = Date.now();
-      objectStore.put(data);
-      console.log(`sucessfully stored ${objectStore.keyPath? data[objectStore.keyPath] : 'data'} to ${store}`);
+      objectStore.put(data).onsuccess = () => {
+        console.log(`sucessfully stored ${objectStore.keyPath? data[objectStore.keyPath] : 'data'} to ${store}`);
+      }
     });
   });
 };
@@ -90,13 +91,23 @@ const updateData = dataObj => { // merge data into database
     });
   });
 };
-const clearData = dataObj => { // delete data from database
+const clearData = (dataObj, options) => { // delete data from database
   const stores = Object.keys(dataObj);
   const transaction = db.transaction(stores, 'readwrite');
-  stores.map(key => {
-    const objectStore = transaction.objectStore(key);
-    [dataObj[key]].flat().map(index => {
-      objectStore.delete(index);
+  stores.map(store => {
+    let storeOptions, index;
+    if (store in options); storeOptions = options[store];
+    const objectStore = transaction.objectStore(store);
+    if (storeOptions && 'index' in storeOptions) {
+      index = objectStore.index(storeOptions.index);
+    }
+    if (!storeOptions && objectStore.autoIncrement) console.warn('clearData warning: you cannot delete an item from a store using an autoincremented key without including an index option');
+    [dataObj[store]].flat().map(key => {
+      if (index) {
+        index.openCursor(IDBKeyRange.only(key)).onsuccess = event => {
+          event.target.result.delete().onsuccess = () => console.log(`deleted ${key} from ${store} using index ${storeOptions.index}`);
+        };
+      } else objectStore.delete(key).onsuccess = () => console.log(`deleted ${key} from ${store}`);
     });
   });
 };
@@ -115,9 +126,9 @@ const getData = async (dataObj, options) => { // get data from database
     if (store in options); storeOptions = options[store];
     const objectStore = transaction.objectStore(store);
     return Promise.all([dataObj[store]].flat().map(key => new Promise(resolve => {
-      let dataRequest;
+      let dataRequest, index;
       if (storeOptions && 'index' in storeOptions) {
-        const index = objectStore.index(storeOptions.index);
+        index = objectStore.index(storeOptions.index);
         dataRequest = index.get(key);
       }
       else dataRequest = objectStore.get(key);
@@ -128,9 +139,9 @@ const getData = async (dataObj, options) => { // get data from database
         if (typeof result !== 'undefined') {
           result.expired = updateNeeded(result);
           console.log(`successfully retrieved ${key}`);
-        } else if (!objectStore.keyPath) {
-          console.warn(`key ${key} not found in ${store}. this store uses a key generator, did you mean to use an index instead of a keyPath?`);
-        } else console.log(`key ${key} not found in ${store}`);
+        } else if (!objectStore.keyPath && typeof index === 'undefined') {
+          console.warn(`key ${key} (type: ${typeof key}) not found in ${store}. this store uses a key generator, did you mean to use an index instead of a keyPath?`);
+        } else console.log(`key ${key} (type: ${typeof key}) not found in ${store}`);
 
         returnData[store].push(result);
         resolve();
@@ -145,14 +156,24 @@ const getCursor = async ({ store, range }) => {
   const transaction = db.transaction([store], 'readonly');
   transaction.onabort = event => console.error(event.target);
   const objectStore = transaction.objectStore(store);
-  objectStore.openCursor().onsuccess = event => {
-    const cursor = event.target.result;
-    if (cursor) {
-      console.info(cursor.value);
-      cursor.continue();
+  let keyRange;
+  if (typeof range !== 'undefined') keyRange = IDBKeyRange.bound(...range);
+  else keyRange = null;
+  const returnData = [];
+  await new Promise(resolve => {
+    objectStore.openCursor(keyRange, 'prev').onsuccess = event => {
+      const cursor = event.target.result;
+      if (cursor) {
+        console.info(cursor.value);
+        returnData.push(cursor.value);
+        cursor.continue();
+      } else {
+        console.info('end');
+        resolve();
+      }
     }
-    else console.info('end');
-  }
+  });
+  return returnData;
 };
 
 let connectionPort;
@@ -162,13 +183,17 @@ const connected = port => {
   connectionPort.onMessage.addListener(async ({ action, data, options, uuid }) => {
     if (action === 'cache') cacheData(data);
     else if (action === 'update') updateData(data);
-    else if (action === 'clear') clearData(data);
+    else if (action === 'clear') clearData(data, options);
     else if (action === 'get') {
       if (!requestMap.has(data)) requestMap.set(data, getData(data, options));
       const result = await requestMap.get(data);
 
       connectionPort.postMessage({ action: 'response', uuid, data: result }); // sending the result back to database.js
-    } else if (action === 'cursor') getCursor(data);
+    } else if (action === 'cursor') {
+      if (!requestMap.has(data)) requestMap.set(data, getCursor(data));
+      const result = await requestMap.get(data);
+      connectionPort.postMessage({ action: 'response', uuid, data: result });
+    }
   });
 }
 
