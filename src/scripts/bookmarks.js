@@ -74,28 +74,37 @@ const addButtons = posts => posts.map(async post => {
   });
 });
 
+const BOOKMARKS_PER_PAGE = 40;
+
 const renderPage = async () => {
-  const page = /\d+/.exec(window.location.search);
-  const lower = page * 40 + 1;
-  const upper = (page + 1) * 40;
+  const page = +/\d+/.exec(window.location.search);
+  const lower = page * BOOKMARKS_PER_PAGE;
+  const upper = (page + 1) * BOOKMARKS_PER_PAGE;
   const container = document.querySelector('.mt-4.flex.w-fit.flex-col.gap-4');
   const pageButtons = container.querySelector('.max-w-prose');
+  $('.ch-utils-customPost').remove();
 
   document.title = 'cohost! - posts you\'ve bookmarked';
   container.previousElementSibling.style.display = 'none';
 
-  const bookmarks = await getCursor('bookmarkStore', [lower, upper]);
+  let bookmarks = await getCursor('bookmarkStore');
+  bookmarks.reverse();
+  console.log(lower, upper);
+
   cacheData({ postStore: bookmarks });
-  bookmarks.map(bookmark => {
+  bookmarks.slice(lower, upper).map(bookmark => {
     console.log(bookmark);
     container.insertBefore(renderPost(bookmark), pageButtons);
   });
-}
+};
 
 export const main = async () => {
   threadFunction.start(addButtons, `:not([${customAttribute}])`);
 
-  if (window.location.pathname === '/bookmarked') renderPage();
+  if (window.location.pathname === '/bookmarked') {
+    renderPage();
+    window.addEventListener('popstate', () => renderPage());
+  }
 };
 
 export const clean = async () => {

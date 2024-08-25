@@ -729,7 +729,7 @@ export const renderPost = post => {
   if (!post.transparentShareOfPostId) tree.push(post);
 
   const thread = noact({
-    className: 'renderIfVisible',
+    className: 'ch-utils-customPost renderIfVisible',
     children: [{
       className: 'grid  w-full gap-x-6 gap-y-2',
       dataset: { testid: `post-${post.postId} `, postid: post.postId },
