@@ -2,13 +2,14 @@ import { noact } from './utils/noact.js';
 import { headerIconContainer } from './utils/elements.js';
 import { threadFunction } from './utils/mutation.js'; 
 import { getViewModel } from './utils/react.js';
-import { cacheData, clearData, getIndexedResources } from './utils/database.js';
+import { cacheData, clearData, getIndexedResources, getCursor } from './utils/database.js';
+import { renderPost } from './utils/elements.js';
 
 const customClass = 'ch-utils-bookmarks';
 const customAttribute = 'data-bookmarks';
 
 const bookmarkPost = post => cacheData({ bookmarkStore: post });
-const unbookmarkPost = postId => clearData({ bookmarkStore: postId });
+const unbookmarkPost = postId => clearData({ bookmarkStore: postId }, { bookmarkStore: { index: 'postId' } });
 const getBookmark = async postId => getIndexedResources('bookmarkStore', postId, { index: 'postId' });
 const isPostBookmarked = async postId => typeof await getBookmark(postId) !== 'undefined';
 
@@ -25,7 +26,7 @@ const bookmarkIcon = (post, isBookmarked) => noact({
   },
   title: `bookmark this post`,
   style: 'order:3',
-  dataset: { state: isBookmarked ? 'bookmarked' : '' }, // REPLACE WITH BOOKMARK STATE
+  dataset: { state: isBookmarked ? 'bookmarked' : '', bookmarkId: '' },
   children: [{
     className: 'w-6 h-6 pointer absolute top-0 left-0 co-action-button',
     viewBox: '0 0 24 24',
@@ -41,27 +42,60 @@ const bookmarkIcon = (post, isBookmarked) => noact({
   }]
 });
 
+const fixTree = (parentPost, treePost) => { // either cohost or react is sloppy with data inside of the tree so it has empty shareTree or numSharedComments properties by default
+  if (parentPost === treePost) return parentPost;
+  else {
+    const fixedTreePost = treePost;
+    fixedTreePost.shareTree = parentPost.shareTree.slice(0, parentPost.shareTree.indexOf(treePost));
+    fixedTreePost.numSharedComments = fixedTreePost.shareTree.reduce((accumulator, { numComments }) => accumulator + numComments, 0);
+    return fixedTreePost;
+  }
+}
+
 const addButtons = posts => posts.map(async post => {
   post.setAttribute(customAttribute, '');
   const model = await getViewModel(post);
-  let tree = model.shareTree.filter(share => !share.transparentShareOfPostId);
-  let headers = Array.from(post.querySelectorAll('.co-post-header'));
-  if (tree.length === 0) headers = [post.querySelector('.co-thread-header')];
+  const tree = model.shareTree.filter(share => !share.transparentShareOfPostId);
+  const headers = Array.from(post.querySelectorAll('.co-post-header'));
+  headers.push(post.querySelector('.co-thread-header'));
   if (!model.transparentShareOfPostId) tree.push(model);
+  tree.push(model);
+
+  getBookmark(post.postId);
 
   headers.map(async (header, i) => {
     try {
       let container = header.querySelector('.ch-utils-headerIconContainer');
       container ?? (container = headerIconContainer(), header.append(container));
-      const t = tree[i];
+      const t = fixTree(model, tree[i]);
       const isBookmarked = await  isPostBookmarked(t.postId);
       container.append(bookmarkIcon(t, isBookmarked));
     } catch (e) { console.error(tree, i, e); }
   });
 });
 
+const renderPage = async () => {
+  const page = /\d+/.exec(window.location.search);
+  const lower = page * 40 + 1;
+  const upper = (page + 1) * 40;
+  const container = document.querySelector('.mt-4.flex.w-fit.flex-col.gap-4');
+  const pageButtons = container.querySelector('.max-w-prose');
+
+  document.title = 'cohost! - posts you\'ve bookmarked';
+  container.previousElementSibling.style.display = 'none';
+
+  const bookmarks = await getCursor('bookmarkStore', [lower, upper]);
+  cacheData({ postStore: bookmarks });
+  bookmarks.map(bookmark => {
+    console.log(bookmark);
+    container.insertBefore(renderPost(bookmark), pageButtons);
+  });
+}
+
 export const main = async () => {
   threadFunction.start(addButtons, `:not([${customAttribute}])`);
+
+  if (window.location.pathname === '/bookmarked') renderPage();
 };
 
 export const clean = async () => {

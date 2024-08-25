@@ -1,10 +1,14 @@
 import { noact } from './noact.js';
 import { activeProject } from './user.js';
 import { apiFetch, batchTrpc, followState } from './apiFetch.js';
-import { parseMd } from './markdown.js';
+import { parseMd, parseMdEmbed } from './markdown.js';
+import { displayPrefs, postBoxTheme } from './apiFetch.js';
 
-export const avatar8 = project => noact({
-  className: 'flex-0 mask relative aspect-square h-8 w-8 inline-block',
+// eslint-disable-next-line no-undef
+const { DateTime } = luxon;
+
+export const avatar8 = (project, lgHidden = false) => noact({
+  className: `flex-0 mask relative aspect-square h-8 w-8 inline-block ${lgHidden ? 'lg:hidden' : ''}`,
   children: [{
     src: project.avatarURL,
     className: `mask mask-${project.avatarShape} h-full w-full object-cover`,
@@ -507,3 +511,244 @@ export const audioPlayer = (src, preloadDuration = false, track = '', artist = '
 export const headerIconContainer = () => noact({
   className: 'ch-utils-headerIconContainer flex-1 flex items-center justify-end gap-3'
 });
+
+const displayName = project => noact({
+  className: 'co-project-display-name max-w-full flex-shrink truncate font-atkinson font-bold hover:underline',
+  rel: 'author',
+  href: `/${project.handle}`,
+  title: project.displayName,
+  children: project.displayName
+});
+const postHandle = project => noact({
+  className: 'co-project-handle font-atkinson font-normal hover:underline',
+  href: `/${project.handle}`,
+  children: `@${project.handle}`
+});
+const timestamp = post => noact({
+  className: 'block flex-none text-xs tabular-nums text-gray-500',
+  dateTime: post.publishedAt,
+  title: DateTime.fromISO(post.publishedAt).toLocaleString(DateTime.DATETIME_MED),
+  children: [{
+    href: post.singlePostPageUrl,
+    className: 'hover:underline',
+    children: [DateTime.fromISO(post.publishedAt).toRelative()]
+  }]
+});
+const headerProjectLine = post => [
+  post.postingProject.displayName ? displayName(post.postingProject) : null,
+  postHandle(post.postingProject),
+  post.responseToAskId ? {
+    viewBox: '0 0 24 24',
+    className: 'h-6 w-6 co-action-button',
+    fill: 'none',
+    'stroke-width': 1.5,
+    stroke: 'currentColor',
+    'aria-hidden': 'true',
+    children: [{
+      'stroke-linecap': 'round',
+      'stroke-linejoin': 'round',
+      d: 'M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z'
+    }]
+  } : null,
+  timestamp(post)
+];
+const threadHeader = (post, prevShare) => noact({
+  tag: 'header',
+  className: 'co-thread-header',
+  children: [{
+    className: 'flex min-w-0 flex-1 flex-row flex-wrap items-center gap-2 leading-none',
+    children: [
+      avatar8(post.postingProject, true),
+      headerProjectLine(post),
+      prevShare ? [
+        {
+          viewBox: '0 0 24 24',
+          className: 'h-6 w-6 co-action-button',
+          fill: 'none',
+          'stroke-width': 1.5,
+          stroke: 'currentColor',
+          'aria-hidden': 'true',
+          children: [{
+            'stroke-linecap': 'round',
+            'stroke-linejoin': 'round',
+            d: 'M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99'
+          }]
+        },
+        avatar8(prevShare.postingProject, true),
+        headerProjectLine(prevShare)
+      ] : null,
+    ]
+  }]
+});
+const threadPreFooter = post => noact({
+  className: 'flex w-full max-w-full flex-col',
+  children: [
+    {
+      tag: 'hr',
+      className: 'co-hairline mb-3'
+    },
+    {
+      className: 'co-ui-text px-3',
+      children: [{
+        tag: 'span',
+        className: 'min-w-0 truncate',
+        children: [
+          {
+            href: `/${post.postingProject.handle}`,
+            className: 'font-bold hover:underline',
+            children: `@${post.postingProject.handle}`
+          },
+          {
+            tag: 'span',
+            children: ' shared with:'
+          }
+        ]
+      }]
+    },
+    formatTags(post)
+  ]
+})
+const threadFooter = post => noact({
+  tag: 'footer',
+  className: 'co-thread-footer w-full max-w-full rounded-b-lg p-3',
+  children: [{
+    className: 'flex justify-between align-middle',
+    children: [
+      {
+        className: 'w-max flex-none',
+        children: [{
+          className: 'text-sm hover:underline',
+          href: `${post.singlePostPageUrl}#comments`,
+          children: [`${post.numComments} comments`, post.numSharedComments ? ` + ${post.numSharedComments} on shared posts` : '']
+        }]
+      }
+    ]
+  }]
+});
+const postHeader = post => noact({
+  className: 'co-post-header flex flex-row flex-wrap items-center gap-2 px-3 py-2',
+  children: [
+    avatar8(post.postingProject),
+    headerProjectLine(post)
+  ]
+});
+const postHeadline = post => noact({
+  className: 'flex w-full flex-row p-3',
+  children: [{
+    className: 'co-prose prose flex-grow self-center break-words hover:underline',
+    href: post.singlePostPageUrl,
+    children: [{
+      tag: 'h3',
+      children: post.headline
+    }]
+  }]
+})
+
+const formatMarkdown = markdown => noact({
+  className: 'co-prose prose my-4 overflow-hidden break-words px-3',
+  innerHTML: displayPrefs.disableEmbeds ? parseMd(markdown) : parseMdEmbed(markdown)
+});
+const formatImage = attachment => noact({
+  tag: 'button',
+  className: 'group relative w-full flex-initial',
+  tabindex: 0,
+  children: [{
+    src: attachment.fileURL,
+    className: 'h-full w-full object-cover',
+    alt: attachment.altText,
+    dataset: { attachmentId: attachment.attachmentId }
+  }]
+});
+const formatTags = post => noact({
+  className: 'w-full max-w-full p-3',
+  children: [{
+    className: 'co-tags relative w-full overflow-y-hidden break-words leading-none ',
+    children: [{
+      children: post.tags.map(tag => ({ href: `/rc/tagged/${encodeURIComponent(tag)}`, className: 'mr-2 inline-block text-sm', children: ['#', tag] }))
+    }]
+  }]
+})
+
+const mapBlocks = blocks => {
+  let sortedBlockIndex = 0;
+  const sortedBlocks = [];
+  blocks.map((block, index) => {
+    if (block.attachment?.kind === 'image') {
+      sortedBlocks[sortedBlockIndex] ?? sortedBlocks.push([]);
+      sortedBlocks[sortedBlockIndex].push(block);
+      if (blocks[index + 1]?.attachment?.kind !== 'image') ++sortedBlockIndex;
+    } else sortedBlocks.push(block);
+  });
+  return sortedBlocks.map(block => {
+    if (Array.isArray(block)) {
+      const rows = [];
+      block.map((img, i) => {
+        if (block.length === 3 && i === 2) rows[0].children.push(formatImage(img.attachment));
+        else if (i % 2 === 0) rows[i / 2] = {
+          className: 'flex w-full flex-nowrap content-start justify-between',
+          dataset: { testid: `row-${i / 2}` },
+          children: [formatImage(img.attachment)]
+        }; else rows[(i - 1) / 2].children.push(formatImage(img.attachment))
+      });
+      return rows;
+    } else if (block.type === 'markdown') return formatMarkdown(block.markdown.content);
+    else if (block.attachment?.kind === 'audio') return audioPlayer(block.attachment.fileURL, false, block.attachment.title, block.attachment.artist || 'unknown artist');
+    else if (block.type === 'ask') return embeddedAsk(block.ask);
+    else return '';
+  });
+};
+
+const formatPosts = (parentPost, tree) => {
+  return tree.map((post, index) => noact({
+    children: [
+      {
+        id: `post-${post.postId}`,
+        className: 'relative -top-20',
+        dataset: { testid: `post-${post.postId}` }
+      },
+      parentPost.shareOfPostId ? postHeader(post) : null,
+      post.headline? postHeadline(post) : null,
+      {
+        children: [{
+          children:[{
+            className: 'relative overflow-hidden supports-[overflow:clip]:overflow-clip isolate co-contain-paint',
+            dataset: { testid: 'post-body', postBody: true },
+            children: mapBlocks(post.blocks)
+          }]
+        }]
+      },
+      post.tags.length ? formatTags(post) : null, 
+      index < tree.length - 1 ? { tag: 'hr', className: 'co-hairline' } : null,
+    ]
+  }));
+}
+
+export const renderPost = post => {
+  const prevShare = post.shareTree.find(share => share.postId === post.shareOfPostId);
+  const tree = post.shareTree.filter(post => !post.transparentShareOfPostId);
+  if (!post.transparentShareOfPostId) tree.push(post);
+
+  const thread = noact({
+    className: 'renderIfVisible',
+    children: [{
+      className: 'grid  w-full gap-x-6 gap-y-2',
+      dataset: { testid: `post-${post.postId} `, postid: post.postId },
+      children: [
+        {
+          tag: 'article',
+          className: 'co-themed-box co-post-box',
+          dataset: { theme: postBoxTheme },
+          children: [
+            threadHeader(post, prevShare),
+            { tag: 'hr', className: 'co-hairline' },
+            formatPosts(post, tree),
+            post.tags.length && post.transparentShareOfPostId ? threadPreFooter(post) : null,
+            { tag: 'hr', className: 'co-hairline' },
+            threadFooter(post)
+          ]
+        }
+      ]
+    }]
+  });
+  return thread;
+};

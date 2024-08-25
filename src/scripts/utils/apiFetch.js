@@ -107,14 +107,14 @@ export const getProject = async handle => {
 /**
  * @returns {Promise <object>} user display preferences
  */
-export const displayPrefs = async () => await apiFetch('/v1/trpc/users.displayPrefs');
+export const displayPrefs = await apiFetch('/v1/trpc/users.displayPrefs');
 
 const themeMap = {
   light: 'light',
   dark: 'dark',
   'prefers-color-scheme': 'both'
 };
-const { defaultPostBoxTheme } = await displayPrefs();
+const { defaultPostBoxTheme } = displayPrefs;
 
 export const postBoxTheme = themeMap[defaultPostBoxTheme];
 
