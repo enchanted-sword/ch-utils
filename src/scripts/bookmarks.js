@@ -88,23 +88,29 @@ const renderPage = async () => {
   container.previousElementSibling.style.display = 'none';
 
   let bookmarks = await getCursor('bookmarkStore');
-  bookmarks.reverse();
-  console.log(lower, upper);
 
   cacheData({ postStore: bookmarks });
-  bookmarks.slice(lower, upper).map(bookmark => {
+  bookmarks.toReversed().slice(lower, upper).map(bookmark => {
     console.log(bookmark);
     container.insertBefore(renderPost(bookmark), pageButtons);
+  });
+
+  window.addEventListener('popstate', () => {
+    $('.ch-utils-customPost').remove();
+    const page = +/\d+/.exec(window.location.search);
+    const lower = page * BOOKMARKS_PER_PAGE;
+    const upper = (page + 1) * BOOKMARKS_PER_PAGE;
+    bookmarks.toReversed().slice(lower, upper).map(bookmark => {
+      console.log(bookmark);
+      container.insertBefore(renderPost(bookmark), pageButtons);
+    });
   });
 };
 
 export const main = async () => {
   threadFunction.start(addButtons, `:not([${customAttribute}])`);
 
-  if (window.location.pathname === '/bookmarked') {
-    renderPage();
-    window.addEventListener('popstate', () => renderPage());
-  }
+  if (window.location.pathname === '/bookmarked') renderPage();
 };
 
 export const clean = async () => {
