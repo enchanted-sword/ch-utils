@@ -104,7 +104,7 @@ const link = ({ text, href }) => text === href ? `
     </div>
     <div class="co-ui-text mt-0 p-3 text-right"><a href="${href}" target="_blank" rel="noopener nofollow" tabindex="0">${text}</a></div>
   </div>
-` : `<a href="${href}">${href}</a>`;
+` : `<a href="${href}">${text}</a>`;
 const prepostprocess = html => html.replace(/^\s+|\s+$/g, '')
   .replace(styleSheetRegex, '')
   .replace(varRegex, varReplacer)
