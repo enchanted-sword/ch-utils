@@ -19,6 +19,5 @@
       }
     }
   },
-  "js": true,
-  "css": true
+  "js": true
 }

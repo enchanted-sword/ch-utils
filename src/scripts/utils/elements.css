@@ -14,3 +14,8 @@
 .volume-state[data-state="open"] + .volume-controls { display: flex; }
 
 .co-thread-header .ch-utils-headerIconContainer { flex: 0; }
+
+.ch-utils-likeIcon[data-state="liked"] .co-action-button {
+  color: rgb(var(--color-cherry)) !important;
+  fill: currentColor;
+}
