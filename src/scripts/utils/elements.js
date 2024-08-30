@@ -3,6 +3,7 @@ import { activeProject } from './user.js';
 import { apiFetch, batchTrpc, followState } from './apiFetch.js';
 import { parseMd, parseMdEmbed } from './markdown.js';
 import { displayPrefs, postBoxTheme } from './apiFetch.js';
+import { updateData } from './database.js';
 
 // eslint-disable-next-line no-undef
 const { DateTime } = luxon;
@@ -512,28 +513,37 @@ export const headerIconContainer = () => noact({
   className: 'ch-utils-headerIconContainer flex-1 flex items-center justify-end gap-3'
 });
 
-export const likeIcon = (toPostId, isLiked) => noact({
+export const likeIcon = post => noact({
   className: 'ch-utils-likeIcon w-6 h-6 pointer relative',
   onclick: function() {
+    const fromProjectId = activeProject.projectId;
+    const toPostId = post.postId;
     if (this.dataset.state) {
+      post.isLiked = false;
       apiFetch('/v1/trpc/relationships.unlike', {
         method: 'POST',
         queryParams: { batch: 1 },
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ 0: { fromProjectId: activeProject.projectId, toPostId } })
-      }).then(this.dataset.state = '');
+        body: JSON.stringify({ 0: { fromProjectId, toPostId } })
+      }).then(() => {
+        this.dataset.state = '';
+      });
     } else {
+      post.isLiked = true;
       apiFetch('/v1/trpc/relationships.like?batch=1', {
         method: 'POST',
         queryParams: { batch: 1, },
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ 0: { fromProjectId: activeProject.projectId, toPostId } })
-      }).then(this.dataset.state = 'liked');
+        body: JSON.stringify({ 0: { fromProjectId, toPostId } })
+      }).then(() => {
+        this.dataset.state = 'liked';
+      });
     }
+    updateData({ bookmarkStore: post }, { bookmarkStore: { index: 'postId' }});
   },
   title: `like this post as ${activeProject.handle}`,
-  style: 'order:1',
-  dataset: { state: isLiked ? 'liked' : '' },
+  style: 'order:2',
+  dataset: { state: post.isLiked ? 'liked' : '' },
   children: [{
     className: 'w-6 h-6 pointer absolute top-0 left-0 co-action-button',
     viewBox: '0 0 24 24',
@@ -553,7 +563,7 @@ export const shareIcon = shareOfPostId => noact({
   href: `/${activeProject.handle}/post/compose?shareOfPostId=${shareOfPostId}`,
   title: `share this post as ${activeProject.handle}`,
   target: '_blank',
-  style: 'order:2',
+  style: 'order:1',
   children: [{
     viewBox: '0 0 24 24',
     className: 'h-6 w-6 co-action-button',
@@ -678,6 +688,13 @@ const threadFooter = post => noact({
           href: `${post.singlePostPageUrl}#comments`,
           children: [`${post.numComments} ${post.numComments === 1 ? 'comment' : 'comments'}`, post.numSharedComments ? ` + ${post.numSharedComments} on shared posts` : '']
         }]
+      },
+      {
+        className: 'flex items-center justify-end gap-3',
+        children: [
+          likeIcon(post),
+          shareIcon(post.postId)
+        ]
       }
     ]
   }]

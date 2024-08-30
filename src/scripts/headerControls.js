@@ -20,7 +20,7 @@ const addControls = posts => posts.map(async post => {
       let container = header.querySelector('.ch-utils-headerIconContainer');
       container ?? (container = headerIconContainer(), header.append(container));
       const t = tree[i];
-      like && container.append(likeIcon(t.postId, t.isLiked ));
+      like && container.append(likeIcon(t));
       share && t.canShare && container.append(shareIcon(t.postId));
     } catch (e) { console.error(tree, i, e); }
   });

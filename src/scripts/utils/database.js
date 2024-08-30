@@ -7,7 +7,8 @@ const recieveData = msg => {
   if (msg.action === 'response') {
     const callback = dataCallbacks.get(msg.uuid);
     dataCallbacks.delete(msg.uuid);
-    callback(msg.data);
+    if (callback instanceof Function) callback(msg.data);
+    else console.warn('weird callback:', msg);
   }
 };
 const postData = msg => {
@@ -21,19 +22,21 @@ const postData = msg => {
   connectionPort.postMessage(msg);
 };
 
-/**
+/** caches data into stores, overwriting  any existing data tied to those keys (if not an autoincremented store)
  * @param {object} data - object containing key-value pairs of object stores and data to enter into those stores
  * @returns {void}
  */
 export const cacheData = data => postData({ action: 'cache', data });
 
-/**
+/** updates cached data in stores. does nothing if data does not already exist
  * @param {object} data - object containing key-value pairs of object stores and data to update those stores with
+ * @param {object} [options] - object containing key-value pairs of object stores and options objects to use for those stores;
+ * @param {string} [options.STORE_NAME.index] - the index to use when updating data
  * @returns {void}
  */
-export const updateData = data => postData({ action: 'update', data });
+export const updateData = (data, options) => postData({ action: 'update', data, options });
 
-/**
+/** deletes data from stores
  * @param {object} data - object containing key-value pairs of object stores and keys to delete from those stores
  * @param {object} [options] - object containing key-value pairs of object stores and options objects to use for those stores;
  * @param {string} [options.STORE_NAME.index] - the index to use when deleting data

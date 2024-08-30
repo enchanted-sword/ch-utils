@@ -68,25 +68,40 @@ const cacheData = dataObj => { // store data in database
     });
   });
 };
-const updateData = dataObj => { // merge data into database
+const updateData = (dataObj, options) => { // merge data into database
   const stores = Object.keys(dataObj);
   const transaction = db.transaction(stores, 'readwrite');
   stores.map(store => {
+    let storeOptions;
+    if (store in options); storeOptions = options[store];
     const objectStore = transaction.objectStore(store);
     const keyPath = objectStore.keyPath;
+    if (!storeOptions && objectStore.autoIncrement) console.warn('updateData warning: you cannot update an item in a store using an autoincremented key without including an index option');
     [dataObj[store]].flat().map(data => {
-      const key = data[keyPath];
-      const dataRequest = objectStore.get(key);
+      let dataRequest, index, key;
+      if (storeOptions && 'index' in storeOptions) {
+        key = data[storeOptions.index];
+        index = objectStore.index(storeOptions.index);
+        dataRequest = index.get(key);
+      } else dataRequest = objectStore.get(data[keyPath]);
       dataRequest.onsuccess = () => {
+        let updatedData, msg;
         const result = dataRequest.result;
         data.storedAt = Date.now();
-        if (typeof result === 'object') {
-          objectStore.put(Object.assign(result, data));
-          console.log(`sucessfully updated ${data[objectStore.keyPath]} in ${store}`);
+        if (!result) return;
+        else if (typeof result === 'object') {
+          updatedData = Object.assign(result, data);
+          msg = `sucessfully updated ${data[objectStore.keyPath || storeOptions.index]} in ${store}`;
         } else {
-          objectStore.put(data);
-          console.log(`sucessfully stored ${data[objectStore.keyPath]} to ${store}`);
+          updatedData = data;
+          msg = `sucessfully stored ${data[objectStore.keyPath || storeOptions.index]} to ${store}`;
         }
+        if (index) {
+          index.openCursor(IDBKeyRange.only(key)).onsuccess = event => {
+            console.log(event.target.result, updatedData);
+            event.target.result.update(updatedData).onsuccess = () => console.log(msg);
+          };
+        } else objectStore.put(updatedData).onsuccess = () => console.log(msg);
       };
     });
   });
@@ -182,7 +197,7 @@ const connected = port => {
   connectionPort = port;
   connectionPort.onMessage.addListener(async ({ action, data, options, uuid }) => {
     if (action === 'cache') cacheData(data);
-    else if (action === 'update') updateData(data);
+    else if (action === 'update') updateData(data, options);
     else if (action === 'clear') clearData(data, options);
     else if (action === 'get') {
       if (!requestMap.has(data)) requestMap.set(data, getData(data, options));
