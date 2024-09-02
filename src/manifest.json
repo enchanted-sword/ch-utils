@@ -29,7 +29,10 @@
         "lib/luxon.min.js",
         "lib/prism.js"
       ],
-      "css": ["scripts/utils/elements.css"]
+      "css": [
+        "scripts/utils/elements.css",
+        "scripts/bookmarksDefault.css"
+      ]
     }
   ],
   "background": {

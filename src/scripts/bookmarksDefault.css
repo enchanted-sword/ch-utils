@@ -1,0 +1,6 @@
+[id*="ch-utils-bookmarks-default"] { display: none; }
+[id*="ch-utils-bookmarks-installed"] {
+  display: block !important;
+
+  & + div { display: none; }
+}

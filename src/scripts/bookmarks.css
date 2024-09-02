@@ -2,3 +2,27 @@
   color: rgb(var(--color-mango)) !important;
   fill: currentColor;
 }
+
+.renderIfVisible:has([data-postid="7524875"]) { display: none; }
+
+.ch-utils-bookmarks-toggle {
+  background-color: rgb(var(--color-notWhite));
+  color: rgb(var(--color-notBlack));
+  box-shadow: 0px 4px 5px rgba(0,0,0,.14),0px 1px 10px rgba(0,0,0,.12),0px 2px 4px rgba(0,0,0,.2);  
+}
+.ch-utils-bookmarks-toggle[data-theme="dark"] {
+  background-color: rgb(var(--color-notBlack));
+  color: rgb(var(--color-notWhite));
+}
+@media (prefers-color-scheme: dark) {
+  .ch-utils-bookmarks-toggle[data-theme="dark"],
+  .ch-utils-bookmarks-toggle[data-theme="both"] {
+    background-color: rgb(var(--color-notBlack));
+    color: rgb(var(--color-notWhite));
+    border: 1px solid rgb(74 72 71);
+  }
+}
+
+@media (max-width: 600px) {
+  .ch-utils-bookmarks-toggleContainer { flex-direction: column; }
+}

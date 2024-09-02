@@ -2,7 +2,19 @@
   "name": "bookmarks",
   "title": "post bookmarks",
   "description": "adds a bookmark feature to save posts",
-  "preferences": { "enabled": false },
+  "preferences": {
+    "enabled": false,
+    "options": {
+      "chrono": {
+        "value": false,
+        "type": "hidden"
+      },
+      "ascending": {
+        "value": false,
+        "type": "hidden"
+      }
+    }
+  },
   "js": true,
   "css": true
 }

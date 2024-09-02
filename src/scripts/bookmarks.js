@@ -4,9 +4,15 @@ import { threadFunction } from './utils/mutation.js';
 import { getViewModel } from './utils/react.js';
 import { cacheData, clearData, getIndexedResources, getCursor } from './utils/database.js';
 import { renderPost } from './utils/elements.js';
+import { getStorage, getOptions } from './utils/jsTools.js';
+import { postBoxTheme } from './utils/apiFetch.js';
+
+let chrono, ascending;
 
 const customClass = 'ch-utils-bookmarks';
 const customAttribute = 'data-bookmarks';
+const feedToggleOnClassName = 'rounded-lg bg-cherry-500 py-2 px-2 text-notWhite md:px-3 font-bold text-center';
+const feedToggleOffClassName = 'py-2 px-2 text-cherry-700 md:px-3 text-center';
 
 const bookmarkPost = post => cacheData({ bookmarkStore: post });
 const unbookmarkPost = postId => clearData({ bookmarkStore: postId }, { bookmarkStore: { index: 'postId' } });
@@ -75,39 +81,139 @@ const addButtons = posts => posts.map(async post => {
 });
 
 const BOOKMARKS_PER_PAGE = 40;
+let renderPosts;
+
+async function toggleState () {
+  const { preferences } = await getStorage(['preferences']);
+  const { state, target } = this.dataset;
+  state === state ? true : false;
+  const on = this.querySelector(`[class="${feedToggleOnClassName}"]`);
+  const off = this.querySelector(`[class="${feedToggleOffClassName}"]`);
+  on.className = feedToggleOffClassName;
+  off.className = feedToggleOnClassName;
+
+  if (state) {
+    this.dataset.state = '';
+  } else {
+    this.dataset.state = target;
+  }
+
+  if (target in preferences.bookmarks.options) {
+    target === 'chrono' && (state ? chrono = false : chrono = true);
+    target === 'ascending' && (state ? ascending = false : ascending = true);
+    preferences.bookmarks.options[target] = !state; // because we're reading the existing state and updating it
+    browser.storage.local.set({ preferences });
+    renderPosts();
+  }
+};
+const feedControls = noact({
+  className: 'ch-utils-bookmarks-toggleContainer mt-4 flex flex-row justify-between gap-4 max-w-prose items-center',
+  children: [
+    {
+      className: 'ch-utils-bookmarks-toggle flex flex-row gap-4 items-center rounded-lg pl-3 h-fit',
+      dataset: { theme: postBoxTheme },
+      children: [
+        {
+          tag: 'span',
+          className: 'font-bold',
+          children: ['sort by:']
+        },
+        {
+          className: 'inline-flex w-fit items-center rounded-lg bg-cherry-300 text-base leading-none',
+          onclick: toggleState,
+          role: 'switch',
+          tabindex: 0,
+          'aria-hidden': true,
+          dataset: {
+            target: 'chrono',
+            state: chrono ? 'chrono' : ''
+          },
+          children: [
+            {
+              tag: 'span',
+              className: chrono ? feedToggleOffClassName : feedToggleOnClassName,
+              children: 'date bookmarked'
+            },
+            {
+              tag: 'span',
+              className: chrono ? feedToggleOnClassName : feedToggleOffClassName,
+              children: 'date posted'
+            }
+          ]
+        }
+      ]
+    },
+    {
+      className: 'ch-utils-bookmarks-toggle flex flex-row gap-4 items-center rounded-lg pl-3 h-fit',
+      dataset: { theme: postBoxTheme },
+      children: [
+        {
+          tag: 'span',
+          className: 'font-bold',
+          children: ['order:']
+        },
+        {
+          className: 'inline-flex w-fit items-center rounded-lg bg-cherry-300 text-base leading-none',
+          onclick: toggleState,
+          role: 'switch',
+          tabindex: 0,
+          'aria-hidden': true,
+          dataset: {
+            target: 'ascending',
+            state: ascending ? 'ascending' : ''
+          },
+          children: [
+            {
+              tag: 'span',
+              className: ascending ? feedToggleOffClassName : feedToggleOnClassName,
+              children: 'descending'
+            },
+            {
+              tag: 'span',
+              className: ascending ? feedToggleOnClassName : feedToggleOffClassName,
+              children: 'ascending'
+            }
+          ]
+        }
+      ]
+    }
+  ]
+});
 
 const renderPage = async () => {
-  const page = +/\d+/.exec(window.location.search);
-  const lower = page * BOOKMARKS_PER_PAGE;
-  const upper = (page + 1) * BOOKMARKS_PER_PAGE;
   const container = document.querySelector('.mt-4.flex.w-fit.flex-col.gap-4');
   const pageButtons = container.querySelector('.max-w-prose');
-  $('.ch-utils-customPost').remove();
-
   document.title = 'cohost! - posts you\'ve bookmarked';
   container.previousElementSibling.style.display = 'none';
+
+  container.parentElement.insertBefore(feedControls, container.previousElementSibling);
 
   let bookmarks = await getCursor('bookmarkStore');
 
   cacheData({ postStore: bookmarks });
-  bookmarks.toReversed().slice(lower, upper).map(bookmark => {
-    console.log(bookmark);
-    container.insertBefore(renderPost(bookmark), pageButtons);
-  });
-
-  window.addEventListener('popstate', () => {
+  renderPosts = () => window.requestAnimationFrame(() =>{
+    let bookmarkClones = structuredClone(bookmarks);
     $('.ch-utils-customPost').remove();
     const page = +/\d+/.exec(window.location.search);
     const lower = page * BOOKMARKS_PER_PAGE;
     const upper = (page + 1) * BOOKMARKS_PER_PAGE;
-    bookmarks.toReversed().slice(lower, upper).map(bookmark => {
+
+    if (chrono) bookmarkClones.sort((a, b) => a.publishedAt - b.publishedAt);
+    else bookmarkClones.sort((a, b) => a.storedAt - b.storedAt);
+    if (!ascending) bookmarkClones.reverse();
+
+    bookmarkClones.slice(lower, upper).map(bookmark => {
       console.log(bookmark);
       container.insertBefore(renderPost(bookmark), pageButtons);
     });
   });
+
+  renderPosts();
+  window.addEventListener('popstate', renderPosts);
 };
 
 export const main = async () => {
+  ({ chrono, ascending: ascending } = await getOptions('bookmarks'))
   threadFunction.start(addButtons, `:not([${customAttribute}])`);
 
   if (window.location.pathname === '/bookmarked') renderPage();
@@ -115,6 +221,10 @@ export const main = async () => {
 
 export const clean = async () => {
   threadFunction.stop(addButtons);
+  window.removeEventListener('popstate', renderPosts);
   $(`.${customClass}`).remove();
+  $('.ch-utils-customPost').remove();
   $(`[${customAttribute}]`).removeAttr(customAttribute);
 };
+
+export const update = async () => void 0;
