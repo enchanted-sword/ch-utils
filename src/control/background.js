@@ -88,7 +88,7 @@ const updateData = (dataObj, options) => { // merge data into database
         let updatedData, msg;
         const result = dataRequest.result;
         data.storedAt = Date.now();
-        if (!result) return;
+        if (typeof result === 'undefined' && storeOptions?.updateStrict) return;
         else if (typeof result === 'object') {
           updatedData = Object.assign(result, data);
           msg = `sucessfully updated ${data[objectStore.keyPath || storeOptions.index]} in ${store}`;

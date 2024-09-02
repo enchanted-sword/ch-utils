@@ -1,5 +1,5 @@
 import { getProjectSlow } from './darkWorld.js';
-import { cacheData, updateData, getIndexedProjects } from './database.js';
+import { updateData, getIndexedProjects } from './database.js';
 
 const stringifyParams = obj => {
   if (typeof obj === 'undefined') return '';
@@ -72,7 +72,7 @@ const pendingProjectMap = new Map();
 
 const apiFetchProject = async handle => {
   const [{ projects }] = await batchTrpc(['projects.searchByHandle'], { 0: { query: handle, skipMinimum: false } }); // the search function is currently the fastest way to get info from a handle. it's stupid, i know
-  cacheData({ projectStore: projects });
+  updateData({ projectStore: projects });
   const project = projects.find(p => p.handle === handle);
   if (typeof project === 'object') projectMap.set(handle, project);
   else {
@@ -137,6 +137,6 @@ const removeEmptyArrays = obj => {
  */
 export const getComments = async (handle, postId, post = null) => {
   const { comments } = await singlePost(handle, postId);
-  post && (post.comments = comments, updateData(post));
+  post && (post.comments = comments, updateData({ postStore: post, bookmarkStore: post }, { bookmarkStore: { updateStrict: true } }));
   return removeEmptyArrays(comments);
 };

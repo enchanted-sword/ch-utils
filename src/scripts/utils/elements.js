@@ -539,7 +539,7 @@ export const likeIcon = post => noact({
         this.dataset.state = 'liked';
       });
     }
-    updateData({ bookmarkStore: post }, { bookmarkStore: { index: 'postId' }});
+    updateData({ postStore: post, bookmarkStore: post }, { bookmarkStore: { index: 'postId' }});
   },
   title: `like this post as ${activeProject.handle}`,
   style: 'order:2',

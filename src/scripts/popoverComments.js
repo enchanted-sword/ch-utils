@@ -363,10 +363,11 @@ const addPopovers = async posts => {
     post.setAttribute(customAttribute, '');
 
     let handleMap = {};
-    const { postingProject, postId, shareTree, singlePostPageUrl, commentsLocked, transparentShareOfPostId } = await getViewModel(post);
+    const model = await getViewModel(post);
+    const { postingProject, postId, shareTree, singlePostPageUrl, commentsLocked, transparentShareOfPostId } = model;
     const { handle } = postingProject;
     shareTree.map(treeItem => handleMap[treeItem.postId] = treeItem.postingProject.handle);
-    const postComments = await getComments(handle, postId);
+    const postComments = await getComments(handle, postId, model);
 
     if (post.querySelector(linkSelector)) {
       const link = post.querySelector(linkSelector);

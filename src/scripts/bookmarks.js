@@ -2,7 +2,7 @@ import { noact } from './utils/noact.js';
 import { headerIconContainer } from './utils/elements.js';
 import { threadFunction } from './utils/mutation.js'; 
 import { getViewModel } from './utils/react.js';
-import { cacheData, clearData, getIndexedResources, getCursor } from './utils/database.js';
+import { cacheData, updateData, clearData, getIndexedResources, getCursor } from './utils/database.js';
 import { renderPost } from './utils/elements.js';
 import { getStorage, getOptions } from './utils/jsTools.js';
 import { postBoxTheme } from './utils/apiFetch.js';
@@ -190,7 +190,7 @@ const renderPage = async () => {
 
   let bookmarks = await getCursor('bookmarkStore');
 
-  cacheData({ postStore: bookmarks });
+  updateData({ postStore: bookmarks });
   renderPosts = () => window.requestAnimationFrame(() =>{
     let bookmarkClones = structuredClone(bookmarks);
     $('.ch-utils-customPost').remove();

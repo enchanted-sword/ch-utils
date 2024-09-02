@@ -8,7 +8,7 @@ const recieveData = msg => {
     const callback = dataCallbacks.get(msg.uuid);
     dataCallbacks.delete(msg.uuid);
     if (callback instanceof Function) callback(msg.data);
-    else console.warn('weird callback:', msg);
+    else return void 0;
   }
 };
 const postData = msg => {
