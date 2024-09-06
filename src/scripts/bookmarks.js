@@ -7,6 +7,9 @@ import { renderPost } from './utils/elements.js';
 import { getStorage, getOptions } from './utils/jsTools.js';
 import { postBoxTheme } from './utils/apiFetch.js';
 
+// eslint-disable-next-line no-undef
+const { DateTime } = luxon;
+
 let chrono, ascending;
 
 const customClass = 'ch-utils-bookmarks';
@@ -67,7 +70,7 @@ const addButtons = posts => posts.map(async post => {
   if (!model.transparentShareOfPostId) tree.push(model);
   tree.push(model);
 
-  getBookmark(post.postId);
+  getBookmark(model.postId);
 
   headers.map(async (header, i) => {
     try {
@@ -106,8 +109,8 @@ async function toggleState () {
     renderPosts();
   }
 };
-const feedControls = noact({
-  className: 'ch-utils-bookmarks-toggleContainer mt-4 flex flex-row justify-between gap-4 max-w-prose items-center',
+const feedControls = () => noact({
+  className: `${customClass} ${customClass}-toggleContainer mt-4 flex flex-row justify-between gap-4 max-w-prose items-center`,
   children: [
     {
       className: 'ch-utils-bookmarks-toggle flex flex-row gap-4 items-center rounded-lg pl-3 h-fit',
@@ -186,7 +189,7 @@ const renderPage = async () => {
   document.title = 'cohost! - posts you\'ve bookmarked';
   container.previousElementSibling.style.display = 'none';
 
-  container.parentElement.insertBefore(feedControls, container.previousElementSibling);
+  container.parentElement.insertBefore(feedControls(), container.previousElementSibling);
 
   let bookmarks = await getCursor('bookmarkStore');
 
@@ -198,7 +201,7 @@ const renderPage = async () => {
     const lower = page * BOOKMARKS_PER_PAGE;
     const upper = (page + 1) * BOOKMARKS_PER_PAGE;
 
-    if (chrono) bookmarkClones.sort((a, b) => a.publishedAt - b.publishedAt);
+    if (chrono) bookmarkClones.sort((a, b) => DateTime.fromISO(a.publishedAt).toMillis() - DateTime.fromISO(b.publishedAt).toMillis());
     else bookmarkClones.sort((a, b) => a.storedAt - b.storedAt);
     if (!ascending) bookmarkClones.reverse();
 
@@ -213,7 +216,7 @@ const renderPage = async () => {
 };
 
 export const main = async () => {
-  ({ chrono, ascending: ascending } = await getOptions('bookmarks'))
+  ({ chrono, ascending } = await getOptions('bookmarks'))
   threadFunction.start(addButtons, `:not([${customAttribute}])`);
 
   if (window.location.pathname === '/bookmarked') renderPage();

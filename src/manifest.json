@@ -27,7 +27,8 @@
         "lib/marked.min.js",
         "lib/purify.min.js",
         "lib/luxon.min.js",
-        "lib/prism.js"
+        "lib/prism.js",
+        "lib/umd.js"
       ],
       "css": [
         "scripts/utils/elements.css",
