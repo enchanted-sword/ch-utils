@@ -6,4 +6,4 @@ export const activeProject = projects.find(project => project.projectId === proj
 
 export const managedProjects = projects;
 
-export const hasActiveSubscription = await batchTrpc(['subscriptions.hasActiveSubscription']);
+export const [hasActiveSubscription] = await batchTrpc(['subscriptions.hasActiveSubscription']);
