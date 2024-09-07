@@ -104,9 +104,9 @@ const customIcon = (name, href, title, count = 0, onclick = false) => noact({
         children: [{
           className: 'inline-block h-6',
           fill: name === 'bookmarked' && window.location.pathname === '/bookmarked' ? 'currentColor' : 'none',
-          viewBox: '0 0 24 24',
-          stroke: 'currentColor',
-          'stroke-width': 1.5,
+          viewBox: name === 'plus' ? '0 0 26 26' : '0 0 24 24',
+          stroke: name === 'plus' ? '#E56B6F' : 'currentColor',
+          'stroke-width': name === 'plus' ? 2 : 1.5,
           'aria-hidden': true,
           children: [{
             'stroke-linecap': 'round',
@@ -190,7 +190,7 @@ const onTagButtonClick = function(event) {
   if (!state) window.setTimeout(() => document.addEventListener('click', closeTagMenu), 200);
   else document.removeEventListener('click', closeTagMenu);
 };
-const onCustomTagButtonClick = function(event) {
+const onCustomTagButtonClick = function() {
   const state = this.dataset.state;
   if (state) this.dataset.state = '';
   else this.dataset.state = 'open';
