@@ -165,7 +165,6 @@ export const clearData = (dataObj, options = null) => {
       }
       if (index) {
         const cursor = await index.openCursor(IDBKeyRange.only(key));
-        console.log(cursor);
         cursor.delete();
       }
       else store.delete(key);
