@@ -3,7 +3,7 @@
 {
   const { getURL } = browser.runtime;
   const isAppLoaded = () => !!document.getElementById('app');
-  const readyState = () => !Array.from(document.querySelector('#app>.flex-col>.flex-col').childNodes).filter(node => node.nodeType === 8).length;
+  const readyState = () => document.querySelector('#app>.flex-col>.flex-col') && !Array.from(document.querySelector('#app>.flex-col>.flex-col').childNodes).filter(node => node.nodeType === 8).length;
   const waitForLoad = () => new Promise(resolve => {
     window.requestAnimationFrame(() => (isAppLoaded() && readyState()) ? resolve() : waitForLoad().then(resolve));
   });

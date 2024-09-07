@@ -20,7 +20,7 @@
     {
       "matches": [ "*://*.cohost.org/*" ],
       "exclude_matches": [ "*://*.cohost.org/rc/login" ],
-      "run_at": "document_end",
+      "run_at": "document_start",
       "js": [
         "control/contentScript.js",
         "lib/jquery.min.js",
