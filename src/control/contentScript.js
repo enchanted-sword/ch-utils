@@ -24,18 +24,20 @@
       let preferences = {};
       const preferenceListeners = {};
 
+      console.log(browser.scripting);
+
       const executeFeature = async name => {
         const feature = installedFeatures[name];
 
         try {
-          if ('css' in feature) {
+          /* if ('css' in feature) {
             const link = Object.assign(document.createElement('link'), {
               rel: 'stylesheet',
               href: getURL(`/scripts/${name}.css`)
             });
       
             document.documentElement.appendChild(link);
-          }
+          } */
           if ('js' in feature) {
             const { main, clean, update } = await import(browser.runtime.getURL(`/scripts/${name}.js`)); // browser.runtime.getURL is only a valid escape when written in full
       
@@ -66,7 +68,7 @@
         const feature = installedFeatures[name];
 
         try {
-          if (feature.css) document.querySelector(`link[href='${getURL(`/scripts/${name}.css`)}']`).remove();
+          /* if (feature.css) document.querySelector(`link[href='${getURL(`/scripts/${name}.css`)}']`).remove(); */
           if (feature.js) {
             const { clean } = await import(browser.runtime.getURL(`/scripts/${name}.js`)); // browser.runtime.getURL is only a valid escape when written in full
 

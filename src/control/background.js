@@ -3,11 +3,15 @@ browser.runtime.onInstalled.addListener(async details => {
     tabs.forEach(tab => browser.tabs.reload(tab.id));
   });
   if (details.reason === 'update') {
-    browser.browserAction.setBadgeText({ text: '+' });
-    browser.browserAction.setBadgeTextColor({ color: '#20163d' });
-    browser.browserAction.setBadgeBackgroundColor({ color: '#42b0ff' });
+    browser.action.setBadgeText({ text: '+' });
+    browser.action.setBadgeTextColor({ color: '#20163d' });
+    browser.action.setBadgeBackgroundColor({ color: '#42b0ff' });
+    await browser.tabs.query({ url: '*://*.cohost.org/*' }).then(async tabs => {
+      tabs.forEach(tab => browser.tabs.reload(tab.id));
+    });
   }
   if (details.reason === 'install') {
+    browser.tabs.create({ url: '/ui/permissions.html' })
     import(browser.runtime.getURL('/scripts/utils/jsTools.js')).then(({ importFeatures, featureify }) => {
       let installedFeatures, preferences;
 
@@ -18,7 +22,7 @@ browser.runtime.onInstalled.addListener(async details => {
         console.log(preferences);
       };
 
-      setupFeatures().then(() => browser.tabs.create({ url: 'ui/menu.html' }));
+      setupFeatures().then(() => console.log('all set up!'));
     });    
   }
 });

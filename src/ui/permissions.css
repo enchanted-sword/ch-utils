@@ -1,0 +1,111 @@
+@font-face {
+  font-family: "Atkinson Hyperlegible";
+  src:
+    local("Atkinson Hyperlegible Bold"),
+    url('fonts/Atkinson-Hyperlegible-Regular.ttf') format('truetype');
+}
+@font-face {
+  font-family: "Atkinson Hyperlegible";
+  src:
+    local("Atkinson Hyperlegible Bold"),
+    url('fonts/Atkinson-Hyperlegible-Bold.ttf') format('truetype');
+  font-weight: 700;
+}
+
+:root {
+  --cherry: 131 37 79;
+  --notBlack: 25 25 25;
+  --notWhite: 255 249 242;
+  --text: var(--notBlack);
+}
+
+html {
+  line-height: 1.5;
+  font-family: "Atkinson Hyperlegible", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+body {
+  background-color: rgb(var(--notBlack));
+  margin: 0;
+  padding: 0;
+  color: rgb(var(--text));
+}
+
+dialog {
+  background-color: rgb(var(--notWhite));
+  min-width: 80vw;
+  margin-top: 6rem;
+  border: 2rem solid rgb(var(--cherry));
+  border-style: solid none;
+  border-radius: 1rem;
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+}
+
+h1 { margin: 0.5rem 0 1rem; }
+a {
+  text-decoration: none;
+  vertical-align: middle;
+}
+svg {
+  height: 2rem;
+  color: rgb(var(--cherry));
+}
+
+div {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+h2 { margin: 8px 0; }
+
+#grantPermissions {
+  width: 40%;
+  font-size: 1.5rem;
+  background-color: rgb(var(--cherry));
+  color: rgb(var(--notWhite));
+  transition: background-color .3s;
+  border: none;
+  border-radius: .5rem;
+  padding: .5rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+#grantPermissions:hover { background-color: rgb(106 26 61); }
+
+figure {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0;
+  padding: .625rem 0;
+  width: 16rem;
+  border-style: solid none;
+  border-width: 1px;
+  border-color: rgb(191 186 181);
+}
+
+[type="checkbox"] {
+  appearance: none;
+  margin: 0;
+  padding: 0;
+  print-color-adjust: exact;
+  display: inline-block;
+  vertical-align: middle;
+  background-origin: border-box;
+  user-select: none;
+  border: 2px solid rgb(var(--cherry));
+  border-radius: .5rem;
+  color: rgb(var(--cherry));
+  height: 1.5rem;
+  width: 1.5rem;
+}
+[type="checkbox"]:checked {
+  background-image: url("data:image/svg+xml,%3csvg viewBox=%270 0 16 16%27 fill=%27white%27 xmlns=%27http://www.w3.org/2000/svg%27%3e%3cpath d=%27M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z%27/%3e%3c/svg%3e");
+  background-size: 100% 100%;
+  background-color: currentColor;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+label { font-weight: 700; }

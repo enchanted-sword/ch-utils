@@ -1,17 +1,21 @@
 'use strict';
+
 {(
   async function () {
-    const { debounce, importFeatures } = await import('../scripts/utils/jsTools.js');
+    const { debounce, importFeatures, getJsonFile } = await import('../scripts/utils/jsTools.js');
     const { noact } = await import('../scripts/utils/noact.js');
 
     const onToggleFeature = async function () {
       const name = this.getAttribute('name');
+      const feature = await getJsonFile(name);
       const checked = this.checked ? true : false;
       let { preferences } = await browser.storage.local.get('preferences');
 
       if (checked) preferences[name].enabled = true;
       else preferences[name].enabled = false;
       browser.storage.local.set({ preferences });
+
+      if (feature.css) toggleContentScript(checked, feature);
 
       const secondaryContent = this.closest('li').querySelector('.ui-secondaryContent');
       if (secondaryContent) {
@@ -26,6 +30,23 @@
       preferences[name].options[key] = value;
 
       browser.storage.local.set({ preferences });
+    };
+
+    const toggleContentScript = async (state, feature) => {
+      const { name } = feature;
+      console.log(await browser.scripting.getRegisteredContentScripts())
+
+      if (state) {
+        const contentScript = {
+          id: name,
+          css: [`/scripts/${name}.css`],
+          matches: ['*://*.cohost.org/*'],
+          runAt: 'document_start'
+        };
+        browser.scripting.registerContentScripts([contentScript]);
+      } else {
+        browser.scripting.unregisterContentScripts({ ids: [name] });
+      }
     };
 
     const title = featureTitle => {
@@ -299,7 +320,7 @@
         document.body.style.overflow = 'hidden';
       }
 
-      browser.browserAction.setBadgeText({ text: '' });
+      browser.action.setBadgeText({ text: '' });
 
       const installedFeatures = await importFeatures(); // "await has no effect on this type of expression"- it does, actually!
       const { preferences } = await browser.storage.local.get('preferences');
