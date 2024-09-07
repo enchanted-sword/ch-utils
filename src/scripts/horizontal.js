@@ -240,4 +240,4 @@ export const clean = async () => {
   $(menuSelector).insertAfter(`div.${customClass}`);
   $(`.${customClass}`).remove();
   unreadObserver.disconnect();
-}
+};
