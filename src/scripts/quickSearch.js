@@ -11,7 +11,7 @@ const buttonSelector = '[href="https://cohost.org/rc/search"]';
 function showDialog(event) {
   event.preventDefault();
   searchWindow.showModal();
-};
+}
 function closeDialog(event) {
   if (!('key' in event) || event.key === 'Escape') {
     searchWindow.close();
@@ -19,8 +19,8 @@ function closeDialog(event) {
     document.getElementById(`${customClass}-projects`).replaceChildren();
     document.getElementById(`${customClass}-tags`).replaceChildren();
   }
-};
-const onSearch = async function({ target: { value = '' } }) {
+}
+async function onSearch({ target: { value = '' } }) {
   value = value.normalize('NFD').replace(/\p{Diacritic}/gu, ''); // NFD separates characters and diacritics, regex with unicode diacritic escape removes diacritics
   if (value.length < 3) return; // queries with less than 3 chars won't return anything, so this saves on network requests
   const [{ projects }, { result }] = await batchTrpc(
@@ -37,7 +37,7 @@ const onSearch = async function({ target: { value = '' } }) {
   const tags = result.map(({ content }) => content);
   const tagCards = await Promise.all(tags.map(async tag => await tagCard(`${customClass}-result`, tag)));
   document.getElementById(`${customClass}-tags`).replaceChildren(...tagCards);
-};
+}
 
 const searchWindow = noact({
   tag: 'dialog',

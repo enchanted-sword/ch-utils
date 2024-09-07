@@ -29,7 +29,8 @@ module.exports = {
     "marked": "readonly",
     "DOMPurify": "readonly",
     "Prism": "readonly",
-    "luxon": "readonly"
+    "luxon": "readonly",
+    "idb": "readonly"
   },
   "rules": {
     "no-case-declarations": "off",

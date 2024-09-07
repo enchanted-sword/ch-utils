@@ -166,7 +166,6 @@ export const clearData = (dataObj, options = null) => {
       if (index) index.delete(key);
       else store.delete(key);
     });
-    returnObj[dataStore] = storeData;
   });
 };
 

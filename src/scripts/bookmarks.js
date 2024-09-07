@@ -86,7 +86,7 @@ const addButtons = posts => posts.map(async post => {
 const BOOKMARKS_PER_PAGE = 40;
 let renderPosts;
 
-async function toggleState () {
+async function toggleState() {
   const { preferences } = await getStorage(['preferences']);
   const { state, target } = this.dataset;
   state === state ? true : false;
@@ -108,7 +108,7 @@ async function toggleState () {
     browser.storage.local.set({ preferences });
     renderPosts();
   }
-};
+}
 const feedControls = () => noact({
   className: `${customClass} ${customClass}-toggleContainer mt-4 flex flex-row justify-between gap-4 max-w-prose items-center`,
   children: [

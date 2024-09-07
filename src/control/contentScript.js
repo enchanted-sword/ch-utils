@@ -18,7 +18,7 @@
 
   waitForLoad().then(() => {
 
-    import(getURL('/scripts/utils/jsTools.js')).then(({ deepEquals, importFeatures, featureify }) => {
+    import(browser.runtime.getURL('/scripts/utils/jsTools.js')).then(({ deepEquals, importFeatures, featureify }) => { // browser.runtime.getURL is only a valid escape when written in full
       let installedFeatures = {};
       let enabledFeatures = [];
       let preferences = {};
@@ -37,8 +37,7 @@
             document.documentElement.appendChild(link);
           }
           if ('js' in feature) {
-            const scriptPath = getURL(`/scripts/${name}.js`);
-            const { main, clean, update } = await import(scriptPath);
+            const { main, clean, update } = await import(browser.runtime.getURL(`/scripts/${name}.js`)); // browser.runtime.getURL is only a valid escape when written in full
       
             window.requestAnimationFrame(() => main().catch(console.error));
       
@@ -69,8 +68,7 @@
         try {
           if (feature.css) document.querySelector(`link[href='${getURL(`/scripts/${name}.css`)}']`).remove();
           if (feature.js) {
-            const scriptPath = getURL(`/scripts/${name}.js`);
-            const { clean } = await import(scriptPath);
+            const { clean } = await import(browser.runtime.getURL(`/scripts/${name}.js`)); // browser.runtime.getURL is only a valid escape when written in full
 
             window.requestAnimationFrame(() => clean().catch(console.error));
 
