@@ -136,7 +136,11 @@ const removeEmptyArrays = obj => {
  * @returns {Promise <object>} comments
  */
 export const getComments = async (handle, postId, post = null) => {
-  const { comments } = await singlePost(handle, postId);
+  const { comments } = await singlePost(handle, postId).catch(e => {
+    console.warn(`unable to fetch post [${handle}, ${postId}]: most likely unauthorized`, e);
+    return { comments: void 0 };
+  });
+  if (!comments) return [];
   post && (post.comments = comments, updateData({ postStore: post, bookmarkStore: post }, { bookmarkStore: { updateStrict: true } }));
   return removeEmptyArrays(comments);
 };
