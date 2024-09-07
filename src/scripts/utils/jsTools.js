@@ -90,10 +90,10 @@ export const featureify = (installedFeatures, preferences) => {
 
 /**
  * Fetches items from the extension's local storage
- * @param {string} keys - Array of strings corresponding to storage keys to fetch
+ * @param {string[]} keys - Array of strings corresponding to storage keys to fetch
  * @returns {object} Object of key-value pairs ({ version: 'X' })
  */ 
-export const getStorage = async (keys = []) => {
+export const getStorage = async keys => {
   const storage = await browser.storage.local.get();
   const returnObj = {};
   for (const key of keys) {
