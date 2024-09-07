@@ -161,9 +161,13 @@ export const clearData = (dataObj, options = null) => {
     [dataObj[dataStore]].flat().map(async key => {
       if (!key) {
         console.warn('clearData: key is undefined');
-        return void 0;
+        return;
       }
-      if (index) index.delete(key);
+      if (index) {
+        const cursor = await index.openCursor(IDBKeyRange.only(key));
+        console.log(cursor);
+        cursor.delete();
+      }
       else store.delete(key);
     });
   });
