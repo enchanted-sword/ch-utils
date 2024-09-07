@@ -38,9 +38,10 @@
     position: absolute;
     top: 3rem;
     left: 6rem;
-    background: rgb(var(--color-notBlack));
+    background: rgb(var(--color-background));
     padding: .5rem;
     border-radius: .5rem;
+    z-index: 11;
   }
   a[href="#"] + ul li:not(:last-of-type) { border-bottom: 1px solid rgba(var(--color-notWhite) / .2); }
 
@@ -57,4 +58,12 @@
   .lg\:grid-cols-4:has(.ch-utils-horizontal) { grid-template-columns: .5fr repeat(3, minmax(0, 1fr)); }
 
   .artist-alley-grid { margin-left: 0; }
+
+  [href="#"] svg {
+    transition-property: transform;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
+  }
+  [href="#"][data-state="open"] svg { transform: rotate(180deg); }
+  [data-state="open"] + .ch-utils-horizontal-tagList { display: block !important; }
 }
