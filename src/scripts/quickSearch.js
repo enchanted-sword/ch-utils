@@ -8,8 +8,21 @@ const customClass = 'ch-utils-quickSearch';
 const customAttribute = 'data-quick-search';
 const buttonSelector = '[href="https://cohost.org/rc/search"]';
 
+function showDialog(event) {
+  event.preventDefault();
+  searchWindow.showModal();
+};
+function closeDialog(event) {
+  if (!('key' in event) || event.key === 'Escape') {
+    searchWindow.close();
+    document.getElementById('ch-utils-quickSearch').value = '';
+    document.getElementById(`${customClass}-projects`).replaceChildren();
+    document.getElementById(`${customClass}-tags`).replaceChildren();
+  }
+};
 const onSearch = async function({ target: { value = '' } }) {
   value = value.normalize('NFD').replace(/\p{Diacritic}/gu, ''); // NFD separates characters and diacritics, regex with unicode diacritic escape removes diacritics
+  if (value.length < 3) return; // queries with less than 3 chars won't return anything, so this saves on network requests
   const [{ projects }, { result }] = await batchTrpc(
     ['projects.searchByHandle', 'tags.query'],
     { 
@@ -31,13 +44,7 @@ const searchWindow = noact({
   className: `${customClass} h-full w-full max-h-screen max-w-screen flex-col items-center overflow-x-hidden overflow-y-auto justify-stretch gap-6 bg-transparent px-0 py-16 z-50 fixed top-0 text-inherit open:flex lg:px-6`,
   style: 'background: rgb(25 25 25 / .9)',
   onclick: function(event) {
-    try {
-      event.stopPropagation();
-      if (event.target.matches(`dialog, .${customClass}-close`)) {
-        searchWindow.removeAttribute('open');
-        document.getElementById('ch-utils-quickSearch').value = '';
-      }
-    } catch {null}
+    if (event.target.matches(`dialog, .${customClass}-close`)) closeDialog(event);
   },
   children: [{
     className: 'max-w-screen rounded-lg bg-notWhite p-3 text-notBlack',
@@ -123,16 +130,6 @@ const searchWindow = noact({
   }]
 });
 
-const showDialog = event => {
-  event.preventDefault();
-  searchWindow.setAttribute('open', '');
-};
-const closeDialog = event => {
-  if (event.key === 'Escape' && searchWindow.hasAttribute('open')) {
-    searchWindow.removeAttribute('open');
-    document.getElementById('ch-utils-quickSearch').value = '';
-  }
-}
 const addPopovers = buttons => {
   for (const button of buttons) {
     button.setAttribute(customAttribute, '');
