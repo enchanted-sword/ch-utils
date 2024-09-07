@@ -1,4 +1,4 @@
-import { getOptions } from './utils/jsTools.js';
+import { getStorage } from './utils/jsTools.js';
 import { style } from './utils/style.js';
 import { noact } from './utils/noact.js';
 import { activeProject, hasActiveSubscription } from './utils/user.js';
@@ -12,6 +12,7 @@ const observerTargetSelector = '#live-dashboard > .flex-col';
 const textSelector = '#live-dashboard .flex-col > button.w-full svg text'
 const customClass = 'ch-utils-horizontal';
 
+let bookmarks;
 const projectHandle = activeProject.handle;
 const [bookmarkedTags, notifications, followRequests, unreadAsks] = await batchTrpc(['bookmarks.tags.list', 'notifications.count', 'relationships.countFollowRequests', 'asks.unreadCount'], { 1: { projectHandle }, 2: { projectHandle }, 3: { projectHandle } });
 
@@ -29,7 +30,8 @@ const pathMap = {
   followers: 'M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z',
   settings: 'M4.5 12a7.5 7.5 0 0015 0m-15 0a7.5 7.5 0 1115 0m-15 0H3m16.5 0H21m-1.5 0H12m-8.457 3.077l1.41-.513m14.095-5.13l1.41-.513M5.106 17.785l1.15-.964m11.49-9.642l1.149-.964M7.501 19.795l.75-1.3m7.5-12.99l.75-1.3m-6.063 16.658l.26-1.477m2.605-14.772l.26-1.477m0 17.726l-.26-1.477M10.698 4.614l-.26-1.477M16.5 19.794l-.75-1.299M7.5 4.205L12 12m6.894 5.785l-1.149-.964M6.256 7.178l-1.15-.964m15.352 8.864l-1.41-.513M4.954 9.435l-1.41-.514M12.002 12l-3.75 6.495',
   help: 'M16.712 4.33a9.027 9.027 0 011.652 1.306c.51.51.944 1.064 1.306 1.652M16.712 4.33l-3.448 4.138m3.448-4.138a9.014 9.014 0 00-9.424 0M19.67 7.288l-4.138 3.448m4.138-3.448a9.014 9.014 0 010 9.424m-4.138-5.976a3.736 3.736 0 00-.88-1.388 3.737 3.737 0 00-1.388-.88m2.268 2.268a3.765 3.765 0 010 2.528m-2.268-4.796a3.765 3.765 0 00-2.528 0m4.796 4.796c-.181.506-.475.982-.88 1.388a3.736 3.736 0 01-1.388.88m2.268-2.268l4.138 3.448m0 0a9.027 9.027 0 01-1.306 1.652c-.51.51-1.064.944-1.652 1.306m0 0l-3.448-4.138m3.448 4.138a9.014 9.014 0 01-9.424 0m5.976-4.138a3.765 3.765 0 01-2.528 0m0 0a3.736 3.736 0 01-1.388-.88 3.737 3.737 0 01-.88-1.388m2.268 2.268L7.288 19.67m0 0a9.024 9.024 0 01-1.652-1.306 9.027 9.027 0 01-1.306-1.652m0 0l4.138-3.448M4.33 16.712a9.014 9.014 0 010-9.424m4.138 5.976a3.765 3.765 0 010-2.528m0 0c.181-.506.475-.982.88-1.388a3.736 3.736 0 011.388-.88m-2.268 2.268L4.33 7.288m6.406 1.18L7.288 4.33m0 0a9.024 9.024 0 00-1.652 1.306A9.025 9.025 0 004.33 7.288',
-  plus: 'M11.3119 5.42651 6.14576 1.57637l1.85085 7.14697L1 10.8444l6.40678 1.9135L1.38644 25l9.15256-7.3545 3.2542 6.8473.1424-8.9222 8.7864 5.5331-6.9762-8.438L25 7.317 13.4678 8.40058 15.1356 1l-3.8237 4.42651Z'
+  plus: 'M11.3119 5.42651 6.14576 1.57637l1.85085 7.14697L1 10.8444l6.40678 1.9135L1.38644 25l9.15256-7.3545 3.2542 6.8473.1424-8.9222 8.7864 5.5331-6.9762-8.438L25 7.317 13.4678 8.40058 15.1356 1l-3.8237 4.42651Z',
+  bookmarked: 'M 7.875 2.625 C 6.6285 2.625 5.625 3.6285 5.625 4.875 L 5.625 13.875 L 5.625 19.125 C 5.625 19.2021 5.62922 19.2785 5.63672 19.3535 C 5.6311 19.2972 5.62643 19.241 5.625 19.1836 L 5.625 21.3457 L 6.26953 20.7041 L 12 15 L 17.7305 20.7041 C 17.7556 20.6785 17.7798 20.6518 17.8037 20.625 C 17.78 20.6515 17.7554 20.6788 17.7305 20.7041 L 18.375 21.3457 L 18.375 19.1836 C 18.3736 19.241 18.3689 19.2972 18.3633 19.3535 C 18.3595 19.391 18.3542 19.4279 18.3486 19.4648 C 18.3542 19.428 18.3595 19.391 18.3633 19.3535 C 18.3708 19.2785 18.375 19.2021 18.375 19.125 L 18.375 13.875 L 18.375 4.875 C 18.375 3.6285 17.3715 2.625 16.125 2.625 L 7.875 2.625 Z M 18.3311 19.5762 C 18.3237 19.6125 18.3137 19.646 18.3047 19.6816 C 18.2957 19.7173 18.2861 19.7551 18.2754 19.79 C 18.2647 19.825 18.2526 19.8584 18.2402 19.8926 C 18.2279 19.9268 18.2161 19.9588 18.2021 19.9922 C 18.1743 20.0589 18.1423 20.1252 18.1084 20.1885 C 18.0915 20.2201 18.074 20.2515 18.0557 20.2822 C 18.0373 20.3129 18.0198 20.3433 18 20.373 C 17.9802 20.4028 17.9596 20.4322 17.9385 20.4609 C 17.9597 20.4322 17.9802 20.4029 18 20.373 C 18.0197 20.3435 18.0374 20.3128 18.0557 20.2822 C 18.0741 20.2514 18.0914 20.2203 18.1084 20.1885 C 18.1423 20.1252 18.1743 20.0589 18.2021 19.9922 C 18.2159 19.9591 18.228 19.9265 18.2402 19.8926 C 18.2527 19.8581 18.2646 19.8253 18.2754 19.79 C 18.2863 19.7545 18.2955 19.7179 18.3047 19.6816 C 18.3135 19.6466 18.3239 19.6119 18.3311 19.5762 Z M 5.69531 19.6816 C 5.70446 19.7179 5.71373 19.7545 5.72461 19.79 C 5.7354 19.8253 5.74732 19.8581 5.75977 19.8926 C 5.74744 19.8584 5.73531 19.825 5.72461 19.79 C 5.71391 19.7551 5.70434 19.7173 5.69531 19.6816 Z M 5.79785 19.9922 C 5.82567 20.0589 5.85773 20.1252 5.8916 20.1885 C 5.90862 20.2203 5.92586 20.2514 5.94434 20.2822 C 5.92596 20.2515 5.90854 20.2201 5.8916 20.1885 C 5.85773 20.1252 5.82567 20.0589 5.79785 19.9922 Z'
 };
 
 const unreadOnNavbarStyleElement = style('@media (min-width: 1024px) { #live-dashboard > .flex > button.w-full { display: none; } }');
@@ -101,7 +103,7 @@ const customIcon = (name, href, title, count = 0, onclick = false) => noact({
         className: 'relative',
         children: [{
           className: 'inline-block h-6',
-          fill: 'none',
+          fill: name === 'bookmarked' && window.location.pathname === '/bookmarked' ? 'currentColor' : 'none',
           viewBox: '0 0 24 24',
           stroke: 'currentColor',
           'stroke-width': 1.5,
@@ -162,6 +164,7 @@ const customNavBar = () => noact({
       }
     ] : null,
     customIcon('liked-posts', '/rc/liked-posts', 'posts you\'ved liked'),
+    bookmarks ? customIcon('bookmarked', '/bookmarked', 'posts you\'ve bookmarked') : null,
     customIcon('artist-alley', '/rc/artist-alley', 'artist alley'),
     customIcon('search', 'https://cohost.org/rc/search', 'search'), // so popovers get attached
     customIcon('profile', `/${projectHandle}`, 'profile'),
@@ -201,7 +204,9 @@ const unreadObserver = new MutationObserver(mutations => {
 });
 
 export const main = async () => {
-  const { unreadOnNavbar } = await getOptions('horizontal');
+  const { preferences } = await getStorage(['preferences']);
+  bookmarks = preferences.bookmarks.enabled;
+  const { unreadOnNavbar } = preferences.horizontal.options;
   const menu = document.querySelector(menuSelector);
 
   if (window.location.pathname !== '/' && window.location.pathname.split('/').length === 2) {
@@ -209,6 +214,10 @@ export const main = async () => {
   } else {
     if (window.location.pathname === '/rc/artist-alley') $('.styled-scrollbars-light[class~="\[height\:calc\(100vh-4rem\)\]"]').prepend($('<div>', { class: 'ch-utils-horizontal' }));
     else $('[class~="lg\:grid-cols-4"]:has(ul[role="menu"])').prepend($('<div>', { class: 'ch-utils-horizontal' }));
+
+    if (bookmarks) {
+      menu.insertBefore(customIcon('bookmarked', '/bookmarked', 'posts you\'ve bookmarked'), menu.querySelector('ul > [href*="/rc/artist-alley"]'));
+    }
     document.querySelector(navSelector).prepend(menu);
     menu.prepend(homeIcon);
     $(linkSelector).on('click', onTagButtonClick);
