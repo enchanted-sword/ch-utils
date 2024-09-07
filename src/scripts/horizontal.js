@@ -163,7 +163,7 @@ const customNavBar = () => noact({
     ] : null,
     customIcon('liked-posts', '/rc/liked-posts', 'posts you\'ved liked'),
     customIcon('artist-alley', '/rc/artist-alley', 'artist alley'),
-    customIcon('search', '/rc/search', 'search'),
+    customIcon('search', 'https://cohost.org/rc/search', 'search'), // so popovers get attached
     customIcon('profile', `/${projectHandle}`, 'profile'),
     customIcon('inbox', '/rc/project/inbox', 'inbox', unreadAsks.count),
     customIcon('unpublished', '/rc/posts/unpublished', 'drafts'),
