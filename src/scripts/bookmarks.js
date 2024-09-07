@@ -204,11 +204,10 @@ const renderPage = async () => {
     if (chrono) bookmarkClones.sort((a, b) => DateTime.fromISO(a.publishedAt).toMillis() - DateTime.fromISO(b.publishedAt).toMillis());
     else bookmarkClones.sort((a, b) => a.storedAt - b.storedAt);
     if (!ascending) bookmarkClones.reverse();
+    bookmarkClones = bookmarkClones.slice(lower, upper);
 
-    bookmarkClones.slice(lower, upper).map(bookmark => {
-      console.log(bookmark);
-      container.insertBefore(renderPost(bookmark), pageButtons);
-    });
+    console.log(bookmarkClones);
+    bookmarkClones.map(bookmark => container.insertBefore(renderPost(bookmark), pageButtons));
   });
 
   renderPosts();
