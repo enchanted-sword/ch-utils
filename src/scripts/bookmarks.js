@@ -83,7 +83,7 @@ const addButtons = posts => posts.map(async post => {
   });
 });
 
-const BOOKMARKS_PER_PAGE = 40;
+const BOOKMARKS_PER_PAGE = 20;
 let renderPosts;
 
 async function toggleState() {
