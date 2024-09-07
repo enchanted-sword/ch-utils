@@ -76,7 +76,7 @@ const apiFetchProject = async handle => {
   const project = projects.find(p => p.handle === handle);
   if (typeof project === 'object') projectMap.set(handle, project);
   else {
-    console.warn('search method failed, attempting slow method');
+    console.warn(`search method failed { handle: ${handle} }, attempting slow method`);
     projectMap.set(handle, await getProjectSlow(handle));
   }
   return project;
@@ -137,7 +137,7 @@ const removeEmptyArrays = obj => {
  */
 export const getComments = async (handle, postId, post = null) => {
   const { comments } = await singlePost(handle, postId).catch(e => {
-    console.warn(`unable to fetch post [${handle}, ${postId}]: most likely unauthorized`, e);
+    console.warn(`unable to fetch post { handle: ${handle},  postId: ${postId} }\nmost likely unauthorized`, e);
     return { comments: void 0 };
   });
   if (!comments) return [];
