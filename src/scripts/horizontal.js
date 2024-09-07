@@ -143,7 +143,7 @@ const customIcon = (name, href, title, count = 0, onclick = false) => noact({
 const customNavBar = () => noact({
   tag: 'ul',
   role: 'menu',
-  className: `${customClass} flex h-fit align-center relative color-notWhite`,
+  className: `${customClass} ${customClass}-customNav flex h-fit align-center relative color-notWhite`,
   children: [
     customIcon('home', '/', 'home'),
     customIcon('notifications', 'https://cohost.org/rc/project/notifications', 'notifications', notifications.count), // so popovers get attached
@@ -209,9 +209,10 @@ export const main = async () => {
   const { unreadOnNavbar } = preferences.horizontal.options;
   const menu = document.querySelector(menuSelector);
 
-  if (window.location.pathname !== '/' && window.location.pathname.split('/').length === 2) {
+  if (window.location.pathname !== '/' && !window.location.pathname.startsWith('/rc/')) {
     document.querySelector(navSelector).prepend(customNavBar());
   } else {
+    if (!menu) return;
     if (window.location.pathname === '/rc/artist-alley') $('.styled-scrollbars-light[class~="\[height\:calc\(100vh-4rem\)\]"]').prepend($('<div>', { class: 'ch-utils-horizontal' }));
     else $('[class~="lg\:grid-cols-4"]:has(ul[role="menu"])').prepend($('<div>', { class: 'ch-utils-horizontal' }));
 

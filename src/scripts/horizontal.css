@@ -67,3 +67,6 @@
   [href="#"][data-state="open"] svg { transform: rotate(180deg); }
   [data-state="open"] + .ch-utils-horizontal-tagList { display: block !important; }
 }
+@media (max-width: 1023px) {
+  .ch-utils-horizontal-customNav { display: none; }
+}
