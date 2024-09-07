@@ -58,6 +58,12 @@ Adds keyboard shortcuts for navigation and interaction.
 ### Post previews
 Display a live preview of the post you're writing alongside the editor.
 
+### Like and share from post headers
+Allows adding like and/or share buttons to each post in a thread, so that you can like and/or share them without clicking through to the permalink.
+
+### Post bookmarks
+Adds a custom bookmark feature that allows you to save posts, view, and sort them.
+
 # Building the extension locally
 - Download and install [Node.js and npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
 - Install the project dependancies using ```npm install```

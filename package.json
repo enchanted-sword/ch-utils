@@ -1,6 +1,6 @@
 {
   "name": "ch-utils",
-  "version": "1.4.1",
+  "version": "1.5.0",
   "description": "utilities for cohost",
   "scripts": {
     "test": "web-ext lint",

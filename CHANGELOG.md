@@ -1,3 +1,27 @@
+# 1.5.0
+### General
+- Updated the markdown parser again
+- Implemented IndexedDB for caching posts and projects, cutting down on API requests
+
+### **New feature:** Like and share from post headers
+- Allows adding like and/or share buttons to each post in a thread, so that you can like and/or share them without clicking through to the permalink
+
+### **New feature:** Post bookmarks
+- Adds a custom bookmark feature that allows you to save posts, view, and sort them
+
+### Horizontal navigation
+- Navbar is now shown on user pages
+- Added bookmarks integration
+
+### Open notifications in popover view
+- Remove empty notifications before rendering
+
+### Conditionally show 18+
+- Fixed content not being re-hideable
+
+### Post filtering
+- Fixed originals being hidden when they shouldn't be
+
 # 1.4.1
 ### **New feature:** Conditionally show 18+ {[@wowperfect](https://cohost.org/wowperfect)}
 - When logged in as certain pages, automatically displays 18+ content
