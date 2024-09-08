@@ -86,7 +86,6 @@ const tokenizer = {
 const renderer = {
   code({ text }) {return `<div style="scrollbar-color:initial" class="co-prose prose overflow-hidden break-words"><pre><code>${text}</code></pre></div>`},
   text({ text, tokens }) {
-    console.log(tokens);
     if (tokens) text = this.parser.parseInline(tokens);
     return text.replace(mentionRegex, mention);
   },
