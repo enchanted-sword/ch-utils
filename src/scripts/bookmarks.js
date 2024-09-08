@@ -6,10 +6,12 @@ import { cacheData, updateData, clearData, getIndexedResources, getCursor } from
 import { renderPost } from './utils/elements.js';
 import { getStorage, getOptions } from './utils/jsTools.js';
 import { postBoxTheme } from './utils/apiFetch.js';
+import { activeProject } from './utils/user.js';
 
 // eslint-disable-next-line no-undef
 const { DateTime } = luxon;
 
+const bookmarkingProject = activeProject.handle;
 let chrono, ascending;
 
 const customClass = 'ch-utils-bookmarks';
@@ -17,7 +19,7 @@ const customAttribute = 'data-bookmarks';
 const feedToggleOnClassName = 'rounded-lg bg-cherry-500 py-2 px-2 text-notWhite md:px-3 font-bold text-center';
 const feedToggleOffClassName = 'py-2 px-2 text-cherry-700 md:px-3 text-center';
 
-const bookmarkPost = post => cacheData({ bookmarkStore: post });
+const bookmarkPost = post => cacheData({ bookmarkStore: Object.assign(structuredClone(post), { bookmarkingProject }) });
 const unbookmarkPost = postId => clearData({ bookmarkStore: postId }, { bookmarkStore: { index: 'postId' } });
 const getBookmark = async postId => getIndexedResources('bookmarkStore', postId, { index: 'postId' });
 const isPostBookmarked = async postId => typeof await getBookmark(postId) !== 'undefined';
