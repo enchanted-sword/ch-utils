@@ -118,11 +118,6 @@ const { defaultPostBoxTheme } = displayPrefs;
 
 export const postBoxTheme = themeMap[defaultPostBoxTheme];
 
-/**
- * @returns {Promise <object[]>} list of projects the user has edit access to
- */
-export const listEditedProjects = async () => await apiFetch('/v1/trpc/projects.listEditedProjects');
-
 const removeEmptyArrays = obj => {
   const returnObj = {};
   Object.keys(obj).filter(key => obj[key].length > 0).map(key => returnObj[key] = obj[key]);

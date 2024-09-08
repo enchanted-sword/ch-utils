@@ -18,7 +18,7 @@ const conditionalCreateIndex = (store, indexName, keyPath, options) => {
   }
 };
 
-const db = await openDB('ch-utils', DB_VERSION, {
+export const openDatabase = async () => openDB('ch-utils', DB_VERSION, {
   upgrade: (db, oldVersion, newVersion, transaction) => {
     console.info(`database upgraded from v${oldVersion} to v${newVersion}`);
     
@@ -41,7 +41,9 @@ const db = await openDB('ch-utils', DB_VERSION, {
   }
 });
 
-const updateNeeded = date => (Date.now() - date) > EXPIRY_TIME;
+const db = await openDatabase();
+
+const updateNeeded = data => (Date.now() - data.storedAt) > EXPIRY_TIME;
 const smartGetData = async (store, data) => {
   let val
   const key = data[store.keyPath];
@@ -61,16 +63,20 @@ const smartGetData = async (store, data) => {
  * @param {object} data - object containing key-value pairs of object stores and data to enter into those stores
  * @returns {void}
  */
-export const cacheData = dataObj => {
+export const cacheData = async dataObj => {
   const dataStores = Object.keys(dataObj);
   const tx = db.transaction(dataStores, 'readwrite');
   dataStores.map(dataStore => {
     const store = tx.objectStore(dataStore);
-    [dataObj[dataStore]].flat().map(data => store.put(data));
+    [dataObj[dataStore]].flat().map(data => {
+      data.storedAt = Date.now();
+      store.put(data);
+    });
   });
+  return tx.done;
 };
 
-/** updates cached data in stores. stores data by default if it dones't already exist
+/** updates cached data in stores. stores data by default if it doesn't already exist
  * @param {object} data - object containing key-value pairs of object stores and data to update those stores with
  * @param {object} [options] - object containing key-value pairs of object stores and options objects to use for those stores;
  * @param {string} [options.STORE_NAME.index] - the index to use when updating data
@@ -90,6 +96,7 @@ export const updateData = (dataObj, options = null) => {
       if (storeOptions?.updateStrict && typeof existingData === 'undefined') return;
       else if (typeof existingData === 'object') updateData = Object.assign(structuredClone(existingData), data);
       else updateData = data;
+      updateData.storedAt = Date.now();
       store.put(updateData);
     });
   });
@@ -119,7 +126,7 @@ export const getData = async (dataObj, options = null) => {
       if (index) return index.get(key);
       else return store.get(key);
     }));
-    returnObj[dataStore] = storeData.map(data => structuredClone(data));
+    returnObj[dataStore] = storeData.map(data => typeof data === 'object' ? Object.assign(structuredClone(data), { expired: updateNeeded(data) }) : structuredClone(data));
   });
 
   await tx.done;
@@ -137,7 +144,7 @@ export const getCursor = async (storeName, query = null) => {
   const returnData = [];
   let cursor = await tx.store.openCursor(query);
   while (cursor) {
-    returnData.push(structuredClone(cursor.value));
+    returnData.push(typeof cursor.value === 'object' ? Object.assign(structuredClone(cursor.value), { expired: updateNeeded(cursor.value) }) : structuredClone(cursor.value));
     cursor = await cursor.continue();
   }
   await tx.done;
