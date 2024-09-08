@@ -756,12 +756,20 @@ const meatballMenuButton = postId => noact({
   id: `mb-${postId}`,
   style: 'order: 2',
   onclick: function() {
+    function closeMenu(event) {
+      event.stopPropagation();
+      if (!event.target.closest('[id*="mb"]') && !event.target.closest('.ch-utils-mb')) {
+        document.querySelectorAll('[id*="mb"][data-headlessui-state="open"]').forEach(button => button.click());
+      }
+    }
     if (this.dataset.headlessuiState) {
       this.dataset.headlessuiState = '',
       this.setAttribute('aria-expanded', false);
+      document.documentElement.removeEventListener('click', closeMenu);
     } else {
       this.dataset.headlessuiState = 'open',
       this.setAttribute('aria-expanded', true);
+      document.documentElement.addEventListener('click', closeMenu);
     }
   },
   type: 'button',
