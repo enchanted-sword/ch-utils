@@ -13,7 +13,7 @@ const editorSelector = `.flex-row:has(.co-post-composer):not([${customAttribute}
 const askSelector = '[data-testid="composer-context"] [data-testid^="ask-"] article';
 const projectButtonSelector = '.co-post-composer > .co-thread-header button[data-headlessui-state]';
 const headlineInputSelector = '.co-editable-body[name="headline"]';
-let bodySelector = '[data-headlessui-state] > div > .flex-col:has([data-drop-target-for-external])';
+let bodySelector = '[data-headlessui-state] > div > .flex-col:has([data-drop-target-for-external],[data-drop-target-for-element])';
 const tagInputSelector = '.co-editable-body.text-sm';
 const tagButtonSelector = '.co-editable-body:has(input[id*="downshift"]) .co-filled-button';
 
@@ -199,7 +199,8 @@ const mapBlocks = block => {
   const audioV1 = Array.from(block.querySelectorAll('figure:has(audio)')).map(audio => formatAudio(audio));
   const audioV2 = block.matches('figure:has(audio)') ? formatAudio(block) : null;
 
-  if (textarea) return formatMarkdown(textarea.value);
+  if (block.matches('dialog')) return null
+  else if (textarea) return formatMarkdown(textarea.value);
   else if (imgs.length) {
     if (imgs.length === 1) return noact(wrapImg(imgs[0]));
     else {
