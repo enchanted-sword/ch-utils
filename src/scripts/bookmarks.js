@@ -204,7 +204,7 @@ const renderPage = async () => {
     const upper = (page + 1) * BOOKMARKS_PER_PAGE;
 
     if (chrono) bookmarkClones.sort((a, b) => DateTime.fromISO(a.publishedAt).toMillis() - DateTime.fromISO(b.publishedAt).toMillis());
-    else bookmarkClones.sort((a, b) => a.storedAt - b.storedAt);
+    else bookmarkClones.sort((a, b) => a.bookmarkId - b.bookmarkId);
     if (!ascending) bookmarkClones.reverse();
     bookmarkClones = bookmarkClones.slice(lower, upper);
 
@@ -215,8 +215,7 @@ const renderPage = async () => {
   renderPosts();
   window.addEventListener('popstate', renderPosts);
   window.addEventListener('ch-utils-database-update', async ({ detail }) => {
-    console.log(detail);
-    if ('bookmarkStore' in detail.targets) {
+    if ('bookmarkStore' in detail.targets && ['cache', 'clear'].includes(detail.type)) {
       bookmarks = await getCursor('bookmarkStore');
       renderPosts();
     }
