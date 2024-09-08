@@ -26,6 +26,9 @@
 ### Post previews
 - Fixed rendering when using the v2 post composer
 
+### Keyboard shortcuts
+- Fixed inability to paginate upwards when filtering posts
+
 # 1.4.1
 ### **New feature:** Conditionally show 18+ {[@wowperfect](https://cohost.org/wowperfect)}
 - When logged in as certain pages, automatically displays 18+ content
