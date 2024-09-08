@@ -84,27 +84,34 @@ const tokenizer = {
   html: src => false,
 };
 const renderer = {
-  code: ({ text }) => `<div style="scrollbar-color:initial" class="co-prose prose overflow-hidden break-words"><pre><code>${text}</code></pre></div>`,
-  text: ({ text }) => text.replace(mentionRegex, mention),
-  heading: ({ text, depth }) => `<h${depth} class="font-bold">${text}</h${depth}>`
+  code({ text }) {return `<div style="scrollbar-color:initial" class="co-prose prose overflow-hidden break-words"><pre><code>${text}</code></pre></div>`},
+  text({ text, tokens }) {
+    console.log(tokens);
+    if (tokens) text = this.parser.parseInline(tokens);
+    return text.replace(mentionRegex, mention);
+  },
+  heading({ tokens, depth }) {return `<h${depth} class="font-bold">${this.parser.parseInline(tokens)}</h${depth}>`}
 };
-const link = ({ text, href }) => text === href ? `
-  <div class="co-embed">
-    <div class="renderIfVisible">
-      <div>
+function link({ text, href }) {
+  if (text === href) return `
+    <div class="co-embed">
+      <div class="renderIfVisible">
         <div>
-          <div
-            style="left: 0px; width: 100%; height: 160px; position: relative; border-radius: 3px; box-shadow: rgba(0, 0, 0, 0.06) 0px 8px 18px; overflow: hidden; padding-bottom: 0px;">
-            <iframe
-              src="https://iframely.net/api/iframe?app=1&amp;url=${encodeURIComponent(href)}&amp;key=${IFRAMELY_KEY}"
-              style="top: 0; left: 0; width: 100%; height: 100%; position: absolute; border: 0;" allowfullscreen=""
-              tabindex="0"></iframe></div>
+          <div>
+            <div
+              style="left: 0px; width: 100%; height: 160px; position: relative; border-radius: 3px; box-shadow: rgba(0, 0, 0, 0.06) 0px 8px 18px; overflow: hidden; padding-bottom: 0px;">
+              <iframe
+                src="https://iframely.net/api/iframe?app=1&amp;url=${encodeURIComponent(href)}&amp;key=${IFRAMELY_KEY}"
+                style="top: 0; left: 0; width: 100%; height: 100%; position: absolute; border: 0;" allowfullscreen=""
+                tabindex="0"></iframe></div>
+          </div>
         </div>
       </div>
+      <div class="co-ui-text mt-0 p-3 text-right"><a href="${href}" target="_blank" rel="noopener nofollow" tabindex="0">${text}</a></div>
     </div>
-    <div class="co-ui-text mt-0 p-3 text-right"><a href="${href}" target="_blank" rel="noopener nofollow" tabindex="0">${text}</a></div>
-  </div>
-` : `<a href="${href}">${text}</a>`;
+  `;
+  else return `<a href="${href}">${text}</a>`;
+}
 const prepostprocess = html => html.replace(/^\s+|\s+$/g, '')
   .replace(styleSheetRegex, '')
   .replace(varRegex, varReplacer)
@@ -117,7 +124,6 @@ const postprocess = html => DOMPurify.sanitize(prepostprocess(html));
 const standard = new Marked();
 standard.use({
   renderer,
-  tokenizer,
   hooks: { preprocess, postprocess },
   gfm: true,
   breaks: true
@@ -128,7 +134,7 @@ standard.use({
  * @param {string} str - markdown
  * @returns {string} parsed markdown
  */
-export const parseMd = str => standard.parseInline(str);
+export const parseMd = str => standard.parse(str);
 
 /**
  * standard parser sans gfm breaks
@@ -138,7 +144,6 @@ export const parseMd = str => standard.parseInline(str);
 const breakless = new Marked();
 breakless.use({
   renderer,
-  tokenizer,
   hooks: { preprocess, postprocess },
   gfm: true,
   breaks: false
@@ -154,7 +159,6 @@ export const parseMdNoBr = str => breakless.parseInline(str);
 const embedful = new Marked();
 embedful.use({
   renderer: Object.assign(renderer, { link }),
-  tokenizer,
   hooks: {
     preprocess,
     postprocess: html => DOMPurify.sanitize(prepostprocess(html), { ADD_TAGS: ['iframe'], ADD_ATTR: ['allow', 'allowfullscreen', 'frameborder', 'scrolling'] }),
@@ -163,4 +167,4 @@ embedful.use({
   breaks: true
 });
 
-export const parseMdEmbed = str => embedful.parseInline(str);
+export const parseMdEmbed = str => embedful.parse(str);
