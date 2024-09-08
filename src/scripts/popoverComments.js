@@ -39,6 +39,7 @@ const newCommentButton = (postId, link) => noact({
     {
       viewBox: '0 0 24 24',
       fill: 'currentColor',
+      'stroke-width': 0.5,
       'aria-hidden': true,
       className: 'h-6 w-6 transition-transform ui-open:rotate-180',
       children: [{
