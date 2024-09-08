@@ -1,18 +1,17 @@
 import { noact } from './utils/noact.js';
-import { headerIconContainer } from './utils/elements.js';
+import { avatar8, headerIconContainer, renderPost } from './utils/elements.js';
 import { threadFunction } from './utils/mutation.js'; 
 import { getViewModel } from './utils/react.js';
 import { cacheData, updateData, clearData, getIndexedResources, getCursor } from './utils/database.js';
-import { renderPost } from './utils/elements.js';
 import { getStorage, getOptions } from './utils/jsTools.js';
 import { postBoxTheme } from './utils/apiFetch.js';
-import { activeProject } from './utils/user.js';
+import { activeProject, managedProjects } from './utils/user.js';
 
 // eslint-disable-next-line no-undef
 const { DateTime } = luxon;
 
 const bookmarkingProject = activeProject.handle;
-let chrono, ascending;
+let chrono, ascending, projectFeed, selectedProject;
 
 const customClass = 'ch-utils-bookmarks';
 const customAttribute = 'data-bookmarks';
@@ -86,6 +85,7 @@ const addButtons = posts => posts.map(async post => {
 });
 
 const BOOKMARKS_PER_PAGE = 20;
+const hideMenuDelay = 500;
 let renderPosts;
 
 async function toggleState() {
@@ -112,71 +112,188 @@ async function toggleState() {
   }
 }
 const feedControls = () => noact({
-  className: `${customClass} ${customClass}-toggleContainer mt-4 flex flex-row justify-between gap-4 max-w-prose items-center`,
+  className: `${customClass} mt-4 flex flex-col gap-4 max-w-prose`,
   children: [
     {
-      className: 'ch-utils-bookmarks-toggle flex flex-row gap-4 items-center rounded-lg pl-3 h-fit',
+      className: `${customClass}-toggle w-full flex flex-row items-center p-3 rounded-lg gap-4`,
       dataset: { theme: postBoxTheme },
       children: [
+        { tag: 'h3', style: 'font-weight: bold; font-size: 1.25rem', children: 'showing bookmarks for:' },
         {
-          tag: 'span',
-          className: 'font-bold',
-          children: ['sort by:']
-        },
-        {
-          className: 'inline-flex w-fit items-center rounded-lg bg-cherry-300 text-base leading-none',
-          onclick: toggleState,
-          role: 'switch',
-          tabindex: 0,
-          'aria-hidden': true,
-          dataset: {
-            target: 'chrono',
-            state: chrono ? 'chrono' : ''
-          },
+          className: 'relative flex flex-row items-center gap-4',
           children: [
             {
-              tag: 'span',
-              className: chrono ? feedToggleOffClassName : feedToggleOnClassName,
-              children: 'date bookmarked'
+              className: 'group flex flex-row items-center gap-1',
+              id: 'bookmark-page-selector',
+              'aria-haspopup': 'listbox',
+              'aria-expanded': false,
+              dataset: { headlessuiState: '' },
+              onclick: function() {
+                if (this.dataset.headlessuiState) {
+                  this.dataset.headlessuiState = '',
+                  this.setAttribute('aria-expanded', false);
+                } else {
+                  this.dataset.headlessuiState = 'open',
+                  this.setAttribute('aria-expanded', true);
+                }
+              },
+              children: [
+                {
+                  id: 'bookmark-page-selector-active',
+                  className: 'flex-row items-center gap-3 rounded-l-lg px-2 py-1 group-hover:bg-foreground-600 ui-open:bg-foreground-700 lg:flex',
+                  children: [
+                    projectFeed ? {
+                      className: 'flex-0 mask relative aspect-square h-8 w-8',
+                      children: [{
+                        className: 'mask mask-roundrect h-full w-full object-cover',
+                        src: `${activeProject.avatarURL}?dpr=2&amp;width=80&amp;height=80&amp;fit=cover&amp;auto=webp`,
+                        alt: bookmarkingProject
+                      }]
+                    } : null,
+                    {
+                      tag: 'span',
+                      className: 'font-bold',
+                      style: projectFeed ? '' : 'height: 2rem; line-height: 2rem; display: inline-block',
+                      children: projectFeed ? `@${bookmarkingProject}` : 'all pages'
+                    }
+                  ]
+                },
+                {
+                  className: 'rounded-r-lg p-2 group-hover:bg-foreground-600 ui-open:bg-foreground-700 lg:block',
+                  children: [{
+                    className: `${customClass}-caret h-6 w-6 transition-transform ui-open:rotate-180`,
+                    viewBox: '0 0 24 24',
+                    'aria-hidden': true,
+                    'stroke-width': 0.5,
+                    fill: 'currentColor',
+                    children: [{
+                      'fill-rule': 'evenodd',
+                      'clip-rule': 'evenodd',
+                      d: 'M12.53 16.28a.75.75 0 01-1.06 0l-7.5-7.5a.75.75 0 011.06-1.06L12 14.69l6.97-6.97a.75.75 0 111.06 1.06l-7.5 7.5z'
+                    }]
+                  }]
+                }
+              ]
             },
             {
-              tag: 'span',
-              className: chrono ? feedToggleOnClassName : feedToggleOffClassName,
-              children: 'date posted'
+              tag: 'ul',
+              className: 'ch-utils-bookmarks-list hidden lg:cohost-shadow-light dark:lg:cohost-shadow-dark left-0 top-12 z-30 !overflow-y-auto truncate bg-foreground !outline-none absolute lg:max-h-[calc(100vh_-_100px)] lg:divide-none rounded-lg bg-notWhite text-notBlack',
+              'aria-orientation': 'vertical',
+              role: 'listbox',
+              onmouseleave: function() {
+                const selector = document.getElementById('bookmark-page-selector');
+                window.setTimeout(() => selector.dataset.headlessuiState = '', hideMenuDelay);
+              },
+              tabindex: 0,
+              children: [
+                {
+                  tag: 'li',
+                  className: 'flex h-10 cursor-pointer flex-row items-center gap-3 px-2 py-1 hover:bg-foreground-100 hover:text-foreground-800 lg:first-of-type:rounded-t-lg lg:last-of-type:rounded-b-lg',
+                  role: 'option',
+                  tabindex: -1,
+                  'aria-selected': selectedProject === 'all',
+                  onclick: async function() {
+                    if (projectFeed) {
+                      const { preferences } = await getStorage(['preferences']);
+                      preferences.bookmarks.options.page = false;
+                      browser.storage.local.set({ preferences });
+                    }
+                    projectFeed = false,
+                    selectedProject = 'all';
+                    renderPosts();
+                    const selector = document.getElementById('bookmark-page-selector');
+                    const selectorActive = document.getElementById('bookmark-page-selector-active');
+                    selector.click();
+                    selectorActive.replaceChildren(
+                      noact({
+                        tag: 'span',
+                        style: 'line-height: 2rem',
+                        className: 'font-bold h-8 inline-block',
+                        children: 'all pages'
+                      })
+                    );
+                  },
+                  children: {
+                    tag: 'span',
+                    children: ['show bookmarks for all pages']
+                  }
+                },
+                ...managedProjects.map(project => selectableProject(project))
+              ]
             }
           ]
         }
+        
       ]
     },
     {
-      className: 'ch-utils-bookmarks-toggle flex flex-row gap-4 items-center rounded-lg pl-3 h-fit',
-      dataset: { theme: postBoxTheme },
+      className: `${customClass}-toggleContainer flex flex-row flex-wrap gap-4 items-center`,
       children: [
         {
-          tag: 'span',
-          className: 'font-bold',
-          children: ['order:']
-        },
-        {
-          className: 'inline-flex w-fit items-center rounded-lg bg-cherry-300 text-base leading-none',
-          onclick: toggleState,
-          role: 'switch',
-          tabindex: 0,
-          'aria-hidden': true,
-          dataset: {
-            target: 'ascending',
-            state: ascending ? 'ascending' : ''
-          },
+          className: 'ch-utils-bookmarks-toggle flex flex-row gap-4 items-center rounded-lg pl-3 h-fit',
+          dataset: { theme: postBoxTheme },
           children: [
             {
               tag: 'span',
-              className: ascending ? feedToggleOffClassName : feedToggleOnClassName,
-              children: 'descending'
+              className: 'font-bold',
+              children: ['sort by:']
             },
             {
+              className: 'inline-flex w-fit items-center rounded-lg bg-cherry-300 text-base leading-none',
+              onclick: toggleState,
+              role: 'switch',
+              tabindex: 0,
+              'aria-hidden': true,
+              dataset: {
+                target: 'chrono',
+                state: chrono ? 'chrono' : ''
+              },
+              children: [
+                {
+                  tag: 'span',
+                  className: chrono ? feedToggleOffClassName : feedToggleOnClassName,
+                  children: 'date bookmarked'
+                },
+                {
+                  tag: 'span',
+                  className: chrono ? feedToggleOnClassName : feedToggleOffClassName,
+                  children: 'date posted'
+                }
+              ]
+            }
+          ]
+        },
+        {
+          className: 'ch-utils-bookmarks-toggle flex flex-row gap-4 items-center rounded-lg pl-3 h-fit',
+          dataset: { theme: postBoxTheme },
+          children: [
+            {
               tag: 'span',
-              className: ascending ? feedToggleOnClassName : feedToggleOffClassName,
-              children: 'ascending'
+              className: 'font-bold',
+              children: ['order:']
+            },
+            {
+              className: 'inline-flex w-fit items-center rounded-lg bg-cherry-300 text-base leading-none',
+              onclick: toggleState,
+              role: 'switch',
+              tabindex: 0,
+              'aria-hidden': true,
+              dataset: {
+                target: 'ascending',
+                state: ascending ? 'ascending' : ''
+              },
+              children: [
+                {
+                  tag: 'span',
+                  className: ascending ? feedToggleOffClassName : feedToggleOnClassName,
+                  children: 'descending'
+                },
+                {
+                  tag: 'span',
+                  className: ascending ? feedToggleOnClassName : feedToggleOffClassName,
+                  children: 'ascending'
+                }
+              ]
             }
           ]
         }
@@ -184,6 +301,46 @@ const feedControls = () => noact({
     }
   ]
 });
+const selectableProject = project => {
+  const { handle } = project;
+  const selected = handle === selectedProject;
+
+  return {
+    tag: 'li',
+    className: 'flex h-10 cursor-pointer flex-row items-center gap-3 px-2 py-1 hover:bg-foreground-100 hover:text-foreground-800 lg:first-of-type:rounded-t-lg lg:last-of-type:rounded-b-lg',
+    role: 'option',
+    tabindex: -1,
+    'aria-selected': selected,
+    onclick: async function() {
+      if (!projectFeed) {
+        const { preferences } = await getStorage(['preferences']);
+        preferences.bookmarks.options.page = true;
+        browser.storage.local.set({ preferences });
+      }
+      projectFeed = true;
+      selectedProject = handle;
+      renderPosts();
+      const selector = document.getElementById('bookmark-page-selector');
+      const selectorActive = document.getElementById('bookmark-page-selector-active');
+      selector.click();
+      selectorActive.replaceChildren(
+        avatar8(project),
+        noact({
+          tag: 'span',
+          className: 'font-bold',
+          children: `@${handle}`
+        })
+      );
+    },
+    children: [
+      avatar8(project),
+      {
+        tag: 'span',
+        children: [`@${handle}`]
+      }
+    ]
+  }
+};
 
 const renderPage = async () => {
   const container = document.querySelector('.mt-4.flex.w-fit.flex-col.gap-4');
@@ -206,6 +363,7 @@ const renderPage = async () => {
     if (chrono) bookmarkClones.sort((a, b) => DateTime.fromISO(a.publishedAt).toMillis() - DateTime.fromISO(b.publishedAt).toMillis());
     else bookmarkClones.sort((a, b) => a.bookmarkId - b.bookmarkId);
     if (!ascending) bookmarkClones.reverse();
+    if (selectedProject !== 'all') bookmarkClones = bookmarkClones.filter(bookmark => bookmark.bookmarkingProject === selectedProject);
     bookmarkClones = bookmarkClones.slice(lower, upper);
 
     console.log(bookmarkClones);
@@ -223,9 +381,10 @@ const renderPage = async () => {
 };
 
 export const main = async () => {
-  ({ chrono, ascending } = await getOptions('bookmarks'))
+  ({ chrono, ascending, projectFeed } = await getOptions('bookmarks'))
   threadFunction.start(addButtons, `:not([${customAttribute}])`);
-
+  if (projectFeed) selectedProject = bookmarkingProject;
+  else selectedProject = 'all';
   if (window.location.pathname === '/bookmarked') renderPage();
 };
 

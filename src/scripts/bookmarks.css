@@ -23,6 +23,5 @@
   }
 }
 
-@media (max-width: 600px) {
-  .ch-utils-bookmarks-toggleContainer { flex-direction: column; }
-}
+[data-headlessui-state="open"] ~ .ch-utils-bookmarks-list { display: block; }
+.ch-utils-bookmarks :is(button:hover, [data-headlessui-state="open"]) :is(span, .ch-utils-bookmarks-caret) { color: rgb(var(--color-notWhite)); }

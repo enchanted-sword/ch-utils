@@ -12,6 +12,10 @@
       "ascending": {
         "value": false,
         "type": "hidden"
+      },
+      "projectFeed": {
+        "value": true,
+        "type": "hidden"
       }
     }
   },
