@@ -153,6 +153,7 @@ const newMenu = async postId => {
                     className: 'ch-utils-quickRechost-caret h-6 w-6 transition-transform ui-open:rotate-180',
                     viewBox: '0 0 24 24',
                     'aria-hidden': true,
+                    'stroke-width': 0.5,
                     fill: 'currentColor',
                     children: [{
                       'fill-rule': 'evenodd',
