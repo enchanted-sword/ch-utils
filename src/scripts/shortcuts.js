@@ -2,11 +2,11 @@ const keyHandler = ({ ctrlKey, key, repeat }) => {
   if (!(document.querySelector(':focus') === null)) return;
 
   if (['j', 'k'].includes(key)) { // post scrolling
-    const posts = Array.from(document.querySelectorAll('.renderIfVisible:has([data-postid])'));
+    const posts = Array.from(document.querySelectorAll('.renderIfVisible:has([data-postid])')).filter(post => post.checkVisibility());
     if (posts.length === 0) return;
     let scrollTarget;
     if (key === 'k') scrollTarget = posts.find(post => Math.floor(post.getBoundingClientRect().y) > 80);
-    else scrollTarget = posts.reverse().find(post => Math.ceil(post.getBoundingClientRect().y) < 80);
+    else scrollTarget = posts.reverse().find(post => Math.ceil(post.getBoundingClientRect().y) <= 80);
     if (typeof scrollTarget === 'undefined') {
       if (key === 'j') window.scroll(0, 0);
       else return;
