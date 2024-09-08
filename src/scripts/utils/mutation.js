@@ -59,7 +59,7 @@ export const threadFunction = Object.freeze({
    * @param {string} filter - optional filter
    */
   start (func, filter = false) {
-    if (this.functions.has(func)) this.functions.delete(func);
+    if (this.functions.has(func)) this.listeners.delete(func);
     this.functions.set(func, filter);
     if (mutationManager.listeners.has(onNewThreads)) mutationManager.trigger(onNewThreads);
     else (mutationManager.start(postSelector, onNewThreads));
