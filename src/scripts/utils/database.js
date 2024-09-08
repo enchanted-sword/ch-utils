@@ -37,6 +37,7 @@ const db = await openDB('ch-utils', DB_VERSION, {
     conditionalCreateIndex(bookmarkStore, 'postId', 'postId', { unique: true });
     conditionalCreateIndex(bookmarkStore, 'publishedAt', 'publishedAt', { unique: false });
     conditionalCreateIndex(bookmarkStore, 'storedAt', 'storedAt', { unique: false });
+    conditionalCreateIndex(bookmarkStore, 'bookmarkingProject', 'bookmarkingProject', { unique: false });
   }
 });
 
@@ -102,7 +103,7 @@ export const updateData = (dataObj, options = null) => {
  */
 export const getData = async (dataObj, options = null) => {
   const dataStores = Object.keys(dataObj);
-  const tx = db.transaction(dataStores, 'readwrite');
+  const tx = db.transaction(dataStores, 'readonly');
   const returnObj = {};
 
   dataStores.map(async dataStore => {
@@ -132,7 +133,7 @@ export const getData = async (dataObj, options = null) => {
  * @returns {Promise <object[]>}
  */
 export const getCursor = async (storeName, query = null) => {
-  const tx = db.transaction(storeName);
+  const tx = db.transaction(storeName, 'readwrite');
   const returnData = [];
   let cursor = await tx.store.openCursor(query);
   while (cursor) {
