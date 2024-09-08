@@ -6,6 +6,8 @@ import { noact } from './utils/noact.js';
 import { parseMd } from './utils/markdown.js';
 import { getOptions } from './utils/jsTools.js';
 import { onLongPress } from './utils/touch.js';
+import { managedProjects } from './utils/user.js';
+import { updateData } from './utils/database.js';
 
 let timeoutId, showDescriptions;
 
@@ -271,6 +273,8 @@ export const main = async () => {
   threadFunction.start(addPopoversInPosts);
   mutationManager.start(anchorSelector, addPopovers);
   document.addEventListener('touchstart', removePopover);
+
+  updateData({ projectStore: managedProjects }); // this keeps your projects up-to-date and prevents the annoying warning spam when getProject tries to fetch your own private projects via search
 };
 
 export const clean = async () => {
