@@ -14,11 +14,11 @@
     .grid > & {
       position: fixed;
       top: .75rem;
-      right: calc(50% - 11rem);
+      right: calc(50% - 14rem);
       z-index: 50;
 
-      @media (min-width: 1280px) { right: calc(50% - 19rem); }
-      @media (min-width: 1536px) { right: calc(50% - 27rem); }
+      @media (min-width: 1280px) { right: calc(50% - 22rem); }
+      @media (min-width: 1536px) { right: calc(50% - 30rem); }
     }
 
     > a > li {
