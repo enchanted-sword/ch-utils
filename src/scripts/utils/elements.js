@@ -579,6 +579,179 @@ export const shareIcon = shareOfPostId => noact({
   }]
 });
 
+const infoBox = (type, text) => noact({
+  className: 'flex flex-col items-center m-3 gap-3',
+  children: [{
+    className: `co-info-box co-${type} box-border border-[1px] flex flex-row items-center gap-3 self-stretch rounded-lg p-3`,
+    children: [
+      {
+        className: 'h-6 w-6 flex-none',
+        fill: 'none',
+        'stroke-width': 1.5,
+        stroke: 'currentColor',
+        viewBox: '0 0 24 24',
+        'aria-hidden': true,
+        children: [{
+          'stroke-linecap': 'round',
+          'stroke-linejoin': 'round',
+          d: 'M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z'
+        }]
+      },
+      { children: text }
+    ]
+  }]
+});
+const adultToggle = () => noact({
+  className: 'ch-utils-18-plus flex flex-col items-center m-3 gap-3',
+  children: [
+    {
+      className: `ch-utils-18-plus-info co-info-box co-18-plus box-border border-[1px] flex flex-row items-center gap-3 self-stretch rounded-lg p-3`,
+      children: [
+        {
+          className: 'h-6 w-6 flex-none',
+          fill: 'none',
+          'stroke-width': 1.5,
+          stroke: 'currentColor',
+          viewBox: '0 0 24 24',
+          'aria-hidden': true,
+          children: [{
+            'stroke-linecap': 'round',
+            'stroke-linejoin': 'round',
+            d: 'M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z'
+          }]
+        },
+        {
+          children: [
+            'This post contains 18+ content.',
+            displayPrefs.explicitlyCollapseAdultContent	? ' We\'re hiding it according to your content preferences.' : null
+          ]
+        }
+      ]
+    },
+    {
+      className: 'ch-utils-18-plus-toggle flex flex-row items-center gap-3',
+      children: [
+        {
+          href: 'https://help.antisoftware.club/a/solutions/articles/62000225024',
+          className: 'co-info-box co-18-plus border-[1px] hover-underline flex h-10 items-center justify-center self-center rounded-lg bg-foreground py-2 px-3 leading-none hidden',
+          target: '_blank',
+          rel: 'noreferrer',
+          children: '18+'
+        },
+        {
+          className: 'ch-utils-18-plus-button co-filled-button tracking-wider whitespace-nowrap flex h-10 items-center justify-center self-center rounded-lg bg-foreground py-2 px-3 leading-none',
+          onclick: function() {
+            if (this.dataset.state) {
+              this.dataset.state = '';
+              this.textContent = 'show post';
+            }
+            else {
+              this.dataset.state = 'open';
+              this.textContent = 'hide post';
+            }
+          },
+          dataset: { state: displayPrefs.explicitlyCollapseAdultContent ? '' : 'open' },
+          children: displayPrefs.explicitlyCollapseAdultContent ? 'show post' : 'hide post'
+        }
+      ]
+    }
+  ]
+});
+const cwToggle = (adult, cws) => noact({
+  className: 'ch-utils-18-plus ch-utils-cw flex flex-col items-center m-3 gap-3',
+  children: [
+    adult ? {
+      className: `ch-utils-18-plus-info co-info-box co-18-plus box-border border-[1px] flex flex-row items-center gap-3 self-stretch rounded-lg p-3`,
+      children: [
+        {
+          className: 'h-6 w-6 flex-none',
+          fill: 'none',
+          'stroke-width': 1.5,
+          stroke: 'currentColor',
+          viewBox: '0 0 24 24',
+          'aria-hidden': true,
+          children: [{
+            'stroke-linecap': 'round',
+            'stroke-linejoin': 'round',
+            d: 'M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z'
+          }]
+        },
+        {
+          children: [
+            'This post contains 18+ content.',
+            displayPrefs.explicitlyCollapseAdultContent	? ' We\'re hiding it according to your content preferences.' : null
+          ]
+        }
+      ]
+    } : null,
+    {
+      className: `ch-utils-cw-info co-info-box co-warning box-border border-[1px] flex flex-row items-center gap-3 self-stretch rounded-lg p-3`,
+      children: [
+        {
+          className: 'h-6 w-6 flex-none',
+          fill: 'none',
+          'stroke-width': 1.5,
+          stroke: 'currentColor',
+          viewBox: '0 0 24 24',
+          'aria-hidden': true,
+          children: [{
+            'stroke-linecap': 'round',
+            'stroke-linejoin': 'round',
+            d: 'M12 9v3.75m0-10.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.75c0 5.592 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.57-.598-3.75h-.152c-3.196 0-6.1-1.249-8.25-3.286zm0 13.036h.008v.008H12v-.008z'
+          }]
+        },
+        {
+          children: [
+            {
+              className: 'ch-utils-cw-infoLine',
+              children: [
+                'This post has content warnings for:',
+                ...cws.map(cw => ({ tag: 'span', className: 'font-bold', children: ` ${cw}` })),
+                { tag: 'span', className: 'font-bold', children: '.' }
+              ]
+            },
+            {
+              className: 'ch-utils-cw-openLine hidden',
+              children: [
+                adult ? [
+                  'This post contains ',
+                  {
+                    href: 'https://help.antisoftware.club/a/solutions/articles/62000225024',
+                    className: 'underline',
+                    target: '_blank',
+                    rel: 'noreferrer',
+                    children: '18+ content'
+                  },
+                  '.',
+                  { tag: 'br' },
+                ] : null,
+                'CWs:',
+                ...cws.map(cw => ({ tag: 'span', className: 'font-bold', children: ` ${cw}` })),
+                { tag: 'span', className: 'font-bold', children: '.' }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      className: 'ch-utils-18-plus-button co-filled-button tracking-wider whitespace-nowrap flex h-10 items-center justify-center self-center rounded-lg bg-foreground py-2 px-3 leading-none',
+      onclick: function() {
+        if (this.dataset.state) {
+          this.dataset.state = '';
+          this.textContent = 'show post';
+        }
+        else {
+          this.dataset.state = 'open';
+          this.textContent = 'hide post';
+        }
+      },
+      dataset: { state: displayPrefs.explicitlyCollapseAdultContent ? '' : 'open' },
+      children: displayPrefs.explicitlyCollapseAdultContent ? 'show post' : 'hide post'
+    }
+  ]
+});
+
 const displayName = project => noact({
   className: 'co-project-display-name max-w-full flex-shrink truncate font-atkinson font-bold hover:underline',
   rel: 'author',
@@ -691,10 +864,10 @@ const threadFooter = post => noact({
       },
       {
         className: 'flex items-center justify-end gap-3',
-        children: [
+        children: post.state? [
           likeIcon(post),
           shareIcon(post.postId)
-        ]
+        ] : []
       }
     ]
   }]
@@ -707,7 +880,7 @@ const postHeader = post => noact({
   ]
 });
 const postHeadline = post => noact({
-  className: 'flex w-full flex-row p-3',
+  className: 'ch-utils-headline flex w-full flex-row p-3',
   children: [{
     className: 'co-prose prose flex-grow self-center break-words hover:underline',
     href: post.singlePostPageUrl,
@@ -781,14 +954,20 @@ const formatPosts = (parentPost, tree) => {
         dataset: { testid: `post-${post.postId}` }
       },
       parentPost.shareOfPostId ? postHeader(post) : null,
-      post.headline? postHeadline(post) : null,
       {
         children: [{
-          children:[{
-            className: 'relative overflow-hidden supports-[overflow:clip]:overflow-clip isolate co-contain-paint',
-            dataset: { testid: 'post-body', postBody: true },
-            children: mapBlocks(post.blocks)
-          }]
+          children:[
+            post.state === 0 ? infoBox('info', 'This post is a draft.  It\'s not publicly visible, but you can send people links to it.') : null,
+            post.state === 2 ? infoBox('tombstone', 'Sorry!  This post has been deleted by its original author.') : null,
+            (post.state !== 2 && post.cws.length === 0 && post.effectiveAdultContent) ? adultToggle() : null,
+            post.cws.length ? cwToggle(post.effectiveAdultContent, post.cws) : null,
+            post.headline? postHeadline(post) : null,
+            {
+              className: 'relative overflow-hidden supports-[overflow:clip]:overflow-clip isolate co-contain-paint',
+              dataset: { testid: 'post-body', postBody: true },
+              children: mapBlocks(post.blocks)
+            }
+          ]
         }]
       },
       post.tags.length ? formatTags(post) : null, 

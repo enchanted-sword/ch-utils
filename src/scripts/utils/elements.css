@@ -19,3 +19,29 @@
   color: rgb(var(--color-cherry)) !important;
   fill: currentColor;
 }
+
+.ch-utils-18-plus:has([data-state="open"]) {
+  &.ch-utils-cw {
+    flex-direction: row;
+    align-self: stretch;
+  }
+  .ch-utils-18-plus-toggle {
+    align-items: start;
+    justify-content: end;
+    align-self: stretch;
+    padding: .75rem;
+  }
+  .ch-utils-18-plus-info { display: none; }
+  .ch-utils-cw-info {
+    flex-grow: 1;
+    border-width: 2px;
+  }
+  .ch-utils-18-plus-info + .ch-utils-cw-info {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+  }
+  .ch-utils-cw-infoLine { display: none; }
+  .hidden { display: flex; }
+  .ch-utils-cw-openLine { display: block; }
+}
+.ch-utils-18-plus:not(:has([data-state="open"])) ~ :is([data-post-body], .ch-utils-headline) { display: none; }
