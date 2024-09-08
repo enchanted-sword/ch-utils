@@ -18,6 +18,7 @@ const newIcon = () => noact({
     {
       className: 'h-6 w-10 co-action-button',
       stroke: 'currentColor',
+      'stroke-width': 1,
       viewBox: '0 0 18 18',
       children: [
         {

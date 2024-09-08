@@ -42,6 +42,15 @@ export const noact = obj => {
   
     if (svgNs.includes(tag)) {
       el = document.createElementNS('http://www.w3.org/2000/svg', tag);
+      if (tag === 'svg' && !('style' in obj)) {
+        !('fill' in obj) && el.setAttribute('fill', 'none');
+        !('stroke' in obj) && el.setAttribute('stroke', 'currentColor');
+        !('stroke-width' in obj) && el.setAttribute('stroke-width', 1.5);
+        !('aria-hidden' in obj) && el.setAttribute('aria-hidden', true);
+      } else if (tag === 'path' && !('style' in obj)) {
+        !('stroke-linejoin' in obj) && el.setAttribute('stroke-linejoin', 'round');
+        !('stroke-linecap' in obj) && el.setAttribute('stroke-linecap', 'round');
+      }
       Object.keys(obj).filter(key => !['tag', 'dataset', 'children'].includes(key))
         .forEach(key => el.setAttribute(key === 'className' ? 'class' : key, obj[key]));
     } else {
