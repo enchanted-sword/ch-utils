@@ -13,7 +13,7 @@ let timeoutId, showDescriptions;
 
 const customClass = 'ch-utils-urlPopovers';
 const customAttribute = 'data-url-popovers';
-const anchorSelector = `a[href^="https://cohost.org/"]:not([href="https://cohost.org/"],[href^="https://cohost.org/rc"],[href*="/post/"],[href$="/ask"],[href*="/tagged/"],[href$="/follow-requests"],[${customAttribute}])`;
+const anchorSelector = `a:is([href^="https://cohost.org/"],[href^="/"]):not([href="https://cohost.org/"],[href*="/rc/"],[href*="/post/"],[href$="/ask"],[href*="/tagged/"],[href$="/follow-requests"],[${customAttribute}])`;
 
 const hasMouse = () => matchMedia('(pointer:fine)').matches;
 const addPopoverDelay = 100;
