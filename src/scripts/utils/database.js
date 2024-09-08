@@ -3,6 +3,8 @@ const { openDB, wrap } = idb;
 const DB_VERSION = 1; // database version
 const EXPIRY_TIME = 86400000; // period after which data is considered expired
 
+const updateEvent = 'ch-utils-database-update';
+
 const conditionalCreateStore = (tx, storeName, options) => {
   const { db } = tx;
   let store;
@@ -58,10 +60,16 @@ const smartGetData = async (store, data) => {
   }
   return val;
 };
+const dispatchUpdate = (type, targets) => {
+  const event = new CustomEvent(updateEvent, {
+    detail: { type, targets }
+  });
+  window.dispatchEvent(event);
+}
 
 /** caches data into stores, overwriting any existing data tied to those keys (if not an autoincremented store)
  * @param {object} data - object containing key-value pairs of object stores and data to enter into those stores
- * @returns {void}
+ * @returns {Promise <void>} fulfils with completion of the transaction
  */
 export const cacheData = async dataObj => {
   const dataStores = Object.keys(dataObj);
@@ -73,6 +81,7 @@ export const cacheData = async dataObj => {
       store.put(data);
     });
   });
+  dispatchUpdate('cache', dataObj);
   return tx.done;
 };
 
@@ -81,7 +90,7 @@ export const cacheData = async dataObj => {
  * @param {object} [options] - object containing key-value pairs of object stores and options objects to use for those stores;
  * @param {string} [options.STORE_NAME.index] - the index to use when updating data
  * @param {boolean} [options.STORE_NAME.updateStrict] - if true, data is only updated if the key is already present in the store
- * @returns {void}
+ * @returns {Promise <void>} fulfils with completion of the transaction
  */
 export const updateData = (dataObj, options = null) => {
   const dataStores = Object.keys(dataObj);
@@ -100,6 +109,9 @@ export const updateData = (dataObj, options = null) => {
       store.put(updateData);
     });
   });
+
+  dispatchUpdate('update', dataObj);
+  return tx.done;
 };
 
 /**
@@ -155,7 +167,7 @@ export const getCursor = async (storeName, query = null) => {
  * @param {object} data - object containing key-value pairs of object stores and keys to delete from those stores
  * @param {object} [options] - object containing key-value pairs of object stores and options objects to use for those stores;
  * @param {string} [options.STORE_NAME.index] - the index to use when deleting data
- * @returns {void}
+ * @returns {Promise <void>} fulfils with completion of the transaction
  */
 export const clearData = (dataObj, options = null) => {
   const dataStores = Object.keys(dataObj);
@@ -178,6 +190,9 @@ export const clearData = (dataObj, options = null) => {
       else store.delete(key);
     });
   });
+
+  dispatchUpdate('clear', dataObj);
+  return tx.done
 };
 
 /**

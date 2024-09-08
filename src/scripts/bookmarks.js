@@ -53,7 +53,7 @@ const bookmarkIcon = (post, isBookmarked) => noact({
   }]
 });
 
-const fixTree = (parentPost, treePost) => { // either cohost or react is sloppy with data inside of the tree so it has empty shareTree or numSharedComments properties by default
+const fixTree = (parentPost, treePost) => { // either cohost or react is sloppy with data inside of the tree so it has empty shareTree and numSharedComments properties by default
   if (parentPost === treePost) return parentPost;
   else {
     const fixedTreePost = treePost;
@@ -214,6 +214,13 @@ const renderPage = async () => {
 
   renderPosts();
   window.addEventListener('popstate', renderPosts);
+  window.addEventListener('ch-utils-database-update', async ({ detail }) => {
+    console.log(detail);
+    if ('bookmarkStore' in detail.targets) {
+      bookmarks = await getCursor('bookmarkStore');
+      renderPosts();
+    }
+  });
 };
 
 export const main = async () => {
