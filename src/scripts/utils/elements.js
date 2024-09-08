@@ -752,6 +752,87 @@ const cwToggle = (adult, cws) => noact({
   ]
 });
 
+const meatballMenuButton = postId => noact({
+  id: `mb-${postId}`,
+  style: 'order: 2',
+  onclick: function() {
+    if (this.dataset.headlessuiState) {
+      this.dataset.headlessuiState = '',
+      this.setAttribute('aria-expanded', false);
+    } else {
+      this.dataset.headlessuiState = 'open',
+      this.setAttribute('aria-expanded', true);
+    }
+  },
+  type: 'button',
+  'aria-haspopup': 'menu',
+  'aria-expanded': false,
+  dataset: { headlessuiState: '' },
+  children: [{
+    className: 'co-action-button h-6 w-6 transition-transform ui-open:rotate-90',
+    viewBox: '0 0 24 24',
+    fill: 'none',
+    stroke: 'currentColor',
+    'stroke-width': 1.5,
+    'aria-hidden': true,
+    children: [{
+      'stroke-linecap': 'round',
+      'stroke-linejoin': 'round',
+      d: 'M6.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM12.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM18.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0z'
+    }]
+  }]
+});
+const meatballMenu = post => noact({
+  style: 'top: 2.75rem; right: .75rem',
+  className: 'hidden ch-utils-mb absolute cohost-shadow-dark z-30 flex min-w-max flex-col gap-3 rounded-lg bg-notWhite p-3 text-notBlack focus:!outline-none',
+  'aria-labelledBy': `mb-${post.postId}`,
+  role: 'menu',
+  tabindex: 0,
+  children: [
+    {
+      onclick: function() { navigator.share({ url: post.singlePostPageUrl }) },
+      className: 'flex flex-row gap-2 hover:underline',
+      role: 'menuitem',
+      tabindex: -1,
+      children: [
+        {
+          viewBox: '0 0 24 24',
+          className: 'h-6',
+          children: [{
+            d: 'M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z'
+          }]
+        },
+        'share post'
+      ]
+    },
+    {
+      onclick: function() {
+        const post = this.closest('article');
+        let theme = post.dataset.theme;
+
+        if (theme === 'light' || (theme === 'both' && window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches)) {
+          theme = 'dark';
+        } else theme = 'light';
+
+        post.dataset.theme = theme;
+      },
+      className: 'flex flex-row gap-2 hover:underline',
+      role: 'menuitem',
+      tabindex: -1,
+      children: [
+        {
+          viewBox: '0 0 24 24',
+          className: 'h-6',
+          children: [{
+            d: 'M12 18v-5.25m0 0a6.01 6.01 0 001.5-.189m-1.5.189a6.01 6.01 0 01-1.5-.189m3.75 7.478a12.06 12.06 0 01-4.5 0m3.75 2.383a14.406 14.406 0 01-3 0M14.25 18v-.192c0-.983.658-1.823 1.508-2.316a7.5 7.5 0 10-7.517 0c.85.493 1.509 1.333 1.509 2.316V18'
+          }]
+        },
+        'invert colors'
+      ]
+    }
+  ]
+});
+
 const displayName = project => noact({
   className: 'co-project-display-name max-w-full flex-shrink truncate font-atkinson font-bold hover:underline',
   rel: 'author',
@@ -805,31 +886,35 @@ const headerProjectLine = post => [
 ];
 const threadHeader = (post, prevShare) => noact({
   tag: 'header',
-  className: 'co-thread-header',
-  children: [{
-    className: 'flex min-w-0 flex-1 flex-row flex-wrap items-center gap-2 leading-none',
-    children: [
-      avatar8(post.postingProject, true),
-      headerProjectLine(post),
-      prevShare ? [
-        {
-          viewBox: '0 0 24 24',
-          className: 'h-6 w-6 co-action-button',
-          fill: 'none',
-          'stroke-width': 1.5,
-          stroke: 'currentColor',
-          'aria-hidden': 'true',
-          children: [{
-            'stroke-linecap': 'round',
-            'stroke-linejoin': 'round',
-            d: 'M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99'
-          }]
-        },
-        avatar8(prevShare.postingProject, true),
-        headerProjectLine(prevShare)
-      ] : null,
-    ]
-  }]
+  className: 'co-thread-header relative',
+  children: [
+    {
+      className: 'flex min-w-0 flex-1 flex-row flex-wrap items-center gap-2 leading-none',
+      children: [
+        avatar8(post.postingProject, true),
+        headerProjectLine(post),
+        prevShare ? [
+          {
+            viewBox: '0 0 24 24',
+            className: 'h-6 w-6 co-action-button',
+            fill: 'none',
+            'stroke-width': 1.5,
+            stroke: 'currentColor',
+            'aria-hidden': 'true',
+            children: [{
+              'stroke-linecap': 'round',
+              'stroke-linejoin': 'round',
+              d: 'M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99'
+            }]
+          },
+          avatar8(prevShare.postingProject, true),
+          headerProjectLine(prevShare)
+        ] : null,
+      ]
+    },
+    meatballMenuButton(post.postId),
+    meatballMenu(post)
+  ]
 });
 const threadPreFooter = post => noact({
   className: 'flex w-full max-w-full flex-col',
@@ -900,7 +985,7 @@ const postHeadline = post => noact({
       children: post.headline
     }]
   }]
-})
+});
 
 const formatMarkdown = markdown => noact({
   className: 'co-prose prose my-4 overflow-hidden break-words px-3',
@@ -925,7 +1010,7 @@ const formatTags = post => noact({
       children: post.tags.map(tag => ({ href: `/rc/tagged/${encodeURIComponent(tag)}`, className: 'mr-2 inline-block text-sm', children: ['#', tag] }))
     }]
   }]
-})
+});
 
 const mapBlocks = blocks => {
   let sortedBlockIndex = 0;
@@ -985,7 +1070,7 @@ const formatPosts = (parentPost, tree) => {
       index < tree.length - 1 ? { tag: 'hr', className: 'co-hairline' } : null,
     ]
   }));
-}
+};
 
 export const renderPost = post => {
   const prevShare = post.shareTree.find(share => share.postId === post.shareOfPostId);

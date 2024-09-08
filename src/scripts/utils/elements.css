@@ -26,6 +26,8 @@
   fill: currentColor;
 }
 
+[data-headlessui-state="open"] ~ .ch-utils-mb { display: flex; }
+
 .ch-utils-18-plus:has([data-state="open"]) {
   &.ch-utils-cw {
     flex-direction: row;
