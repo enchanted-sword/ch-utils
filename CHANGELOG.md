@@ -12,6 +12,7 @@
 ### Horizontal navigation
 - Navbar is now shown on user pages
 - Added bookmarks integration
+- Navbar is now more accurately positioned before being moved to reduce jank
 
 ### Open notifications in popover view
 - Remove empty notifications before rendering
@@ -21,6 +22,9 @@
 
 ### Post filtering
 - Fixed originals being hidden when they shouldn't be
+
+### Post previews
+- Fixed rendering when using the v2 post composer
 
 # 1.4.1
 ### **New feature:** Conditionally show 18+ {[@wowperfect](https://cohost.org/wowperfect)}
