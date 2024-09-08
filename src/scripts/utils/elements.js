@@ -35,7 +35,7 @@ const followCancelOrUnfollowRequest = async (state, toProjectId) => apiFetch(`/v
     0: { fromProjectId: activeProject.projectId, toProjectId } 
   })
 });
-const lockIcon = () => { 
+const followCardLockIcon = () => { 
   return {
     viewBox: '0 0 25 18',
     style: 'fill-rule: evenodd; clip-rule: evenodd; stroke-linejoin: round; stroke-miterlimit: 2;',
@@ -76,7 +76,7 @@ export const followCard = async (customClass, project) => {
         className: `mask mask-${project.avatarShape} h-full w-full object-cover`,
         alt: project.handle
       }, 
-      project.privacy === 'private' ? lockIcon() : ''
+      project.privacy === 'private' ? followCardLockIcon() : ''
     ]
   },
   {
@@ -776,6 +776,17 @@ const timestamp = post => noact({
 });
 const headerProjectLine = post => [
   post.postingProject.displayName ? displayName(post.postingProject) : null,
+  post.postingProject.privacy === 'private' ? {
+    className: 'co-project-display-name inline-block h-5 w-5',
+    viewBox: '0 0 24 24',
+    fill: 'currentColor',
+    'aria-hidden': true,
+    children: [{
+      'fill-rule': 'evenodd',
+      'clip-rule': 'evenodd',
+      d: 'M12 1.5a5.25 5.25 0 00-5.25 5.25v3a3 3 0 00-3 3v6.75a3 3 0 003 3h10.5a3 3 0 003-3v-6.75a3 3 0 00-3-3v-3c0-2.9-2.35-5.25-5.25-5.25zm3.75 8.25v-3a3.75 3.75 0 10-7.5 0v3h7.5zs'
+    }]
+  } : null,
   postHandle(post.postingProject),
   post.responseToAskId ? {
     viewBox: '0 0 24 24',
