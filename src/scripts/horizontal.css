@@ -11,6 +11,16 @@
     position: relative;
     color: rgb(var(--color-notWhite));
 
+    .grid > & {
+      position: fixed;
+      top: .75rem;
+      right: calc(50% - 11rem);
+      z-index: 50;
+
+      @media (min-width: 1280px) { right: calc(50% - 19rem); }
+      @media (min-width: 1536px) { right: calc(50% - 27rem); }
+    }
+
     > a > li {
       font-size: 0;
       gap: 0;
