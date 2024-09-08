@@ -13,7 +13,13 @@
 .volume-controls { display: none; }
 .volume-state[data-state="open"] + .volume-controls { display: flex; }
 
-.co-thread-header .ch-utils-headerIconContainer { flex: 0; }
+.co-thread-header {
+  [id*="headlessui-menu-button"] { order: 2; }
+  .ch-utils-headerIconContainer {
+    order: 1;
+    flex: 0;
+  }
+}
 
 .ch-utils-likeIcon[data-state="liked"] .co-action-button {
   color: rgb(var(--color-cherry)) !important;
