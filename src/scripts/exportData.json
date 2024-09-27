@@ -1,7 +1,7 @@
 {
   "name": "exportData",
   "title": "export cached data",
-  "description": "export any posts or users cached in your browser storage",
+  "description": "export any posts, users, and bookmarked posts cached in your browser storage",
   "preferences": {
     "enabled": false,
     "options": {

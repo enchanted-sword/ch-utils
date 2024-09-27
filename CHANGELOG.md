@@ -1,292 +1,395 @@
-# 1.5.0
+# 1.5.1
+
 ### General
-- Updated the markdown parser again
-- Implemented IndexedDB for caching posts and projects, cutting down on API requests
+
+-   Final update :/
+
+### **New feature:** Export cached data
+
+-   Exports any posts, users, and bookmarked posts cached in your browser as JSON data
+
+### Follower tweaks
+
+-   Added download follower list option
+-   Downloads your follower list as JSON data after every follower is loaded
+
+# 1.5.0
+
+### General
+
+-   Updated the markdown parser again
+-   Implemented IndexedDB for caching posts and projects, cutting down on API requests
 
 ### **New feature:** Like and share from post headers
-- Allows adding like and/or share buttons to each post in a thread, so that you can like and/or share them without clicking through to the permalink
+
+-   Allows adding like and/or share buttons to each post in a thread, so that you can like and/or share them without clicking through to the permalink
 
 ### **New feature:** Post bookmarks
-- Adds a custom bookmark feature that allows you to save posts, view, and sort them
+
+-   Adds a custom bookmark feature that allows you to save posts, view, and sort them
 
 ### Horizontal navigation
-- Navbar is now shown on user pages
-- Added bookmarks integration
-- Navbar is now more accurately positioned before being moved to reduce jank
+
+-   Navbar is now shown on user pages
+-   Added bookmarks integration
+-   Navbar is now more accurately positioned before being moved to reduce jank
 
 ### Open notifications in popover view
-- Remove empty notifications before rendering
+
+-   Remove empty notifications before rendering
 
 ### Conditionally show 18+
-- Fixed content not being re-hideable
+
+-   Fixed content not being re-hideable
 
 ### Post filtering
-- Fixed originals being hidden when they shouldn't be
+
+-   Fixed originals being hidden when they shouldn't be
 
 ### Post previews
-- Fixed rendering when using the v2 post composer
+
+-   Fixed rendering when using the v2 post composer
 
 ### Keyboard shortcuts
-- Fixed inability to paginate upwards when filtering posts
+
+-   Fixed inability to paginate upwards when filtering posts
 
 # 1.4.1
+
 ### **New feature:** Conditionally show 18+ {[@wowperfect](https://cohost.org/wowperfect)}
-- When logged in as certain pages, automatically displays 18+ content
+
+-   When logged in as certain pages, automatically displays 18+ content
 
 ### General
-- Extension preference menu now only opens on install {[@consoleskunk](https://cohost.org/consoleskunk)}
-- Preferences are now also initialised in the menu
-- Markdown parsing now bolds inline headings
+
+-   Extension preference menu now only opens on install {[@consoleskunk](https://cohost.org/consoleskunk)}
+-   Preferences are now also initialised in the menu
+-   Markdown parsing now bolds inline headings
 
 ### Quick search
-- Fixed some tag names not being URL-safe
+
+-   Fixed some tag names not being URL-safe
 
 ### Post previews
-- Added asks to the preview
-- Added audio to the preview
-- Added link embeds to the preview
+
+-   Added asks to the preview
+-   Added audio to the preview
+-   Added link embeds to the preview
 
 ### Keyboard shortcuts
-- Fixed pagination
+
+-   Fixed pagination
 
 ### Open notifications in popover view
-- Fixed un-owned reply line of action missing a word
+
+-   Fixed un-owned reply line of action missing a word
 
 ### Yinglet translation
-- Added support for the "th" -> "z" pronounciation {[@8akesale](https://cohost.org/bakesale)}
+
+-   Added support for the "th" -> "z" pronounciation {[@8akesale](https://cohost.org/bakesale)}
 
 ### Post filtering
-- New preference: Hide shares {[@wowperfect](https://cohost.org/wowperfect)}
-- Filters now add a toggle to the feed, allowing them to be switched on and off without exiting the app on mobile
+
+-   New preference: Hide shares {[@wowperfect](https://cohost.org/wowperfect)}
+-   Filters now add a toggle to the feed, allowing them to be switched on and off without exiting the app on mobile
 
 # 1.4.0.2
+
 ### Post previews
-- Fixed the editor expanding its height to match the preview
-- Fixed an incorrect selector during tag initialisation
-- Fixed an incompatibility with the v1 post composer
+
+-   Fixed the editor expanding its height to match the preview
+-   Fixed an incorrect selector during tag initialisation
+-   Fixed an incompatibility with the v1 post composer
 
 # 1.4.0
+
 ### General
-- Fixed overflow and scrolling issues with the extension menu on mobile
-- Now opens the config menu on install/update so sophonts don't miss it
+
+-   Fixed overflow and scrolling issues with the extension menu on mobile
+-   Now opens the config menu on install/update so sophonts don't miss it
 
 ### Open notifications in popover view
-- Fixed new notifications not being spliced from old ones
-- Prevent popup from closing when clicking inside
-- Weekly notification preview line and body updates
-- Fix headlines being parsed as markdown
+
+-   Fixed new notifications not being spliced from old ones
+-   Prevent popup from closing when clicking inside
+-   Weekly notification preview line and body updates
+-   Fix headlines being parsed as markdown
 
 ### Quick search
-- Strip dialetics from search queries
-- Clear query on closing popup
+
+-   Strip dialetics from search queries
+-   Clear query on closing popup
 
 ### **New feature:** Keyboard shortcuts
-- Adds keyboard shortcuts for navigation and interaction
+
+-   Adds keyboard shortcuts for navigation and interaction
 
 ### **New feature:** Post previews
-- Displays a live preview of the post you're writing alongside the editor
+
+-   Displays a live preview of the post you're writing alongside the editor
 
 # v1.3.4
+
 ### General
-- Fixed newlines harder
-- Preference option text inputs now only update when the input loses focus
+
+-   Fixed newlines harder
+-   Preference option text inputs now only update when the input loses focus
 
 ### Open notifications in popover view
-- Added avatar wrapping option
-- Fixed single likes being labelled as shares
-- Fixed the button still being filled in after feature cleanup
-- Fixed uncaught errors when encountering unavailable posts while mapping shares
+
+-   Added avatar wrapping option
+-   Fixed single likes being labelled as shares
+-   Fixed the button still being filled in after feature cleanup
+-   Fixed uncaught errors when encountering unavailable posts while mapping shares
 
 ### Post filtering
-- Added new options for duplicate post filtering
-- Fixed posts being hidden on your own project page
-- Added content, tag, and CW filtering that supports partial matches and checks all posts in a thread
+
+-   Added new options for duplicate post filtering
+-   Fixed posts being hidden on your own project page
+-   Added content, tag, and CW filtering that supports partial matches and checks all posts in a thread
 
 ### Follower page tweaks
-- Fixed bug where clicking the reshare button would scroll to the top of the page
+
+-   Fixed bug where clicking the reshare button would scroll to the top of the page
 
 ### Show page info
-- New name
-- Now works on mobile! Tap and hold on a link to show the popup
+
+-   New name
+-   Now works on mobile! Tap and hold on a link to show the popup
 
 # v1.3.3
+
 ### **New feature:** Post filtering
-- Control what posts you see on your dashboard
-- Filter out your own posts or duplicate posts
+
+-   Control what posts you see on your dashboard
+-   Filter out your own posts or duplicate posts
 
 ### General
-- Changed the extension icon to use paths instead of glyphs so that it displays correctly regardless of local font availability
-- Fixed colour contrast on machines that prefer light mode
-- Fixed a markdown parsing issue with newlines and carriage returns
+
+-   Changed the extension icon to use paths instead of glyphs so that it displays correctly regardless of local font availability
+-   Fixed colour contrast on machines that prefer light mode
+-   Fixed a markdown parsing issue with newlines and carriage returns
 
 ### Open notifications in popover view
-- Added a new option to display shares with tags
-- Every item in a notification's line of action is now a unique hyperlink where possible
+
+-   Added a new option to display shares with tags
+-   Every item in a notification's line of action is now a unique hyperlink where possible
 
 ### Popover comments
-- Fixed excessive whitespace issue
+
+-   Fixed excessive whitespace issue
 
 ### Custom timestamps
-- Fixed a highly specific bug where notifications for posts containing embedded comments would generate bugged timestamps
+
+-   Fixed a highly specific bug where notifications for posts containing embedded comments would generate bugged timestamps
 
 ### Yinglet translation
-- Translations are now applied per-post instead of per-thread
+
+-   Translations are now applied per-post instead of per-thread
 
 # v1.3.2
+
 ### **New feature:** Fix comment counts
-- Fixes incorrect comment numbers on posts
+
+-   Fixes incorrect comment numbers on posts
 
 ### General
-- Switched to OpenType fonts to fix compatibility issues
+
+-   Switched to OpenType fonts to fix compatibility issues
 
 ### Open notifications in popover view
-- Fixed incorrect timezones on dates
+
+-   Fixed incorrect timezones on dates
 
 ### Popover comments
-- Fixed whitespace not being preserved in comments
+
+-   Fixed whitespace not being preserved in comments
 
 ### Horizontal navigation
-- Fixed a bug where clicking on project pages would send you back to the previous page
+
+-   Fixed a bug where clicking on project pages would send you back to the previous page
 
 # v1.3.1
+
 ### General
-- Fixed module-specific errors from halting mutation callbacks for other modules
+
+-   Fixed module-specific errors from halting mutation callbacks for other modules
 
 ### Custom timestamps
-- Unset default override
-- Added better handling for invalid locales
+
+-   Unset default override
+-   Added better handling for invalid locales
 
 # v1.3.0
+
 ### **New feature:** Mobile quick navigation
-- Add up to 6 navigation icons to a footer menu at the bottom of the screen
+
+-   Add up to 6 navigation icons to a footer menu at the bottom of the screen
 
 ### **New feature:** Quick search
-- Displays a popover search menu when clicking on the search button
+
+-   Displays a popover search menu when clicking on the search button
 
 ### **New feature:** Custom timestamps
-- Formats timestamps with a user-supplied luxon.DateTime preset or Intl.DateTimeFormat constructor options
+
+-   Formats timestamps with a user-supplied luxon.DateTime preset or Intl.DateTimeFormat constructor options
 
 ### Open notifications in popover view
-- A million minor tweaks to preview line creation
-- Link to notification page is now shown on mobile
-- Minor style tweaks
-- &lt;pre&gt; elements are now sandboxed correctly
+
+-   A million minor tweaks to preview line creation
+-   Link to notification page is now shown on mobile
+-   Minor style tweaks
+-   &lt;pre&gt; elements are now sandboxed correctly
 
 ### Quick rechost
-- Positioning in general is now more accurate
-- Added option for showing tag entry
-- Added a new content entry field (handles cohost custom emojis too!)
+
+-   Positioning in general is now more accurate
+-   Added option for showing tag entry
+-   Added a new content entry field (handles cohost custom emojis too!)
 
 ### Show page info on hover
-- Now shows a link to the ask page
+
+-   Now shows a link to the ask page
 
 ### Horizontal navigation
-- All dashboard pages should now have the same margins
+
+-   All dashboard pages should now have the same margins
 
 # v1.2.3
+
 ### Quick rechost
-- Should hopefully no longer occasionally overflow on mobile
+
+-   Should hopefully no longer occasionally overflow on mobile
 
 ### Open notifications in popover view
-- Unread highlighting should now be fixed on LIGHT MODE
-- Minor style tweaks
+
+-   Unread highlighting should now be fixed on LIGHT MODE
+-   Minor style tweaks
 
 ### Show page info on hover
-- Show now always display the correct page
+
+-   Show now always display the correct page
 
 # v1.2.2
+
 ### General
-- Now mobile-friendly!
-- Minor tweaks to the menu appearance
-- Parallel processing should speed up some features
-- The extension will now show a badge to indicate that an update has occured, and new or updated features will be highlighted in the menu 
+
+-   Now mobile-friendly!
+-   Minor tweaks to the menu appearance
+-   Parallel processing should speed up some features
+-   The extension will now show a badge to indicate that an update has occured, and new or updated features will be highlighted in the menu
 
 ### Quick rechost
-- Added touch support; tap and hold the button to bring up the quick rechost menu
+
+-   Added touch support; tap and hold the button to bring up the quick rechost menu
 
 ### Open notifications in popover view
-- Unread notifications now contrast correctly on both forced and inherited dark mode (for real this time)
-- Added mobile support
-- Interaction dialog is now slightly more accurate
+
+-   Unread notifications now contrast correctly on both forced and inherited dark mode (for real this time)
+-   Added mobile support
+-   Interaction dialog is now slightly more accurate
 
 ### Show page info on hover
-- Will now only run if the device has a mouse active (and thus can actually hover), to save on network requests
-- Hover event handlers should now be properly removed when disabling the feature
+
+-   Will now only run if the device has a mouse active (and thus can actually hover), to save on network requests
+-   Hover event handlers should now be properly removed when disabling the feature
 
 ### Horizontal navigation
-- No longer messes with the menu if in sub-1024px mode
+
+-   No longer messes with the menu if in sub-1024px mode
 
 ### Yinglet translation
-- Contents of &lt;code&gt; elements are now preserved and will not be translated
+
+-   Contents of &lt;code&gt; elements are now preserved and will not be translated
 
 ### Display post source code
-- Should now correctly work on long threads with the "collapse long threads" cohost setting enabled
+
+-   Should now correctly work on long threads with the "collapse long threads" cohost setting enabled
 
 # v1.2.1
+
 ### General
-- Preferences should hopefully now transition seamlessly when adding or removing features or options
+
+-   Preferences should hopefully now transition seamlessly when adding or removing features or options
 
 ### **New feature:** Yinglet translation
-- Converts the zh phoneme in yinglet-ified post text to the usual th phoneme
-- Also works in reverse
+
+-   Converts the zh phoneme in yinglet-ified post text to the usual th phoneme
+-   Also works in reverse
 
 ### Open notifications in popover view
-- Fixed bug where cohost tries to serve you posts from blocked projects
-- Unread notifications now contrast correctly on both forced and inherited dark mode
-- Unread notifications are now counted correctly
-- Fixed headline-only opaque shares not displaying preview text
+
+-   Fixed bug where cohost tries to serve you posts from blocked projects
+-   Unread notifications now contrast correctly on both forced and inherited dark mode
+-   Unread notifications are now counted correctly
+-   Fixed headline-only opaque shares not displaying preview text
 
 ### Show comments under posts
-- Comments are no longer haunted (ghost comments could previously be left on transparent shares)
+
+-   Comments are no longer haunted (ghost comments could previously be left on transparent shares)
 
 # v1.2.0
+
 ### General
-- Tweaked permission structure to better fit MV2
-- Debug logging for apiFetch calls
-- Tidied up user methods
-- Importing/exporting preferences now works correctly
+
+-   Tweaked permission structure to better fit MV2
+-   Debug logging for apiFetch calls
+-   Tidied up user methods
+-   Importing/exporting preferences now works correctly
 
 ### **New!** Display post source code
-- Adds a toggle to view a post's source markdown, complete with syntax highlighting
-- 3 colour themes: abyss, fruit, and reef
+
+-   Adds a toggle to view a post's source markdown, complete with syntax highlighting
+-   3 colour themes: abyss, fruit, and reef
 
 ### Open notifications in popover view
-- Colour contrast is now enforced in preview text
-- Added a manual fix for https://bugzilla.mozilla.org/show_bug.cgi?id=1896299
-- Implemented the "[no text]" label for non-transparent with no text
-- numFetch is now explicitly converted to a number
-- Replies to comments on your post are now correctly identified as such
+
+-   Colour contrast is now enforced in preview text
+-   Added a manual fix for https://bugzilla.mozilla.org/show_bug.cgi?id=1896299
+-   Implemented the "[no text]" label for non-transparent with no text
+-   numFetch is now explicitly converted to a number
+-   Replies to comments on your post are now correctly identified as such
 
 ### Follower page tweaks
-- Fixed counting methods (the API now only returns a max of 100 projects at a time, the previous bucket size used was 500)
+
+-   Fixed counting methods (the API now only returns a max of 100 projects at a time, the previous bucket size used was 500)
 
 ### Show comments under posts
-- Comments can now be submitted with ctrl-enter
+
+-   Comments can now be submitted with ctrl-enter
 
 # v1.1.1
+
 ### General
-- Added better system for managing updates to feature options
-- Added a version display and "reset preferences" button to the manage section of the menu
-- chutils is now hosted on AMO! https://addons.mozilla.org/en-US/firefox/addon/chutils/
+
+-   Added better system for managing updates to feature options
+-   Added a version display and "reset preferences" button to the manage section of the menu
+-   chutils is now hosted on AMO! https://addons.mozilla.org/en-US/firefox/addon/chutils/
 
 # v1.1.0
+
 ### General
-- The extension now uses MV2 instead of MV3
+
+-   The extension now uses MV2 instead of MV3
 
 ### Show page info on hover
-- Now generates info cards for pages in notification popovers
-- Optimized methods
-- Now shows pronouns and URL, with a toggleable option to show descriptions
+
+-   Now generates info cards for pages in notification popovers
+-   Optimized methods
+-   Now shows pronouns and URL, with a toggleable option to show descriptions
 
 ### Open notifications in popover view
-- Cleaned up methods
-- Now shows dedicated preview images for posts with inline images or image attachments
+
+-   Cleaned up methods
+-   Now shows dedicated preview images for posts with inline images or image attachments
 
 ### Show comments under posts
-- Posts and comments can now be replied to from the popover view
+
+-   Posts and comments can now be replied to from the popover view
 
 ### Quick rechost
-- Added a new verb replacing "repost"
-- Minor weighting tweaks
+
+-   Added a new verb replacing "repost"
+-   Minor weighting tweaks
 
 # v1.0.1 - Initial release

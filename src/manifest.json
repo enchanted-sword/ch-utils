@@ -1,25 +1,32 @@
 {
   "manifest_version": 2,
   "name": "CHUtils",
-  "version": "1.5.0",
-
+  "version": "1.5.1",
   "description": "Utilities for cohost",
   "icons": {
     "48": "icons/icon.svg",
     "96": "icons/icon.svg"
   },
   "author": "April Lunarii",
-
   "permissions": [
     "storage",
     "*://*.cohost.org/*"
   ],
-  "web_accessible_resources": [ "*.js", "*.json", "*.css", "*.svg", ".png" ],
-
+  "web_accessible_resources": [
+    "*.js",
+    "*.json",
+    "*.css",
+    "*.svg",
+    ".png"
+  ],
   "content_scripts": [
     {
-      "matches": [ "*://*.cohost.org/*" ],
-      "exclude_matches": [ "*://*.cohost.org/rc/login" ],
+      "matches": [
+        "*://*.cohost.org/*"
+      ],
+      "exclude_matches": [
+        "*://*.cohost.org/rc/login"
+      ],
       "run_at": "document_end",
       "js": [
         "control/contentScript.js",
@@ -37,17 +44,17 @@
     }
   ],
   "background": {
-    "scripts": [ "control/background.js" ]
+    "scripts": [
+      "control/background.js"
+    ]
   },
-
   "browser_action": {
-    "default_icon" : {
+    "default_icon": {
       "48": "icons/icon.svg",
       "96": "icons/icon.svg"
     },
     "default_popup": "ui/menu.html?popup=true"
   },
-
   "browser_specific_settings": {
     "gecko": {
       "id": "chutils@girldragon.neocities.org",
