@@ -1,9 +1,8 @@
 import { apiFetch } from './utils/apiFetch.js';
 import { followCard } from './utils/elements.js';
 import { noact } from './utils/noact.js';
-import { getOptions } from './utils/jsTools.js';
+import { getOptions, getStorage } from './utils/jsTools.js';
 
-const boxSelector = '.co-themed-box';
 const headerSelector = '.co-themed-box > h1';
 const customClass = 'ch-utils-followers';
 
@@ -18,7 +17,7 @@ const loaderButtonPlaceholder = $(`
 `);
 const loaderButton = followers => noact({
   className: `${customClass} load-all ml-auto flex h-12 max-w-xs items-center justify-center rounded-lg bg-foreground px-6 text-lg text-text hover:bg-foreground-600 active:bg-foreground-700 disabled:bg-foreground-200`,
-  onclick: async function({ target }) {
+  onclick: async function ({ target }) {
     target.innerHTML = '<span class="spinner"></span>';
     await Promise.all(followers.map(async project => {
       const card = await followCard(customClass, project);
@@ -30,7 +29,7 @@ const loaderButton = followers => noact({
   children: ['load all']
 });
 
-const countFollowers = async () => {
+const countFollowers = async download => {
   let offset = 0;
   let projects = [];
   let total = [];
@@ -43,12 +42,32 @@ const countFollowers = async () => {
     ({ projects } = await apiFetch('/v1/projects/followers', { method: 'GET', queryParams: { offset, limit } }));
     total.push(...projects);
   }
-  
+
+  if (download) {
+    const { preferences } = await getStorage(['preferences']);
+    const { prettyPrint } = preferences.exportData.options;
+
+    const dataExport = new Blob([prettyPrint ? JSON.stringify(total, null, 2) : JSON.stringify(total)], { type: 'application/json' });
+    const url = URL.createObjectURL(dataExport);
+    const exportLink = document.createElement('a');
+    const date = new Date();
+    const yy = date.getFullYear().toString();
+    const mm = (date.getMonth()).toString();
+    const dd = date.getDate().toString();
+    exportLink.href = url;
+    exportLink.download = `cohost followers export ${mm}-${dd}-${yy}.json`;
+
+    document.documentElement.append(exportLink);
+    exportLink.click();
+    exportLink.remove();
+    URL.revokeObjectURL(url);
+  }
+
   return total;
 };
 
 export const main = async () => {
-  const { count, loadAll } = await getOptions('followers');
+  const { count, loadAll, download } = await getOptions('followers');
   if (location.pathname !== '/rc/project/followers' || (!count && !loadAll)) return;
 
   $(headerSelector).addClass('flex items-start');
@@ -58,7 +77,7 @@ export const main = async () => {
   }
   if (loadAll) $(headerSelector).append(loaderButtonPlaceholder);
 
-  const followers = await countFollowers();
+  const followers = await countFollowers(download);
 
   if (count) {
     countElement.text(followers.length);

@@ -1,7 +1,7 @@
 {
   "name": "followers",
   "title": "follower page tweaks",
-  "description": "tweaks to the followers page",
+  "description": "tweaks to the followers page. may take several minutes to fetch all of your followers if you have a lot.",
   "preferences": {
     "enabled": false,
     "options": {
@@ -16,6 +16,12 @@
         "type": "toggle",
         "name": "load all followers",
         "tooltip": "adds a button that allows loading every page of your followers at once"
+      },
+      "download": {
+        "value": false,
+        "type": "toggle",
+        "name": "download follower list",
+        "tooltip": "downloads your follower list after fetching it"
       }
     }
   },
